@@ -3,12 +3,14 @@
 
 #include "background/background.hpp"
 #include "player/player.hpp"
+#include <raylib.h>
 
 class Level {
 public:
   float startX, startY;
   Player player;
   Background background;
+  Camera2D camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
 
   void tick();
 

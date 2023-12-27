@@ -8,7 +8,7 @@
 enum GameState { MENU, EDITOR, PLAYING };
 
 static GameState state = PLAYING;
-static Level level = Level(100, 100, Player(100, 100, 30, 30), Background(CHECKERBOARD, backgroundColorPrimary, backgroundColorSecondary, 40.0f));
+static Level level = Level(100, 100, Player(100, 100, 30, 150), Background(CHECKERBOARD, backgroundColorPrimary, backgroundColorSecondary, 40.0f));
 
 int main() {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");

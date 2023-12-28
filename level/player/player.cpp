@@ -1,5 +1,4 @@
 #include "player.hpp"
-#include <iostream>
 
 void Player::tick() {
   float dx = 0.0f, dy = 0.0f;

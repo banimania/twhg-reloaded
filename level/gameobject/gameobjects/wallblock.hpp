@@ -9,9 +9,9 @@ class WallBlock : public GameObject {
 public:
   Color outlineColor = wallBlockColorOutline, fillColor = wallBlockColorFill;
   
-  void tick() override;
+  void tick(Player player) override;
 
-  WallBlock(float x, float y) : GameObject(x, y, 40.0f, 40.0f) {};
+  WallBlock(Vector2 pos) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}) {};
 };
 
 #endif

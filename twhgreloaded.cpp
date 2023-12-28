@@ -1,15 +1,12 @@
 #include <raylib.h>
-#include "level/background/background.hpp"
 #include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/level.hpp"
-#include "level/player/player.hpp"
-#include "utils/colors.hpp"
 #include "utils/constants.hpp"
 
 enum GameState { MENU, EDITOR, PLAYING };
 
 static GameState state = PLAYING;
-static Level level = Level(100, 100, Player(100, 100, 30, 150), Background(CHECKERBOARD, backgroundColorPrimary, backgroundColorSecondary, 40.0f));
+static Level level = Level(100, 100, Player({100, 100}, 30, 150), Background(CHECKERBOARD, backgroundColorPrimary, backgroundColorSecondary, 40.0f));
 
 int main() {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
@@ -17,7 +14,7 @@ int main() {
 
   SetTargetFPS(60);
 
-  level.gameObjects.push_back(new WallBlock(200, 200));
+  level.gameObjects.push_back(new WallBlock({200, 200}));
 
   while(!WindowShouldClose()) {
     BeginDrawing();

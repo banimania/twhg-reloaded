@@ -1,6 +1,6 @@
 #include "wallblock.hpp"
 
-void WallBlock::tick() {
-  DrawRectangle(x, y, width, height, outlineColor);
-  DrawRectangle(x + 5, y + 5, width - 10, height - 10, fillColor);
+void WallBlock::tick(Player player) {
+  DrawRectangle(rect.x, rect.y, rect.width, rect.height, outlineColor);
+  DrawRectangle(rect.x + 5, rect.y + 5, rect.width - 10, rect.height - 10, fillColor);
 }

@@ -1,13 +1,16 @@
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
 
+#include <raylib.h>
+#include "../player/player.hpp"
+
 class GameObject {
 public:
-  float x, y, width, height;
+  Rectangle rect;
 
-  virtual void tick() {};
+  virtual void tick(Player player) {};
 
-  GameObject(float x, float y, float width, float height) : x(x), y(y), width(width), height(height) {};
+  GameObject(Rectangle rect) : rect(rect) {};
 };
 
 #endif

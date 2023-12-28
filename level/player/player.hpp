@@ -6,12 +6,13 @@
 
 class Player {
 public:
-  float x, y, size, speed;
+  Rectangle rect;
+  float speed;
   Color outlineColor = playerColorOutline, fillColor = playerColorFill;
 
   void tick();
   
-  Player(float x, float y, float size, float speed) : x(x), y(y), size(size), speed(speed) {};
+  Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed) {};
 };
 
 #endif

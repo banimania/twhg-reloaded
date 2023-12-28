@@ -1,5 +1,4 @@
 #include "player.hpp"
-#include <raylib.h>
 
 void Player::tick() {
   

@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include "level/background/background.hpp"
+#include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/level.hpp"
 #include "level/player/player.hpp"
 #include "utils/colors.hpp"
@@ -15,6 +16,8 @@ int main() {
   InitAudioDevice();
 
   SetTargetFPS(60);
+
+  level.gameObjects.push_back(new WallBlock(200, 200));
 
   while(!WindowShouldClose()) {
     BeginDrawing();

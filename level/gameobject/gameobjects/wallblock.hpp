@@ -11,7 +11,7 @@ public:
   
   void tick(Player player) override;
 
-  WallBlock(Vector2 pos) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}) {};
+  WallBlock(Vector2 pos) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true) {};
 };
 
 #endif

@@ -7,10 +7,11 @@
 class GameObject {
 public:
   Rectangle rect;
+  bool solid;
 
   virtual void tick(Player player) {};
 
-  GameObject(Rectangle rect) : rect(rect) {};
+  GameObject(Rectangle rect, bool solid) : rect(rect), solid(solid) {};
 };
 
 #endif

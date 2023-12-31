@@ -9,7 +9,7 @@ void Level::tick() {
     gameObject->tick(player);
   }
 
-  player.tick();
+  player.tick(this);
 
   EndMode2D();
 }

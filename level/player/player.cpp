@@ -1,6 +1,9 @@
 #include "player.hpp"
+#include "../level.hpp"
 
-void Player::tick() {
+#include <raylib.h>
+
+void Player::tick(Level* level) {
   float dx = 0.0f, dy = 0.0f;
 
   if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) dy -= speed * GetFrameTime();
@@ -13,6 +16,25 @@ void Player::tick() {
 
   if (nx != rect.x || ny != rect.y) {
     bool xCol, yCol;
+
+    for (GameObject* gameObject : level->gameObjects) {
+      if (gameObject->solid) {
+        if (CheckCollisionRecs({nx, rect.y, rect.width, rect.height}, gameObject->rect)) xCol = true;
+        if (CheckCollisionRecs({rect.x, ny, rect.width, rect.height}, gameObject->rect)) yCol = true;
+      }
+
+      if (xCol) {
+        if (dx > 0) rect.x = gameObject->rect.x - rect.width;
+        else rect.x = gameObject->rect.x + gameObject->rect.width;
+      }
+
+      if (yCol) {
+        if (dy > 0) rect.y = gameObject->rect.y - rect.height;
+        else rect.y = gameObject->rect.y + gameObject->rect.height;
+      }
+
+      if (xCol || yCol) break;
+    }
 
     if (!xCol) rect.x += dx;
     if (!yCol) rect.y += dy;

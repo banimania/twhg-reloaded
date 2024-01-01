@@ -1,31 +1,31 @@
 #include <raylib.h>
+#include "level/gameobject/gameobjects/enemy.hpp"
 #include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/level.hpp"
 #include "utils/constants.hpp"
 
-enum GameState { MENU, EDITOR, PLAYING };
-
-static GameState state = PLAYING;
-static Level level = Level(100, 100, Player({100, 100}, 30, 150), Background(CHECKERBOARD, backgroundColorPrimary, backgroundColorSecondary, 40.0f));
+#include "utils/needed.hpp"
 
 int main() {
+  SetConfigFlags(FLAG_MSAA_4X_HINT);
+
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   InitAudioDevice();
 
   SetTargetFPS(60);
 
-  level.gameObjects.push_back(new WallBlock({200, 200}));
-
+  TWHGReloaded::level.gameObjects.push_back(new WallBlock({200, 200}));
+  TWHGReloaded::level.gameObjects.push_back(new Enemy({380, 380}));
   while(!WindowShouldClose()) {
     BeginDrawing();
 
-    switch(state) {
+    switch(TWHGReloaded::state) {
       case MENU:
         break;
       case EDITOR:
         break;
       case PLAYING:
-        level.tick();
+        TWHGReloaded::level.tick();
         break;
     }
 

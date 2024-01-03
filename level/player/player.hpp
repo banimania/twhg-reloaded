@@ -16,7 +16,8 @@ public:
   float dyingTimer = 0.0f, dyingTime = 0.5f;
 
   void tick(Level* level);
-  
+  void die();
+
   Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed) {};
 };
 

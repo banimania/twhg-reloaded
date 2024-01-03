@@ -3,7 +3,6 @@
 #include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/level.hpp"
 #include "utils/constants.hpp"
-
 #include "utils/needed.hpp"
 
 int main() {
@@ -37,3 +36,4 @@ int main() {
 
   return 0;
 }
+

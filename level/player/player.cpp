@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "../level.hpp"
 #include "../gameobject/gameobjects/enemy.hpp"
+#include <raylib.h>
 
 void Player::tick(Level* level) {
   float dx = 0.0f, dy = 0.0f;
@@ -54,7 +55,7 @@ void Player::tick(Level* level) {
   for (GameObject* gameObject : level->gameObjects) {
     if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {
       if (CheckCollisionCircleRec({enemy->rect.x + enemy->rect.width / 2.0f, enemy->rect.y + enemy->rect.height / 2.0f}, enemy->radius / 2.0f, rect)) {
-        isDying = true;
+        if (!isDying) die();
       }
     }
   }
@@ -71,4 +72,9 @@ void Player::tick(Level* level) {
 
   DrawRectangle(rect.x, rect.y, rect.width, rect.height, outlineColor);
   DrawRectangle(rect.x + (rect.width / 6.0f), rect.y + (rect.height / 6.0f), (2.0f * rect.width / 3.0f), (2.0f * rect.height / 3.0f), fillColor);
+}
+
+void Player::die() {
+  isDying = true;
+  PlaySound(LoadSound("./res/sounds/death.wav"));
 }

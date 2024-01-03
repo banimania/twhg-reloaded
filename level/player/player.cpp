@@ -13,23 +13,6 @@ void Player::tick(Level* level) {
   if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) dx -= speed * GetFrameTime();
   if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) dx += speed * GetFrameTime();
 
-  if (!canDash) dashTimer += GetFrameTime();
-  if (dashing && dashTimer >= dashTime) dashing = false;
-  if (!dashing && dashTimer >= 4 * dashTime) canDash = true;
-  if (IsKeyDown(KEY_Z) && canDash) {
-    canDash = false;
-    dashing = true;
-    dashTimer = 0.0f;
-    
-    dashX = dx;
-    dashY = dy;
-  }
-
-  if (dashing) {
-    dx = 4 * dashX;
-    dy = 4 * dashY;
-  }
-
   float nx = rect.x + dx;
   float ny = rect.y + dy;
 

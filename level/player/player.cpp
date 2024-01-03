@@ -2,9 +2,6 @@
 #include "../level.hpp"
 #include "../gameobject/gameobjects/enemy.hpp"
 
-#include <iostream>
-#include <raylib.h>
-
 void Player::tick(Level* level) {
   float dx = 0.0f, dy = 0.0f;
 
@@ -13,11 +10,23 @@ void Player::tick(Level* level) {
   if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) dx -= speed * GetFrameTime();
   if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) dx += speed * GetFrameTime();
 
-  float nx = rect.x + dx;
-  float ny = rect.y + dy;
+  float nx = rect.x;
+  float ny = rect.y;
+  if (!isDying) {
+    nx += dx;
+    ny += dy;
+  } else {
+    dyingTimer += GetFrameTime();
+    if (dyingTimer > dyingTime) {
+      isDying = false;
+      dyingTimer = 0.0f;
+      rect.x = level->startX;
+      rect.y = level->startY;
+    }
+  }
 
   if (nx != rect.x || ny != rect.y) {
-    bool xCol, yCol;
+    bool xCol = false, yCol = false;
 
     for (GameObject* gameObject : level->gameObjects) {
       if (gameObject->solid) {
@@ -42,11 +51,23 @@ void Player::tick(Level* level) {
     if (!yCol) rect.y += dy;
   }
 
-  /*for (GameObject* gameObject : level->gameObjects) {
+  for (GameObject* gameObject : level->gameObjects) {
     if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {
-      std::cout << enemy->rect.x << std::endl;
+      if (CheckCollisionCircleRec({enemy->rect.x + enemy->rect.width / 2.0f, enemy->rect.y + enemy->rect.height / 2.0f}, enemy->radius / 2.0f, rect)) {
+        isDying = true;
+      }
     }
-  }*/
+  }
+
+  if (isDying) {
+    float alpha = (1 - dyingTimer / dyingTime) * 255.0f;
+    DrawRectangle(rect.x, rect.y, rect.width, rect.height / 6.0f, {outlineColor.r, outlineColor.g, outlineColor.b, static_cast<unsigned char>(alpha)});
+    DrawRectangle(rect.x, rect.y + (rect.width / 6.0f), rect.width / 6.0f, rect.height * (5.0f / 6.0f), {outlineColor.r, outlineColor.g, outlineColor.b, static_cast<unsigned char>(alpha)});
+    DrawRectangle(rect.x + rect.width * (5.0f / 6.0f), rect.y + (rect.width / 6.0f), rect.width / 6.0f, rect.height * (5.0f / 6.0f), {outlineColor.r, outlineColor.g, outlineColor.b, static_cast<unsigned char>(alpha)});
+    DrawRectangle(rect.x + (rect.width / 6.0f), rect.y + rect.height * (5.0f / 6.0f), rect.width - (2.0f * rect.width / 6.0f), rect.height / 6.0f, {outlineColor.r, outlineColor.g, outlineColor.b, static_cast<unsigned char>(alpha)});
+    DrawRectangle(rect.x + (rect.width / 6.0f), rect.y + (rect.height / 6.0f), (2.0f * rect.width / 3.0f), (2.0f * rect.height / 3.0f), {fillColor.r, fillColor.g, fillColor.b, static_cast<unsigned char>(alpha)});
+    return;
+  }
 
   DrawRectangle(rect.x, rect.y, rect.width, rect.height, outlineColor);
   DrawRectangle(rect.x + (rect.width / 6.0f), rect.y + (rect.height / 6.0f), (2.0f * rect.width / 3.0f), (2.0f * rect.height / 3.0f), fillColor);

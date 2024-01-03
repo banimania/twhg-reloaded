@@ -9,11 +9,11 @@ class Enemy : public GameObject {
 public:
   Color outlineColor = enemyColorOutline, fillColor = enemyColorFill;
   
-  float radius = 10.0f;
+  float radius;
 
   void tick(Player player) override;
 
-  Enemy(Vector2 pos) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false) {};
+  Enemy(Vector2 pos, float radius) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false), radius(radius) {};
 };
 
 #endif

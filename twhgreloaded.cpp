@@ -15,7 +15,7 @@ int main() {
   SetTargetFPS(60);
 
   TWHGReloaded::level.gameObjects.push_back(new WallBlock({200, 200}));
-  TWHGReloaded::level.gameObjects.push_back(new Enemy({380, 380}));
+  TWHGReloaded::level.gameObjects.push_back(new Enemy({380, 380}, 10.0f));
   while(!WindowShouldClose()) {
     BeginDrawing();
 

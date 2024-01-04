@@ -37,12 +37,12 @@ void Player::tick(Level* level) {
       }
 
       if (xCol) {
-        if (dx > 0) rect.x = gameObject->rect.x - rect.width;
+        if (rect.x < gameObject->rect.x) rect.x = gameObject->rect.x - rect.width;
         else rect.x = gameObject->rect.x + gameObject->rect.width;
       }
 
       if (yCol) {
-        if (dy > 0) rect.y = gameObject->rect.y - rect.height;
+        if (rect.y < gameObject->rect.y) rect.y = gameObject->rect.y - rect.height;
         else rect.y = gameObject->rect.y + gameObject->rect.height;
       }
 

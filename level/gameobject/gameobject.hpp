@@ -8,10 +8,11 @@ class GameObject {
 public:
   Rectangle rect;
   bool solid;
+  Level* level;
 
   virtual void tick(Player player) {};
 
-  GameObject(Rectangle rect, bool solid) : rect(rect), solid(solid) {};
+  GameObject(Rectangle rect, bool solid, Level* level) : rect(rect), solid(solid), level(level) {};
 };
 
 #endif

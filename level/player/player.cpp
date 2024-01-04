@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "../level.hpp"
 #include "../gameobject/gameobjects/enemy.hpp"
+#include "../../utils/sounds.hpp"
 #include <raylib.h>
 
 void Player::tick(Level* level) {
@@ -76,5 +77,5 @@ void Player::tick(Level* level) {
 
 void Player::die() {
   isDying = true;
-  PlaySound(LoadSound("./res/sounds/death.wav"));
+  PlaySound(deathSound);
 }

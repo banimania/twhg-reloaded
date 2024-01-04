@@ -13,7 +13,7 @@ public:
 
   void tick(Player player) override;
 
-  Enemy(Vector2 pos, float radius) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false), radius(radius) {};
+  Enemy(Vector2 pos, float radius, Level* level) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false, level), radius(radius) {};
 };
 
 #endif

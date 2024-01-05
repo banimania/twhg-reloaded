@@ -3,6 +3,7 @@
 #include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/level.hpp"
 #include "utils/constants.hpp"
+#include "utils/fonts.hpp"
 #include "utils/needed.hpp"
 #include "utils/sounds.hpp"
 
@@ -13,6 +14,7 @@ int main() {
   InitAudioDevice();
 
   loadSounds();
+  loadFonts();
 
   SetTargetFPS(60);
 

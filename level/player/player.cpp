@@ -2,7 +2,6 @@
 #include "../level.hpp"
 #include "../gameobject/gameobjects/enemy.hpp"
 #include "../../utils/sounds.hpp"
-#include <raylib.h>
 
 void Player::tick(Level* level) {
   float dx = 0.0f, dy = 0.0f;

@@ -5,6 +5,7 @@
 #include <vector>
 #include "background/background.hpp"
 #include "gameobject/gameobject.hpp"
+#include "hud/hud.hpp"
 #include "player/player.hpp"
 
 class Level {
@@ -14,6 +15,7 @@ public:
   std::vector<GameObject*> gameObjects;
   Background background;
   Camera2D camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
+  HUD hud = HUD(this);
 
   void tick();
 

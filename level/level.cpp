@@ -12,4 +12,6 @@ void Level::tick() {
   player.tick(this);
 
   EndMode2D();
+
+  hud.tick();
 }

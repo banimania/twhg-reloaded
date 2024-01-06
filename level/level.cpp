@@ -1,6 +1,9 @@
 #include "level.hpp"
+#include <raylib.h>
 
 void Level::tick() {
+  time += GetFrameTime();
+
   BeginMode2D(camera);
 
   background.tick();

@@ -23,6 +23,7 @@ void Player::tick(Level* level) {
       dyingTimer = 0.0f;
       rect.x = level->startX;
       rect.y = level->startY;
+      deaths++;
     }
   }
 

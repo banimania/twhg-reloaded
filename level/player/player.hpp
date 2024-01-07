@@ -15,6 +15,8 @@ public:
   bool isDying = false;
   float dyingTimer = 0.0f, dyingTime = 0.5f;
 
+  int deaths = 0;
+
   void tick(Level* level);
   void die();
 

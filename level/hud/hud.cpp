@@ -2,12 +2,24 @@
 #include "../level.hpp"
 #include "../../utils/fonts.hpp"
 #include "../../utils/constants.hpp"
-#include <iostream>
-#include <raylib.h>
+#include <iomanip>
+#include <sstream>
 
 std::string formatTime(float time) {
-  int millis = time * 1000;
-  std::string final = std::to_string(millis);
+  int millis = (int) (time * 1000) % 1000;
+  int seconds = (int) time % 60;
+  int minutes = ((int) time / 60) % 60;
+  int hours = ((int) time / 3600);
+  
+  std::stringstream stream;
+
+  if (hours) stream << std::setw(2) << std::setfill('0') << hours << ":";
+
+  if (minutes) stream << std::setw(2) << std::setfill('0') << minutes << ":";
+
+  stream << std::setw(2) << std::setfill('0') << seconds << "." << std::setw(2) << std::setfill('0') << millis;
+
+  std::string final = stream.str();
   return final;
 }
 
@@ -18,7 +30,10 @@ void HUD::tick() {
   DrawRectangle(0, 0, 1280, 80, {0, 0, 0, 255}); 
   DrawTextEx(hudFontBold, "NAME", {(SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "NAME", fontSizeBold, spacing).x), 9}, fontSizeBold, spacing, {255, 255, 255, 255});
   DrawTextEx(hudFont, level->name.c_str(), {(SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "NAME", fontSizeBold, spacing).x), 38}, fontSizeBold, spacing, {255, 255, 255, 255});
+ 
+  DrawTextEx(hudFontBold, "DEATHS", {(2.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "DEATHS", fontSizeBold, spacing).x), 9}, fontSizeBold, spacing, {255, 255, 255, 255});
+  DrawTextEx(hudFont, std::to_string(level->player.deaths).c_str(), {(2.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "DEATHS", fontSizeBold, spacing).x), 38}, fontSizeBold, spacing, {255, 255, 255, 255});
   
-  DrawTextEx(hudFontBold, "TIME", {(2.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "TIME", fontSizeBold, spacing).x), 9}, fontSizeBold, spacing, {255, 255, 255, 255});
-  DrawTextEx(hudFont, formatTime(level->time).c_str(), {(2.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "TIME", fontSizeBold, spacing).x), 38}, fontSizeBold, spacing, {255, 255, 255, 255});
+  DrawTextEx(hudFontBold, "TIME", {(3.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "TIME", fontSizeBold, spacing).x), 9}, fontSizeBold, spacing, {255, 255, 255, 255});
+  DrawTextEx(hudFont, formatTime(level->time).c_str(), {(3.0f * SCREEN_WIDTH / 4.0f - MeasureTextEx(hudFontBold, "TIME", fontSizeBold, spacing).x), 38}, fontSizeBold, spacing, {255, 255, 255, 255});
 }

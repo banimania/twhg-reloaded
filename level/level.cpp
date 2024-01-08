@@ -9,7 +9,7 @@ void Level::tick() {
   background.tick();
 
   for (GameObject* gameObject : gameObjects) {
-    gameObject->tick(player);
+    gameObject->tick(&player);
   }
 
   player.tick(this);

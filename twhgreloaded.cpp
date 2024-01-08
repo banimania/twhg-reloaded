@@ -1,6 +1,9 @@
 #include <raylib.h>
 #include "level/gameobject/gameobjects/enemy.hpp"
 #include "level/gameobject/gameobjects/wallblock.hpp"
+#include "level/gameobject/path/instruction/instructions/linealinstruction.hpp"
+#include "level/gameobject/path/instruction/instructions/waitinstruction.hpp"
+#include "level/gameobject/path/path.hpp"
 #include "level/level.hpp"
 #include "utils/constants.hpp"
 #include "utils/fonts.hpp"
@@ -20,8 +23,13 @@ int main() {
 
   SetTargetFPS(60);
 
+  Path* testPath = new Path();
+  testPath->instructions.push_back(new WaitInstruction(1));
+  testPath->instructions.push_back(new LinealInstruction({40, 40}, 56));
+  Enemy* enemy = new Enemy({300, 300}, 10.0f, &TWHGReloaded::level);
+  enemy->path = testPath;
   TWHGReloaded::level.gameObjects.push_back(new WallBlock({200, 200}, &TWHGReloaded::level));
-  TWHGReloaded::level.gameObjects.push_back(new Enemy({380, 380}, 10.0f, &TWHGReloaded::level));
+  TWHGReloaded::level.gameObjects.push_back(enemy);
   while(!WindowShouldClose()) {
     BeginDrawing();
 

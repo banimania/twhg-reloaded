@@ -6,6 +6,7 @@
 #include "utils/fonts.hpp"
 #include "utils/needed.hpp"
 #include "utils/sounds.hpp"
+#include "utils/textures.hpp"
 
 int main() {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -15,6 +16,7 @@ int main() {
 
   loadSounds();
   loadFonts();
+  loadTextures();
 
   SetTargetFPS(60);
 

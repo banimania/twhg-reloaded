@@ -3,12 +3,9 @@
 
 #include <raylib.h>
 #include "../gameobject.hpp"
-#include "../../../utils/colors.hpp"
 
 class Enemy : public GameObject {
 public:
-  Color outlineColor = enemyColorOutline, fillColor = enemyColorFill;
-  
   float radius;
 
   void tick(Player player) override;

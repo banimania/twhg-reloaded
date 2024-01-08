@@ -1,6 +1,6 @@
 #include "enemy.hpp"
+#include "../../../utils/textures.hpp"
 
 void Enemy::tick(Player player) {
-  DrawCircle(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f, radius, outlineColor);
-  DrawCircle(rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f, radius * (2.0f/3.0f), fillColor);
+  DrawTextureEx(enemyTexture, {rect.x, rect.y}, 0.0f, (2.0f / enemyTexture.width) * radius, WHITE);
 }

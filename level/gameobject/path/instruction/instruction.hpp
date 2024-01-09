@@ -7,11 +7,11 @@ class GameObject;
 
 class Instruction {
 public:
-  float time, timer = 0.0f;
+  bool isDone = false;
 
   virtual void tick(GameObject*& gameObject);
 
-  Instruction(float time) : time(time) {};
+  Instruction() {};
 };
 
 #endif

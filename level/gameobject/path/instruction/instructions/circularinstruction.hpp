@@ -11,7 +11,7 @@ public:
 
   void tick(GameObject*& gameObject) override;
 
-  CircularInstruction(Vector2 center, float angularSpeed) : Instruction(1.0f), center(center), angularSpeed(angularSpeed) {};
+  CircularInstruction(Vector2 center, float angularSpeed) : Instruction(), center(center), angularSpeed(angularSpeed) {};
 };
 
 #endif

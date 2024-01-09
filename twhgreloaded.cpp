@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include "level/gameobject/gameobjects/enemy.hpp"
 #include "level/gameobject/gameobjects/wallblock.hpp"
 #include "level/gameobject/path/instruction/instructions/linealinstruction.hpp"
 #include "level/gameobject/path/instruction/instructions/waitinstruction.hpp"
@@ -25,11 +24,13 @@ int main() {
 
   Path* testPath = new Path();
   testPath->instructions.push_back(new WaitInstruction(1));
-  testPath->instructions.push_back(new LinealInstruction({40, 40}, 56));
-  Enemy* enemy = new Enemy({300, 300}, 10.0f, &TWHGReloaded::level);
-  enemy->path = testPath;
-  TWHGReloaded::level.gameObjects.push_back(new WallBlock({200, 200}, &TWHGReloaded::level));
-  TWHGReloaded::level.gameObjects.push_back(enemy);
+  testPath->instructions.push_back(new LinealInstruction({40, 0}, {56, 56}));
+  testPath->instructions.push_back(new LinealInstruction({0, 40}, {56, 56}));
+  testPath->instructions.push_back(new LinealInstruction({-40, 0}, {56, 56}));
+  testPath->instructions.push_back(new LinealInstruction({0, -40}, {56, 56}));
+  WallBlock* testWall = new WallBlock({200, 200}, &TWHGReloaded::level);
+  testWall->path = testPath;
+  TWHGReloaded::level.gameObjects.push_back(testWall);
   while(!WindowShouldClose()) {
     BeginDrawing();
 

@@ -1,6 +1,5 @@
 #include "circularinstruction.hpp"
 #include <cmath>
-#include <iostream>
 
 void CircularInstruction::tick(GameObject*& gameObject) {
   Instruction::tick(gameObject);
@@ -30,6 +29,8 @@ void CircularInstruction::tick(GameObject*& gameObject) {
   float ex = radius * std::cos(DEG2RAD * degreesMoved);
   float ey = radius * std::sin(DEG2RAD * degreesMoved);
 
+  bool isLast = degreesMoved >= degrees + initialDegree;
+
   float dx = epx - ex;
   float dy = epy - ey;
 
@@ -39,10 +40,10 @@ void CircularInstruction::tick(GameObject*& gameObject) {
   gameObject->rect.x += dx;
   gameObject->rect.y += dy;
 
-  if (degreesMoved >= degrees + initialDegree) {
+  if (isLast) {
+    gameObject->rect.x = (int) std::round(gameObject->rect.x);
+    gameObject->rect.y = (int) std::round(gameObject->rect.y);
     isDone = true;
     degreesMoved = initialDegree;
   }
-
-  std::cout << degreesMoved << std::endl;
 }

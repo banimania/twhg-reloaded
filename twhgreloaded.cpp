@@ -24,10 +24,10 @@ int main() {
 
   Path* testPath = new Path();
   testPath->instructions.push_back(new WaitInstruction(1));
-  testPath->instructions.push_back(new LinealInstruction({40, 0}, {56, 56}));
-  testPath->instructions.push_back(new LinealInstruction({0, 40}, {56, 56}));
-  testPath->instructions.push_back(new LinealInstruction({-40, 0}, {56, 56}));
-  testPath->instructions.push_back(new LinealInstruction({0, -40}, {56, 56}));
+  testPath->instructions.push_back(new LinealInstruction({400, 0}, {1560, 1560}));
+  testPath->instructions.push_back(new LinealInstruction({0, 400}, {1560, 1560}));
+  testPath->instructions.push_back(new LinealInstruction({-400, 0}, {1560, 1560}));
+  testPath->instructions.push_back(new LinealInstruction({0, -40}, {1560, 1560}));
   WallBlock* testWall = new WallBlock({200, 200}, &TWHGReloaded::level);
   testWall->path = testPath;
   TWHGReloaded::level.gameObjects.push_back(testWall);

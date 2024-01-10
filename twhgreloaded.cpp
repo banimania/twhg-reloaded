@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include "level/gameobject/gameobjects/wallblock.hpp"
+#include "level/gameobject/path/instruction/instructions/circularinstruction.hpp"
 #include "level/gameobject/path/instruction/instructions/linealinstruction.hpp"
 #include "level/gameobject/path/instruction/instructions/waitinstruction.hpp"
 #include "level/gameobject/path/path.hpp"
@@ -24,10 +25,7 @@ int main() {
 
   Path* testPath = new Path();
   testPath->instructions.push_back(new WaitInstruction(1));
-  testPath->instructions.push_back(new LinealInstruction({400, 0}, {1560, 1560}));
-  testPath->instructions.push_back(new LinealInstruction({0, 400}, {1560, 1560}));
-  testPath->instructions.push_back(new LinealInstruction({-400, 0}, {1560, 1560}));
-  testPath->instructions.push_back(new LinealInstruction({0, -40}, {1560, 1560}));
+  testPath->instructions.push_back(new CircularInstruction({40, 40}, 200, 360, true));
   WallBlock* testWall = new WallBlock({200, 200}, &TWHGReloaded::level);
   testWall->path = testPath;
   TWHGReloaded::level.gameObjects.push_back(testWall);

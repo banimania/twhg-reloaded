@@ -1,5 +1,6 @@
 #include "circularinstruction.hpp"
 #include <cmath>
+#include <iostream>
 
 void CircularInstruction::tick(GameObject*& gameObject) {
   Instruction::tick(gameObject);
@@ -12,6 +13,9 @@ void CircularInstruction::tick(GameObject*& gameObject) {
     }
     radius = sqrt(pow(center.x - gameObject->rect.x, 2) + pow(center.y - gameObject->rect.y, 2));
     radiusMap.insert(std::pair<GameObject*, float>(gameObject, radius));
+
+    initialDegree = RAD2DEG * atan2(gameObject->rect.y, gameObject->rect.x);
+    degreesMoved = initialDegree;
   } else radius = radiusMap.find(gameObject)->second;
 
   float deltaDegree = GetFrameTime() * angularSpeed;
@@ -27,8 +31,10 @@ void CircularInstruction::tick(GameObject*& gameObject) {
   gameObject->rect.x += dx;
   gameObject->rect.y += dy;
 
-  if (degreesMoved >= degrees) {
+  if (degreesMoved >= degrees + initialDegree) {
     isDone = true;
-    degreesMoved = 0.0f;
+    degreesMoved = initialDegree;
   }
+
+  std::cout << degreesMoved << std::endl;
 }

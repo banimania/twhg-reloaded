@@ -5,8 +5,13 @@
 void CircularInstruction::tick(GameObject*& gameObject) {
   Instruction::tick(gameObject);
 
+  Vector2 originalPosition;
+  if (originalPositionsMap.find(gameObject) == originalPositionsMap.end()) originalPositionsMap.insert(std::pair<GameObject*, Vector2>(gameObject, {gameObject->rect.x, gameObject->rect.y}));
+  else originalPosition = originalPositionsMap.find(gameObject)->second;
+
   float radius = 0.0f;
   if (radiusMap.find(gameObject) == radiusMap.end()) {
+    originalCenter = center;
     if (relative) {
       center.x += gameObject->rect.x;
       center.y += gameObject->rect.y;
@@ -25,8 +30,11 @@ void CircularInstruction::tick(GameObject*& gameObject) {
   float ex = radius * std::cos(DEG2RAD * degreesMoved);
   float ey = radius * std::sin(DEG2RAD * degreesMoved);
 
-  float dx = ex - epx;
-  float dy = ey - epy;
+  float dx = epx - ex;
+  float dy = epy - ey;
+
+  if ((relative && originalCenter.x < 0) || (!relative && originalCenter.x < originalPosition.x)) dx = ex - epx;
+  if ((relative && originalCenter.y < 0) || (!relative && originalCenter.y < originalPosition.y)) dy = ey - epy;
 
   gameObject->rect.x += dx;
   gameObject->rect.y += dy;

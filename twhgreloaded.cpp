@@ -24,10 +24,12 @@ int main() {
   SetTargetFPS(60);
 
   Path* testPath = new Path();
-  testPath->instructions.push_back(new WaitInstruction(1));
   testPath->instructions.push_back(new CircularInstruction({40, 40}, 200, 360, true));
+  Path* otherTestPath = new Path();
+  otherTestPath->instructions.push_back(new LinealInstruction({40, 0}, {100, 100}));
   WallBlock* testWall = new WallBlock({200, 200}, &TWHGReloaded::level);
-  testWall->path = testPath;
+  testWall->paths.push_back(testPath);
+  testWall->paths.push_back(otherTestPath);
   TWHGReloaded::level.gameObjects.push_back(testWall);
   while(!WindowShouldClose()) {
     BeginDrawing();

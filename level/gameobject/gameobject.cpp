@@ -1,7 +1,7 @@
 #include "gameobject.hpp"
 
 void GameObject::tick(Player* player) {
-  if (path) {
+  for (Path* path : paths) {
     path->tick(this);
   }
 }

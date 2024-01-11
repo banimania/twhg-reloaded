@@ -10,7 +10,7 @@ public:
   Rectangle rect;
   bool solid;
   Level* level;
-  Path* path = NULL;
+  std::vector<Path*> paths;
 
   virtual void tick(Player* player);
 

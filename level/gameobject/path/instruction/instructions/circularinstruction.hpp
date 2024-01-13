@@ -1,23 +1,19 @@
 #ifndef CIRCULARINSTRUCTION_HPP
 #define CIRCULARINSTRUCTION_HPP
 
-#include <map>
 #include <raylib.h>
+#include <cmath>
 #include "../instruction.hpp"
-#include "../../../gameobject.hpp"
 
 class CircularInstruction : public Instruction {
 public:
-  Vector2 center, originalCenter;
-  float angularSpeed, degrees, degreesMoved = 0.0f, initialDegree = 0.0f;
-  bool relative;
+  Vector2 center;
+  float angularSpeed, degrees, degreesMoved = 0.0f, initialDegree, radius;
+  bool init = false;
 
-  std::map<GameObject*, float> radiusMap;
-  std::map<GameObject*, Vector2> originalPositionsMap;
+  void calculateMovement() override;
 
-  void tick(GameObject*& gameObject) override;
-
-  CircularInstruction(Vector2 center, float angularSpeed, float degrees, bool relative) : Instruction(), center(center), angularSpeed(angularSpeed), degrees(degrees), relative(relative) {};
+  CircularInstruction(Vector2 center, float angularSpeed, float degrees) : Instruction(), center(center), angularSpeed(angularSpeed), degrees(degrees) {};
 };
 
 #endif

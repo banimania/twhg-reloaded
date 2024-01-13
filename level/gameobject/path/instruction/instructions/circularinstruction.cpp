@@ -1,48 +1,35 @@
 #include "circularinstruction.hpp"
-#include <cmath>
 
-void CircularInstruction::tick(GameObject*& gameObject) {
-  Instruction::tick(gameObject);
+void CircularInstruction::calculateMovement() {
 
-  Vector2 originalPosition;
-  if (originalPositionsMap.find(gameObject) == originalPositionsMap.end()) originalPositionsMap.insert(std::pair<GameObject*, Vector2>(gameObject, {gameObject->rect.x, gameObject->rect.y}));
-  else originalPosition = originalPositionsMap.find(gameObject)->second;
-
-  float radius = 0.0f;
-  if (radiusMap.find(gameObject) == radiusMap.end()) {
-    originalCenter = center;
-    if (relative) {
-      center.x += gameObject->rect.x;
-      center.y += gameObject->rect.y;
-    }
-    radius = sqrt(pow(center.x - gameObject->rect.x, 2) + pow(center.y - gameObject->rect.y, 2));
-    radiusMap.insert(std::pair<GameObject*, float>(gameObject, radius));
-
-    initialDegree = RAD2DEG * atan2(gameObject->rect.y, gameObject->rect.x);
+  if (!init) {
+    radius = sqrt(pow(center.x, 2) + pow(center.y, 2));
+    
+    initialDegree = RAD2DEG * atan2(center.y, center.x);
+    if (initialDegree < 0) initialDegree += 360;
+    
     degreesMoved = initialDegree;
-  } else radius = radiusMap.find(gameObject)->second;
+
+    init = true;
+  }
 
   float deltaDegree = GetFrameTime() * angularSpeed;
+
+  bool isLast = degreesMoved + deltaDegree >= degrees + initialDegree;
+
   float epx = radius * std::cos(DEG2RAD * degreesMoved);
   float epy = radius * std::sin(DEG2RAD * degreesMoved);
+  
   degreesMoved += deltaDegree;
+  if (isLast) degreesMoved = degrees + initialDegree;
+
   float ex = radius * std::cos(DEG2RAD * degreesMoved);
   float ey = radius * std::sin(DEG2RAD * degreesMoved);
 
-  bool isLast = degreesMoved >= degrees + initialDegree;
-
-  float dx = epx - ex;
-  float dy = epy - ey;
-
-  if ((relative && originalCenter.x < 0) || (!relative && originalCenter.x < originalPosition.x)) dx = ex - epx;
-  if ((relative && originalCenter.y < 0) || (!relative && originalCenter.y < originalPosition.y)) dy = ey - epy;
-
-  gameObject->rect.x += dx;
-  gameObject->rect.y += dy;
+  last = {epx - ex, epy - ey};
 
   if (isLast) {
-    gameObject->rect.x = (int) std::round(gameObject->rect.x);
-    gameObject->rect.y = (int) std::round(gameObject->rect.y);
+    init = false;
     isDone = true;
     degreesMoved = initialDegree;
   }

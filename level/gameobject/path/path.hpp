@@ -11,7 +11,9 @@ public:
   std::vector<Instruction*> instructions;
   int currentInstructionId = 0;
 
-  void tick(GameObject* gameObject);
+  Instruction* getCurrentInstruction();
+  void tick();
+  void updateObject(GameObject* gameObject);
 
   Path() {};
 };

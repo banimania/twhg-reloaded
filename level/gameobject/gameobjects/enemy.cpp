@@ -1,5 +1,4 @@
 #include "enemy.hpp"
-#include "../../../utils/textures.hpp"
 
 void Enemy::tick(Player* player) {
   GameObject::tick(player);

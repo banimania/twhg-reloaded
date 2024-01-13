@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include "../gameobject.hpp"
+#include "../../../utils/textures.hpp"
 
 class Enemy : public GameObject {
 public:

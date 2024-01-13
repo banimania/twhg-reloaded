@@ -2,6 +2,6 @@
 
 void GameObject::tick(Player* player) {
   for (Path* path : paths) {
-    path->tick(this);
+    path->updateObject(this);
   }
 }

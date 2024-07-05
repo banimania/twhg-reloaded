@@ -17,6 +17,8 @@ public:
 
   int deaths = 0;
 
+  Vector2 force = {0, 0};
+
   void tick(Level* level);
   void die();
 

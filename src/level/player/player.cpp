@@ -14,8 +14,8 @@ void Player::tick(Level* level) {
   float nx = rect.x;
   float ny = rect.y;
   if (!isDying) {
-    nx += dx;
-    ny += dy;
+    nx += dx + force.x;
+    ny += dy + force.y;
   } else {
     dyingTimer += GetFrameTime();
     if (dyingTimer > dyingTime) {
@@ -49,9 +49,11 @@ void Player::tick(Level* level) {
       if (xCol || yCol) break;
     }
 
-    if (!xCol) rect.x += dx;
-    if (!yCol) rect.y += dy;
+    if (!xCol) rect.x += dx + force.x;
+    if (!yCol) rect.y += dy + force.y;
   }
+
+  force = {0, 0};
 
   for (GameObject* gameObject : level->gameObjects) {
     if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {

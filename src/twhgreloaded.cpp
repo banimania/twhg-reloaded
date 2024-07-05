@@ -27,10 +27,13 @@ int main() {
 
   WallBlock* testWall = new WallBlock({200, 200}, &TWHGReloaded::level);
   Enemy* enemy = new Enemy({300, 300}, 10.0f, &TWHGReloaded::level);
-  Conveyor* conveyor = new Conveyor({400, 400}, &TWHGReloaded::level);
+  Conveyor* conveyor = new Conveyor({200, 240}, &TWHGReloaded::level);
+  Conveyor* conveyor2 = new Conveyor({240, 240}, &TWHGReloaded::level);
+  conveyor2->direction = RIGHT;
   TWHGReloaded::level.gameObjects.push_back(testWall);
   TWHGReloaded::level.gameObjects.push_back(enemy);
   TWHGReloaded::level.gameObjects.push_back(conveyor);
+  TWHGReloaded::level.gameObjects.push_back(conveyor2);
   
   while(!WindowShouldClose()) {
     BeginDrawing();

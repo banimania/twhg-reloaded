@@ -67,4 +67,42 @@ void Conveyor::tick(Player* player) {
   rlPopMatrix();
   
   EndScissorMode();
+
+  //Player movement
+  if (CheckCollisionRecs(rect, player->rect)) {
+    float force = speed * GetFrameTime() * (direction == UP || direction == LEFT ? -1 : 1);
+    if (player->force.x == 0 && player->force.y == 0) {
+      (direction == RIGHT || direction == LEFT ? player->force.x : player->force.y) += force;
+    } else {
+      if (direction == RIGHT) {
+        if (player->force.x > 0) {
+          if (player->force.x >= force) return;
+          else player->force.x = force;
+        } else {
+          player->force.x += force;
+        }
+      } else if (direction == DOWN) {
+         if (player->force.y > 0) {
+          if (player->force.y >= force) return;
+          else player->force.y = force;
+        } else {
+          player->force.y += force;
+        }
+      } else if (direction == LEFT) {
+        if (player->force.x < 0) {
+          if (player->force.x <= force) return;
+          else player->force.x = force;
+        } else {
+          player->force.x += force;
+        }
+      } else if (direction == UP) {
+         if (player->force.y < 0) {
+          if (player->force.y <= force) return;
+          else player->force.y = force;
+        } else {
+          player->force.y += force;
+        }
+      }
+    }
+  }
 }

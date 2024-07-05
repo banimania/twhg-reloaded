@@ -55,14 +55,6 @@ void Player::tick(Level* level) {
 
   force = {0, 0};
 
-  for (GameObject* gameObject : level->gameObjects) {
-    if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {
-      if (CheckCollisionCircleRec({enemy->rect.x + enemy->rect.width / 2.0f, enemy->rect.y + enemy->rect.height / 2.0f}, enemy->radius / 2.0f, rect)) {
-        if (!isDying) die();
-      }
-    }
-  }
-
   if (isDying) {
     float alpha = (1 - dyingTimer / dyingTime) * 255.0f;
     DrawRectangle(rect.x, rect.y, rect.width, rect.height / 6.0f, {outlineColor.r, outlineColor.g, outlineColor.b, static_cast<unsigned char>(alpha)});

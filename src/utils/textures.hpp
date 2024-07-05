@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 inline Texture enemyTexture;
+inline Texture coinTexture;
 
 void loadTextures();
 

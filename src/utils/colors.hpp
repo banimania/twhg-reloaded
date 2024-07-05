@@ -12,6 +12,9 @@ static const Color playerColorFill = Color{255, 0, 0, 255};
 static const Color enemyColorOutline = Color{0, 0, 0, 255};
 static const Color enemyColorFill = Color{8, 35, 249, 255};
 
+static const Color coinColorOutline = Color{0, 0, 0, 255};
+static const Color coinColorFill = Color{255, 204, 56, 255};
+
 static const Color wallBlockColorOutline = Color{0, 0, 0, 255};
 static const Color wallBlockColorFill = Color{178, 178, 254, 255};
 

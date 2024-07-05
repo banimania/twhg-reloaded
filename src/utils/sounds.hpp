@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 inline Sound deathSound;
+inline Sound coinPickupSound;
 
 void loadSounds();
 

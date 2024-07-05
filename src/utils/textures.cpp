@@ -7,7 +7,14 @@ void loadTextures() {
   ImageDrawCircle(&i, 512, 512, 512, enemyColorOutline);
   ImageDrawCircle(&i, 512, 512, 512 * (2.0f / 3.0f), enemyColorFill);
   enemyTexture = LoadTextureFromImage(i);
-  UnloadImage(i);
   GenTextureMipmaps(&enemyTexture);
   SetTextureFilter(enemyTexture, TEXTURE_FILTER_BILINEAR);
+
+  ImageDrawCircle(&i, 512, 512, 512, coinColorOutline);
+  ImageDrawCircle(&i, 512, 512, 512 * (2.0f / 3.0f), coinColorFill);
+  coinTexture = LoadTextureFromImage(i);
+  GenTextureMipmaps(&coinTexture);
+  SetTextureFilter(coinTexture, TEXTURE_FILTER_BILINEAR);
+
+  UnloadImage(i);
 }

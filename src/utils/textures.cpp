@@ -16,5 +16,11 @@ void loadTextures() {
   GenTextureMipmaps(&coinTexture);
   SetTextureFilter(coinTexture, TEXTURE_FILTER_BILINEAR);
 
+
+  i = LoadImage("./res/img/key.png");
+  keyTexture = LoadTextureFromImage(LoadImage("./res/img/key.png"));
+  GenTextureMipmaps(&keyTexture);
+  SetTextureFilter(keyTexture, TEXTURE_FILTER_BILINEAR);
+
   UnloadImage(i);
 }

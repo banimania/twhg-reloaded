@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "../level.hpp"
 #include "../gameobject/gameobjects/enemy.hpp"
+#include "../gameobject/gameobjects/keyblock.hpp"
 #include "../../utils/sounds.hpp"
 
 void Player::tick(Level* level) {
@@ -34,6 +35,13 @@ void Player::tick(Level* level) {
       if (gameObject->solid) {
         if (CheckCollisionRecs({nx, rect.y, rect.width, rect.height}, gameObject->rect)) xCol = true;
         if (CheckCollisionRecs({rect.x, ny, rect.width, rect.height}, gameObject->rect)) yCol = true;
+      }
+
+      if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
+        if (keyBlock->open) {
+          xCol = false;
+          yCol = false;
+        }
       }
 
       if (xCol) {

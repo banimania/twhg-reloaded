@@ -5,6 +5,7 @@
 
 inline Sound deathSound;
 inline Sound coinPickupSound;
+inline Sound keyPickupSound;
 
 void loadSounds();
 

@@ -5,6 +5,7 @@
 
 inline Texture enemyTexture;
 inline Texture coinTexture;
+inline Texture keyTexture;
 
 void loadTextures();
 

@@ -15,4 +15,7 @@ static const Color enemyColorFill = Color{8, 35, 249, 255};
 static const Color wallBlockColorOutline = Color{0, 0, 0, 255};
 static const Color wallBlockColorFill = Color{178, 178, 254, 255};
 
+static const Color conveyorColorArrow = Color{100, 100, 100, 255};
+static const Color conveyorColorFill = Color{164, 164, 164, 255};
+
 #endif

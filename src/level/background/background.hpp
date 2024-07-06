@@ -13,7 +13,7 @@ public:
   Color colorPrimary, colorSecondary;
   float squareSize;
 
-  void tick();
+  void tick(Camera2D camera);
 
   Background(BackgroundType backgroundType, Color colorPrimary, Color colorSecondary, float squareSize) : backgroundType(backgroundType), colorPrimary(colorPrimary), colorSecondary(colorSecondary), squareSize(squareSize) {};
   Background() : backgroundType(CHECKERBOARD), colorPrimary(backgroundColorPrimary), colorSecondary(backgroundColorSecondary), squareSize(40.0f) {};

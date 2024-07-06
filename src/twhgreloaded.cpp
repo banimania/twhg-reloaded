@@ -8,6 +8,7 @@
 
 int main() {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
+  SetConfigFlags(FLAG_VSYNC_HINT);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   InitAudioDevice();

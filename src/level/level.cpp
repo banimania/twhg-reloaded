@@ -5,7 +5,7 @@ void Level::tick() {
 
   BeginMode2D(camera);
 
-  background.tick();
+  background.tick(camera);
 
   std::vector<Path*> pathsTicked;
   for (int i = 0; i < gameObjects.size(); i++) {

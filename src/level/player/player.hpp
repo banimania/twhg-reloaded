@@ -23,6 +23,7 @@ public:
   void die();
 
   Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed) {};
+  Player() : rect({100, 100, 30, 30}), speed(150) {};
 };
 
 #endif

@@ -26,4 +26,14 @@ static const Color conveyorColorFill = Color{164, 164, 164, 255};
 
 static const Color checkpointColorFill = Color{164, 254, 161, 255};
 
+static const Color buttonWidgetBorderColor = Color{70, 70, 70, 255};
+static const Color buttonWidgetGradientColor1 = Color{185, 185, 186, 255};
+static const Color buttonWidgetGradientColor2 = Color{107, 107, 107, 255};
+
+static const Color textFieldWidgetBorderColor = Color{70, 70, 70, 255};
+static const Color textFieldWidgetFillColor = RAYWHITE;
+
+static const Color enumWidgetBorderColor = Color{70, 70, 70, 255};
+static const Color enumWidgetFillColor = RAYWHITE;
+
 #endif

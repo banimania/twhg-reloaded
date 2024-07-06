@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include "../../utils/constants.hpp"
+#include "../../utils/colors.hpp"
 
 enum BackgroundType { PLAIN, CHECKERBOARD };
 
@@ -15,6 +16,7 @@ public:
   void tick();
 
   Background(BackgroundType backgroundType, Color colorPrimary, Color colorSecondary, float squareSize) : backgroundType(backgroundType), colorPrimary(colorPrimary), colorSecondary(colorSecondary), squareSize(squareSize) {};
+  Background() : backgroundType(CHECKERBOARD), colorPrimary(backgroundColorPrimary), colorSecondary(backgroundColorSecondary), squareSize(40.0f) {};
 };
 
 #endif

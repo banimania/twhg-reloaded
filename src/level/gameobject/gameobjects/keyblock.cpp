@@ -3,7 +3,8 @@
 #include "key.hpp"
 
 void KeyBlock::tick(Player* player) {
-  
+  GameObject::tick(player);
+
   if (isOpening) {
     DrawRectangle(rect.x, rect.y, 5, rect.height, {keyBlockColorOutline.r, keyBlockColorOutline.g, keyBlockColorOutline.b, (static_cast<unsigned char>((1 - openTimer / openTime) * 255.0f))});
     DrawRectangle(rect.x, rect.y, rect.width, 5, {keyBlockColorOutline.r, keyBlockColorOutline.g, keyBlockColorOutline.b, (static_cast<unsigned char>((1 - openTimer / openTime) * 255.0f))});
@@ -22,6 +23,7 @@ void KeyBlock::tick(Player* player) {
   DrawRectangle(rect.x, rect.y, rect.width, rect.height, keyBlockColorOutline);
   DrawRectangle(rect.x + 5, rect.y + 5, rect.width - 10, rect.height - 10, keyBlockColorFill);
 
+  if (level == nullptr) return;
   for (GameObject* gameObject : level->gameObjects) {
     if (Key* key = dynamic_cast<Key*>(gameObject)) {
       if (keyId == key->keyId && key->collected) {

@@ -2,7 +2,8 @@
 #include <raylib.h>
 
 void Key::tick(Player* player) {
-  
+  GameObject::tick(player);
+
   if (isBeingCollected) {
     DrawTextureEx(keyTexture, {rect.x - 5, rect.y - 5}, 0.0f, 0.06f, {255, 255, 255, (static_cast<unsigned char>((1 - collectTimer / collectTime) * 255.0f))});
     collectTimer += GetFrameTime();

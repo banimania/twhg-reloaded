@@ -8,6 +8,7 @@ class Level;
 class HUD {
 public:
   void tick();
+  void tickEditor();
 
   Level* level;
 

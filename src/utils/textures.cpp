@@ -18,9 +18,20 @@ void loadTextures() {
 
 
   i = LoadImage("./res/img/key.png");
-  keyTexture = LoadTextureFromImage(LoadImage("./res/img/key.png"));
+  keyTexture = LoadTexture("./res/img/key.png");
   GenTextureMipmaps(&keyTexture);
   SetTextureFilter(keyTexture, TEXTURE_FILTER_BILINEAR);
 
   UnloadImage(i);
+
+  arrowLeftTexture = LoadTexture("./res/img/arrow_left.png");
+  arrowRightTexture = LoadTexture("./res/img/arrow_right.png");
+
+  configurationTexture = LoadTexture("./res/img/configuration.png");
+  playTexture = LoadTexture("./res/img/play.png");
+}
+
+Texture GetTextureFromName(std::string textureName) {
+  if (textureName == "configurationTexture") return configurationTexture;
+  else if (textureName == "playTexture") return playTexture;
 }

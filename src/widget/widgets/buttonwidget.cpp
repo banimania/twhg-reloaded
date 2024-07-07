@@ -1,6 +1,8 @@
 #include "buttonwidget.hpp"
 #include <iostream>
 #include <raylib.h>
+#include "../../utils/fonts.hpp"
+#include "../../utils/textures.hpp"
 
 void ButtonWidget::tick() {
   Widget::tick();
@@ -22,6 +24,21 @@ void ButtonWidget::tick() {
   float difHalf = (rect.width * scale - rect.width) / 2.0f;
   DrawRectangleV({rect.x - difHalf, rect.y - difHalf}, {rect.width * scale, rect.height * scale}, borderColor);
   DrawRectangleGradientV(rect.x + borderThickness - difHalf, rect.y + borderThickness - difHalf, (rect.width - 2 * borderThickness) * scale, (rect.height - 2 * borderThickness) * scale, gradientColor1, gradientColor2);
+
+  if (textured) {
+    Texture tex = GetTextureFromName(textureName);
+    float x = rect.x - difHalf + (rect.width * scale / 2.0f) - (tex.width * scale * textureScale / 2.0f);
+    float y = rect.y - difHalf + (rect.height * scale / 2.0f) - (tex.height * scale * textureScale / 2.0f);
+    DrawTextureEx(tex, {x, y}, 0.0f, textureScale, WHITE);
+    return;
+  }
+
+  DrawOutlinedCenteredText(hudFontBold, text.c_str(), {rect.x - difHalf, rect.y - difHalf, rect.width * scale, rect.height * scale}, fontSize * scale, WHITE, 2, BLACK);
+}
+
+void ButtonWidget::setSelected(bool selected) {
+  this->selected = selected;
+  borderColor = selected ? buttonWidgetSelectedBorderColor : buttonWidgetBorderColor;
 }
 
 void ButtonWidget::handleClick(int action, int mouseX, int mouseY) {

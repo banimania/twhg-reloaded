@@ -10,6 +10,7 @@
 #include "../level/gameobject/gameobjects/key.hpp"
 #include "../level/gameobject/gameobjects/keyblock.hpp"
 #include "../level/gameobject/gameobjects/conveyor.hpp"
+#include "../level/gameobject/gameobjects/checkpoint.hpp"
 #include <functional>
 #include <raylib.h>
 
@@ -17,7 +18,7 @@ enum Mode { BUILD, EDIT };
 
 class Editor {
 public:
-  Level* level;
+  Level* level = new Level();
 
   Camera2D camera;
   
@@ -46,14 +47,15 @@ public:
   KeyBlock keyBlock = KeyBlock({180, 330}, -69, level);
   ButtonWidget buildConveyorButton = ButtonWidget("", 0, {10, 400, 60, 60}, std::bind(&Editor::selectConveyorButton, this));
   Conveyor conveyor = Conveyor({20, 410}, RIGHT, level);
+  ButtonWidget buildCheckpointButton = ButtonWidget("", 0, {90, 400, 60, 60}, std::bind(&Editor::selectCheckpointButton, this));
+  Checkpoint checkpoint = Checkpoint({100, 410}, level);
+  ButtonWidget buildPlayerButton = ButtonWidget("", 0, {170, 400, 60, 60}, std::bind(&Editor::selectPlayerButton, this));
   
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildModeButton, this));
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildEditButton, this));
   
   Editor() {
-    level = new Level();
-    
-    camera.zoom = 0.8f;
+    camera.zoom = 1;
     camera.rotation = 0.0f;
     camera.target = {-155, -80};
 
@@ -77,6 +79,8 @@ public:
   void selectKeyButton();
   void selectKeyBlockButton();
   void selectConveyorButton();
+  void selectCheckpointButton();
+  void selectPlayerButton();
 
   void deselectAll();
 };

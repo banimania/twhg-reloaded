@@ -1,4 +1,6 @@
 #include "level.hpp"
+#include "gameobject/gameobjects/conveyor.hpp"
+#include <raylib.h>
 
 void Level::tick() {
   time += GetFrameTime();
@@ -6,6 +8,8 @@ void Level::tick() {
   BeginMode2D(camera);
 
   background.tick(camera);
+
+  tickConveyorManager();
 
   std::vector<Path*> pathsTicked;
   for (int i = 0; i < gameObjects.size(); i++) {

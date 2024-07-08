@@ -45,7 +45,17 @@ void Editor::tick() {
   
   level->background.tick(camera);
 
+  tickConveyorManager();
+
+  level->camera = camera;
+  for (GameObject* gameObject : level->gameObjects) {
+    gameObject->tick(&level->player);
+  }
+
   drawGrid();
+
+  DrawRectangle(level->startX, level->startY, 30, 30, playerColorOutline);
+  DrawRectangle(level->startX + 5, level->startY + 5, 20, 20, playerColorFill);
 
   EndMode2D();
   
@@ -58,6 +68,49 @@ void Editor::tick() {
   //use rlScalef for scaling what the fuck am i doing lol
 
   if (mode == BUILD) {
+
+    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240, SCREEN_HEIGHT - 80})) {
+      if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && selectedObject != -1) {
+        Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
+        GameObject* object;
+
+        switch (selectedObject) {
+          case 1:
+            object = new WallBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            break;
+          case 2:
+            object = new BackgroundBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            break;
+          case 3:
+            object = new Enemy({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level);
+            break;
+          case 4:
+            object = new Coin({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level);
+            break;
+          case 5:
+            object = new Key({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 1, level);
+            break;
+          case 6:
+            object = new KeyBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, 1, level);
+            break;
+          case 7:
+            object = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level);
+            break;
+          case 8:
+            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            break;
+          case 9:
+            level->startX = (float) ((int) (pos.x / 40) * 40) + 5;
+            level->startY = (float) ((int) (pos.y / 40) * 40) + 5;
+            break;
+        }
+
+        if (object != nullptr) {
+          level->gameObjects.push_back(object);
+        }
+      }
+    }
+
     rlPushMatrix();
     buildWallblockButton.tick();
     float difHalf = (buildWallblockButton.rect.width * buildWallblockButton.scale - buildWallblockButton.rect.width) / 2.0f;
@@ -153,11 +206,32 @@ void Editor::tick() {
     conveyor.tick(&level->player);
     rlPopMatrix();*/
     buildConveyorButton.tick();
+    conveyor.isEditorSample = true;
     conveyor.rect = {20 - (buildConveyorButton.rect.width * buildConveyorButton.scale - buildConveyorButton.rect.width) / 2.0f,
       410 - (buildConveyorButton.rect.height * buildConveyorButton.scale - buildConveyorButton.rect.height) / 2.0f,
       40 * buildConveyorButton.scale,
       40 * buildConveyorButton.scale};
     conveyor.tick(&level->player);  
+    
+    rlPushMatrix();
+    buildCheckpointButton.tick();
+    difHalf = (buildCheckpointButton.rect.width * buildCheckpointButton.scale - buildCheckpointButton.rect.width) / 2.0f;
+    rlTranslatef(checkpoint.rect.x - difHalf, checkpoint.rect.y - difHalf, 0.0f);
+    rlScalef(buildCheckpointButton.scale, buildCheckpointButton.scale, 1.0f);
+    rlTranslatef(-checkpoint.rect.x, -checkpoint.rect.y, 0.0f);
+    checkpoint.tick(&level->player);
+    rlPopMatrix();
+
+    rlPushMatrix();
+    buildPlayerButton.tick();
+    difHalf = (buildPlayerButton.rect.width * buildPlayerButton.scale - buildPlayerButton.rect.width) / 2.0f;
+    Vector2 playerPos = {185, 415};
+    rlTranslatef(playerPos.x - difHalf, playerPos.y - difHalf, 0.0f);
+    rlScalef(buildPlayerButton.scale, buildPlayerButton.scale, 1.0f);
+    rlTranslatef(-playerPos.x, -playerPos.y, 0.0f);
+    DrawRectangle(playerPos.x, playerPos.y, 30, 30, playerColorOutline);
+    DrawRectangle(playerPos.x + 5, playerPos.y + 5, 20, 20, playerColorFill);
+    rlPopMatrix();
   }
 
   configButton.tick();
@@ -184,8 +258,8 @@ void Editor::drawOutline() {
   DrawRectangleGradientH(0, 80, 120, 40, editorGradient1Color, editorGradient2Color);
   DrawRectangleGradientH(120, 80, 120, 40, editorGradient2Color, editorGradient1Color);
 
-  DrawOutlinedText(hudFontBold, "Layer", 30, 80, 35, WHITE, 2, BLACK);
-  DrawOutlinedText(hudFontBold, zLayer == 0 ? "All" : std::to_string(zLayer).c_str(), zLayer == 0 ? 155 : 160, zLayer == 0 ? 86 : 80, zLayer == 0 ? 25 : 35, WHITE, 2, BLACK);
+  DrawOutlinedText(editorFontBold, "Layer", 30, 80, 35, WHITE, 2, BLACK);
+  DrawOutlinedText(editorFontBold, zLayer == 0 ? "All" : std::to_string(zLayer).c_str(), zLayer == 0 ? 155 : 160, zLayer == 0 ? 86 : 80, zLayer == 0 ? 25 : 35, WHITE, 2, BLACK);
 
   DrawTextureEx(arrowLeftTexture, {120, 83}, 0.0f, 0.1f, RAYWHITE);
   DrawTextureEx(arrowRightTexture, {185, 83}, 0.0f, 0.1f, RAYWHITE);
@@ -193,7 +267,7 @@ void Editor::drawOutline() {
   DrawRectangleGradientH(0, 190, 120, 40, editorGradient1Color, editorGradient2Color);
   DrawRectangleGradientH(120, 190, 120, 40, editorGradient2Color, editorGradient1Color);
   
-  DrawOutlinedCenteredText(hudFontBold, mode == BUILD ? "OBJECTS" : "TOOLS", {0, 190, 240, 40}, 35, WHITE, 2, BLACK);
+  DrawOutlinedCenteredText(editorFontBold, mode == BUILD ? "OBJECTS" : "TOOLS", {0, 190, 240, 40}, 35, WHITE, 2, BLACK);
 
   DrawRectangleGradientH(0, SCREEN_HEIGHT - 100, 120, 10, editorGradient1Color, editorGradient2Color);
   DrawRectangleGradientH(120, SCREEN_HEIGHT - 100, 120, 10, editorGradient2Color, editorGradient1Color);
@@ -253,6 +327,18 @@ void Editor::selectConveyorButton() {
   buildConveyorButton.setSelected(true);
 }
 
+void Editor::selectCheckpointButton() {
+  selectedObject = 8;
+  deselectAll();
+  buildCheckpointButton.setSelected(true);
+}
+
+void Editor::selectPlayerButton() {
+  selectedObject = 9;
+  deselectAll();
+  buildPlayerButton.setSelected(true);
+}
+
 void Editor::deselectAll() {
   buildWallblockButton.setSelected(false);
   buildBackgroundBlockButton.setSelected(false);
@@ -261,4 +347,6 @@ void Editor::deselectAll() {
   buildKeyButton.setSelected(false);
   buildKeyBlockButton.setSelected(false);
   buildConveyorButton.setSelected(false);
+  buildCheckpointButton.setSelected(false);
+  buildPlayerButton.setSelected(false);
 }

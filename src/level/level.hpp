@@ -7,6 +7,8 @@
 #include <algorithm>
 #include "background/background.hpp"
 #include "gameobject/gameobject.hpp"
+#include "gameobject/gameobjects/conveyor.hpp"
+#include "gameobject/gameobjects/wallblock.hpp"
 #include "hud/hud.hpp"
 #include "player/player.hpp"
 
@@ -24,7 +26,7 @@ public:
   void tick();
 
   Level(float startX, float startY, std::string name, Player player, Background background) : startX(startX), startY(startY), name(name), player(player), background(background) {};
-  Level() : startX(100), startY(100), name("Unnamed"), player(Player()), background(Background()) {}; 
+  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {}; 
 };
 
 #endif

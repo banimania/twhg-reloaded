@@ -1,9 +1,10 @@
 #include "conveyor.hpp"
 #include <raylib.h>
 #include <rlgl.h>
-
-float conveyorOffset = 0;
-float conveyorOffset2 = -40;
+#include <unordered_map>
+#include <utility>
+#include <iostream>
+#include "../../level.hpp"
 
 void Conveyor::drawArrow(Rectangle rect) {
   rlBegin(RL_QUADS);
@@ -29,12 +30,6 @@ void Conveyor::tick(Player* player) {
   //Background
   DrawRectangle(rect.x, rect.y, rect.width, rect.height, conveyorColorFill);
 
-  conveyorOffset += speed * GetFrameTime();
-  conveyorOffset2 += speed * GetFrameTime();
-
-  if (conveyorOffset > 40) conveyorOffset = 0;
-  if (conveyorOffset2 > 0) conveyorOffset2 = -40;
-
   int rotation = 0;
 
   switch (direction) {
@@ -48,26 +43,34 @@ void Conveyor::tick(Player* player) {
       rotation = 180;
       break;
   }
+  
+  std::pair<float, float> offsets = getConveyorOffsets(speed);
 
   //Arrows
-  BeginScissorMode(rect.x, rect.y, rect.width, rect.height);
+  Vector2 posScreen = GetWorldToScreen2D({rect.x, rect.y}, level->camera);
+  Vector2 pos2Screen = GetWorldToScreen2D({rect.x + rect.width, rect.y + rect.height}, level->camera);
+  Vector2 sizeScreen = {pos2Screen.x - posScreen.x, pos2Screen.y - posScreen.y};
 
+  BeginScissorMode(isEditorSample ? rect.x : posScreen.x, isEditorSample ? rect.y : posScreen.y, isEditorSample ? rect.width : sizeScreen.x, isEditorSample ? rect.height : sizeScreen.y);
   rlPushMatrix();
   rlTranslatef(rect.x + rect.width / 2, rect.y + rect.height / 2, 0);
   rlRotatef(rotation, 0, 0, 1);
-  rlTranslatef(-rect.x - rect.width / 2 + conveyorOffset, -rect.y - rect.height / 2, 0);
+  rlTranslatef(-rect.x - rect.width / 2 + offsets.first, -rect.y - rect.height / 2, 0);
   drawArrow(rect);
   rlPopMatrix();
 
   rlPushMatrix();
   rlTranslatef(rect.x + rect.width / 2, rect.y + rect.height / 2, 0);
   rlRotatef(rotation, 0, 0, 1);
-  rlTranslatef(-rect.x - rect.width / 2 + conveyorOffset2, -rect.y - rect.height / 2, 0);
+  rlTranslatef(-rect.x - rect.width / 2 + offsets.second, -rect.y - rect.height / 2, 0);
   drawArrow(rect);
   rlPopMatrix();
+
+  //drawArrow({rect.x + offsets.first, rect.y, rect.width, rect.height});
+  //drawArrow({rect.x + offsets.second, rect.y, rect.width, rect.height});
   
   EndScissorMode();
-
+  
   //Player movement
   if (CheckCollisionRecs(rect, player->rect)) {
     float force = speed * GetFrameTime() * (direction == UP || direction == LEFT ? -1 : 1);
@@ -104,5 +107,32 @@ void Conveyor::tick(Player* player) {
         }
       }
     }
+  }
+}
+
+std::unordered_map<float, std::pair<float, float>> speedOffsetMap;
+
+void tickConveyorManager() {
+  for (std::pair<float, std::pair<float, float>> pair : speedOffsetMap) {
+    float conveyorOffset = pair.second.first + pair.first * GetFrameTime();
+    float conveyorOffset2 = pair.second.second + pair.first * GetFrameTime();
+
+    if (conveyorOffset > 40) conveyorOffset = 0;
+    if (conveyorOffset2 > 0) conveyorOffset2 = -40;
+
+    auto it = speedOffsetMap.find(pair.first);
+    if (it != speedOffsetMap.end()) {
+      it->second = std::make_pair(conveyorOffset, conveyorOffset2);
+    }
+  }
+}
+
+std::pair<float, float> getConveyorOffsets(float speed) {
+  if (speedOffsetMap.find(speed) == speedOffsetMap.end()) {
+    speedOffsetMap.insert(std::make_pair(speed, std::make_pair(0.0f, -40.0f)));
+  }
+
+  for (std::pair<float, std::pair<float, float>> pair : speedOffsetMap) {
+    if (speed == pair.first) return pair.second;
   }
 }

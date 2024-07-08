@@ -9,7 +9,7 @@ class Checkpoint : public GameObject {
 public:
   void tick(Player* player) override;
 
-  Checkpoint(Vector2 pos, Level* level) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level) {};
+  Checkpoint(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer) {};
 };
 
 #endif

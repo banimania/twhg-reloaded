@@ -9,7 +9,7 @@ class BackgroundBlock : public GameObject {
 public:
   void tick(Player* player) override;
 
-  BackgroundBlock(Vector2 pos, Level* level) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level) {};
+  BackgroundBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {};
 };
 
 #endif

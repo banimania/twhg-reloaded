@@ -16,7 +16,7 @@ public:
 
   void tick(Player* player) override;
 
-  Coin(Vector2 pos, float radius, Level* level) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false, level), radius(radius) {};
+  Coin(Vector2 pos, float radius, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false, level, zLayer), radius(radius) {};
 };
 
 #endif

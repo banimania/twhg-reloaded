@@ -41,6 +41,10 @@ void Editor::tick() {
     camera.zoom = std::clamp(camera.zoom * scaleFactor, 0.7f, 2.0f);
   }
 
+  for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
+    wallBlock->updateWallBlock(getAllGameObjectsInLayer<WallBlock>(zLayer));
+  }
+
   BeginMode2D(camera);
   
   level->background.tick(camera);
@@ -76,34 +80,45 @@ void Editor::tick() {
 
         switch (selectedObject) {
           case 1:
-            object = new WallBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            object = new WallBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
             break;
           case 2:
-            object = new BackgroundBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            object = new BackgroundBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
             break;
           case 3:
-            object = new Enemy({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level);
+            object = new Enemy({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
             break;
           case 4:
-            object = new Coin({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level);
+            object = new Coin({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
             break;
           case 5:
-            object = new Key({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 1, level);
+            object = new Key({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 1, level, zLayer);
             break;
           case 6:
-            object = new KeyBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, 1, level);
+            object = new KeyBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, 1, level, zLayer);
             break;
           case 7:
-            object = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level);
+            object = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level, zLayer);
             break;
           case 8:
-            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level);
+            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
             break;
           case 9:
             level->startX = (float) ((int) (pos.x / 40) * 40) + 5;
             level->startY = (float) ((int) (pos.y / 40) * 40) + 5;
+            object = nullptr;
             break;
         }
+
+        //if (selectedObject == 1 && !getGameObjectsInPos({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        if (selectedObject == 1 && !getGameObjectsInPosAndLayer<WallBlock>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 2 && !getGameObjectsInPosAndLayer<BackgroundBlock>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 3 && !getGameObjectsInPosAndLayer<Enemy>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 4 && !getGameObjectsInPosAndLayer<Coin>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 5 && !getGameObjectsInPosAndLayer<Key>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 6 && !getGameObjectsInPosAndLayer<KeyBlock>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 7 && !getGameObjectsInPosAndLayer<Conveyor>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 8 && !getGameObjectsInPosAndLayer<Checkpoint>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
 
         if (object != nullptr) {
           level->gameObjects.push_back(object);
@@ -349,4 +364,41 @@ void Editor::deselectAll() {
   buildConveyorButton.setSelected(false);
   buildCheckpointButton.setSelected(false);
   buildPlayerButton.setSelected(false);
+}
+
+std::vector<GameObject*> Editor::getAllGameObjectsInPos(Vector2 pos, int layer) {
+  std::vector<GameObject*> result;
+
+  for (GameObject* gameObject : level->gameObjects) {
+    if (gameObject->rect.x == pos.x && gameObject->rect.y == pos.y && (layer == gameObject->zLayer || layer == 0)) result.push_back(gameObject);
+  }
+  return result;
+}
+
+template <typename T>
+std::vector<T*> Editor::getAllGameObjectsInLayer(int layer) {
+  std::vector<T*> result;
+
+  for (GameObject* gameObject : level->gameObjects) {
+    if (gameObject->zLayer == layer) {
+      if (T* t = dynamic_cast<T*>(gameObject)) {
+        result.push_back(t);
+      }
+    }
+  }
+
+  return result;
+}
+
+
+template <typename T>
+std::vector<T*> Editor::getGameObjectsInPosAndLayer(Vector2 pos, int layer) {
+  std::vector<T*> result;
+
+  for (GameObject* gameObject : level->gameObjects) {
+    if (T* t = dynamic_cast<T*>(gameObject)) {
+      if (gameObject->rect.x == pos.x && gameObject->rect.y == pos.y && (layer == gameObject->zLayer || layer == 0)) result.push_back(t);
+    }
+  }
+  return result;
 }

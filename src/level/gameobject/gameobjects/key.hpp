@@ -16,7 +16,7 @@ public:
 
   void tick(Player* player) override;
 
-  Key(Vector2 pos, int keyId, Level* level) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false, level), keyId(keyId) {};
+  Key(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false, level, zLayer), keyId(keyId) {};
 };
 
 #endif

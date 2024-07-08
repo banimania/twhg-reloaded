@@ -34,21 +34,21 @@ public:
   ButtonWidget editButton = ButtonWidget("EDIT", 35, {130, 130, 100, 50}, std::bind(&Editor::buildEditButton, this));
 
   ButtonWidget buildWallblockButton = ButtonWidget("", 0, {10, 240, 60, 60}, std::bind(&Editor::selectWallblockButton, this));
-  WallBlock wallBlock = WallBlock({20, 250}, level);
+  WallBlock wallBlock = WallBlock({20, 250}, level, 0);
   ButtonWidget buildBackgroundBlockButton = ButtonWidget("", 0, {90, 240, 60, 60}, std::bind(&Editor::selectBackgroundBlockButton, this));
-  BackgroundBlock backgroundBlock = BackgroundBlock({100, 250}, level);
+  BackgroundBlock backgroundBlock = BackgroundBlock({100, 250}, level, 0);
   ButtonWidget buildEnemyButton = ButtonWidget("", 0, {170, 240, 60, 60}, std::bind(&Editor::selectEnemyButton, this));
-  Enemy enemy = Enemy({200, 270}, 10.0f, level);
+  Enemy enemy = Enemy({200, 270}, 10.0f, level, 0);
   ButtonWidget buildCoinButton = ButtonWidget("", 0, {10, 320, 60, 60}, std::bind(&Editor::selectCoinButton, this));
-  Coin coin = Coin({40, 350}, 10.0f, level);
+  Coin coin = Coin({40, 350}, 10.0f, level, 0);
   ButtonWidget buildKeyButton = ButtonWidget("", 0, {90, 320, 60, 60}, std::bind(&Editor::selectKeyButton, this));
-  Key key = Key({120, 350}, -69, level);
+  Key key = Key({120, 350}, -69, level, 0);
   ButtonWidget buildKeyBlockButton = ButtonWidget("", 0, {170, 320, 60, 60}, std::bind(&Editor::selectKeyBlockButton, this));
-  KeyBlock keyBlock = KeyBlock({180, 330}, -69, level);
+  KeyBlock keyBlock = KeyBlock({180, 330}, -69, level, 0);
   ButtonWidget buildConveyorButton = ButtonWidget("", 0, {10, 400, 60, 60}, std::bind(&Editor::selectConveyorButton, this));
-  Conveyor conveyor = Conveyor({20, 410}, RIGHT, level);
+  Conveyor conveyor = Conveyor({20, 410}, RIGHT, level, 0);
   ButtonWidget buildCheckpointButton = ButtonWidget("", 0, {90, 400, 60, 60}, std::bind(&Editor::selectCheckpointButton, this));
-  Checkpoint checkpoint = Checkpoint({100, 410}, level);
+  Checkpoint checkpoint = Checkpoint({100, 410}, level, 0);
   ButtonWidget buildPlayerButton = ButtonWidget("", 0, {170, 400, 60, 60}, std::bind(&Editor::selectPlayerButton, this));
   
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildModeButton, this));
@@ -81,6 +81,14 @@ public:
   void selectConveyorButton();
   void selectCheckpointButton();
   void selectPlayerButton();
+
+  std::vector<GameObject*> getAllGameObjectsInPos(Vector2 pos, int layer);
+
+  template <typename T>
+  std::vector<T*> getAllGameObjectsInLayer(int layer);
+
+  template <typename T>
+  std::vector<T*> getGameObjectsInPosAndLayer(Vector2 pos, int layer);
 
   void deselectAll();
 };

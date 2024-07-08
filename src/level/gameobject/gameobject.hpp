@@ -12,9 +12,11 @@ public:
   Level* level;
   std::vector<Path*> paths;
 
+  int zLayer;
+  
   virtual void tick(Player* player);
 
-  GameObject(Rectangle rect, bool solid, Level* level) : rect(rect), solid(solid), level(level) {};
+  GameObject(Rectangle rect, bool solid, Level* level, int zLayer) : rect(rect), solid(solid), level(level), zLayer(zLayer) {};
 };
 
 #endif

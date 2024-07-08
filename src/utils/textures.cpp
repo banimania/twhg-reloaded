@@ -29,6 +29,7 @@ void loadTextures() {
 
   configurationTexture = LoadTexture("./res/img/configuration.png");
   playTexture = LoadTexture("./res/img/play.png");
+  arrowTexture = LoadTexture("./res/img/arrow.png");
 }
 
 Texture GetTextureFromName(std::string textureName) {

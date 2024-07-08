@@ -1,9 +1,10 @@
 #include "editor.hpp"
-#include <iostream>
+#include <algorithm>
 #include <raylib.h>
 #include <rlgl.h>
 #include "../utils/fonts.hpp"
 #include "../utils/textures.hpp"
+#include <iostream>
 
 void Editor::initWidgets() {
   init = true;
@@ -25,7 +26,7 @@ void Editor::tick() {
   else if (zLayer < 0) zLayer = 0;
 
   if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-    camera.target = {camera.target.x - GetMouseDelta().x, camera.target.y - GetMouseDelta().y};
+    camera.target = {camera.target.x - GetMouseDelta().x / camera.zoom, camera.target.y - GetMouseDelta().y / camera.zoom};
   }
 
   float wheel = GetMouseWheelMove();
@@ -38,7 +39,7 @@ void Editor::tick() {
 
     float scaleFactor = 1.0f + (0.25f * fabsf(wheel));
     if (wheel < 0) scaleFactor = 1.0f / scaleFactor;
-    camera.zoom = std::clamp(camera.zoom * scaleFactor, 0.7f, 2.0f);
+    camera.zoom = std::clamp(camera.zoom * scaleFactor, 0.7f, 2.5f);
   }
 
   for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
@@ -54,6 +55,15 @@ void Editor::tick() {
   level->camera = camera;
   for (GameObject* gameObject : level->gameObjects) {
     gameObject->tick(&level->player);
+    if (std::find(selectedObjects.begin(), selectedObjects.end(), gameObject) != selectedObjects.end()) {
+      if (Key* key = dynamic_cast<Key*>(gameObject)) {
+        DrawTextureEx(keyTexture, {gameObject->rect.x - 5, gameObject->rect.y - 5}, 0.0f, 0.06f, editorSelectColor);
+      } else if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {
+        DrawCircle(enemy->rect.x + 10, enemy->rect.y + 10, 10.0f, editorSelectColor);
+      } else if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
+        DrawCircle(coin->rect.x + 10, coin->rect.y + 10, 10.0f, editorSelectColor);
+      } else DrawRectangleRec(gameObject->rect, editorSelectColor);
+    }
   }
 
   drawGrid();
@@ -63,6 +73,15 @@ void Editor::tick() {
 
   EndMode2D();
   
+
+  Rectangle selection = {std::min(selx1, selx2), std::min(sely1, sely2), std::max(selx1, selx2) - std::min(selx1, selx2), std::max(sely1, sely2) - std::min(sely1, sely2)};
+
+  DrawRectangleRec(selection, editorSelectColor);
+  DrawRectangleRec({selection.x, selection.y, selection.width, 5}, editorSelectColor);
+  DrawRectangleRec({selection.x, selection.y + selection.height - 5, selection.width, 5}, editorSelectColor);
+  DrawRectangleRec({selection.x, selection.y + 5, 5, selection.height - 10}, editorSelectColor);
+  DrawRectangleRec({selection.x + selection.width - 5, selection.y + 5, 5, selection.height - 10}, editorSelectColor);
+
   level->hud.tickEditor();
   drawOutline();
 
@@ -71,11 +90,15 @@ void Editor::tick() {
 
   //use rlScalef for scaling what the fuck am i doing lol
 
+  deleteTimer += GetFrameTime();
+
   if (mode == BUILD) {
 
+    selectedObjects = {};
+
     if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240, SCREEN_HEIGHT - 80})) {
+      Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
       if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && selectedObject != -1) {
-        Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
         GameObject* object;
 
         switch (selectedObject) {
@@ -123,9 +146,23 @@ void Editor::tick() {
         if (object != nullptr) {
           level->gameObjects.push_back(object);
         }
+      } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+        Vector2 deletionPos = {(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)};
+        if ((lastDeleted.x != deletionPos.x || lastDeleted.y != deletionPos.y) || (lastDeleted.x == deletionPos.x && lastDeleted.y == deletionPos.y && deleteTimer > deleteTime)) {
+          deleteTimer = 0.0f;
+          lastDeleted = deletionPos; 
+          std::vector<GameObject*> gameObjects = getAllGameObjectsInPos(deletionPos, zLayer);
+
+          if (gameObjects.empty()) {
+            gameObjects = getAllGameObjectsInPos({deletionPos.x + 10, deletionPos.y + 10}, zLayer);
+          }
+
+          if (!gameObjects.empty()) {
+            level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObjects.at(gameObjects.size() - 1)));
+          }
+        }
       }
     }
-
     rlPushMatrix();
     buildWallblockButton.tick();
     float difHalf = (buildWallblockButton.rect.width * buildWallblockButton.scale - buildWallblockButton.rect.width) / 2.0f;
@@ -247,6 +284,103 @@ void Editor::tick() {
     DrawRectangle(playerPos.x, playerPos.y, 30, 30, playerColorOutline);
     DrawRectangle(playerPos.x + 5, playerPos.y + 5, 20, 20, playerColorFill);
     rlPopMatrix();
+  } else if (mode == EDIT) {
+    editRightButton.tick();
+    rlPushMatrix();
+    float difHalf = (editRightButton.rect.width * editRightButton.scale - editRightButton.rect.width) / 2.0f;
+    rlTranslatef(20 - difHalf, 250 - difHalf, 0.0f);
+    rlScalef(editRightButton.scale, editRightButton.scale, 1.0f);
+    rlTranslatef(-20, -250, 0.0f);
+    DrawTextureEx(arrowTexture, {20, 250}, 0.0f, 0.04f, WHITE);
+    rlPopMatrix();
+
+
+    editLeftButton.tick();
+    rlPushMatrix();
+    difHalf = (editLeftButton.rect.width * editLeftButton.scale - editLeftButton.rect.width) / 2.0f;
+    rlTranslatef(100 - difHalf, 250 - difHalf, 0.0f);
+    rlScalef(editLeftButton.scale, editLeftButton.scale, 1.0f);
+    rlRotatef(180, 0, 0, 1);
+    rlTranslatef(-100 - 40, -250 - 40, 0.0f);
+    DrawTextureEx(arrowTexture, {100, 250}, 0.0f, 0.04f, WHITE);
+    rlPopMatrix();
+    
+    editUpButton.tick();
+    rlPushMatrix();
+    difHalf = (editUpButton.rect.width * editUpButton.scale - editUpButton.rect.width) / 2.0f;
+    rlTranslatef(180 - difHalf, 250 - difHalf, 0.0f);
+    rlScalef(editUpButton.scale, editUpButton.scale, 1.0f);
+    rlRotatef(-90, 0, 0, 1);
+    rlTranslatef(-180 - 40, -250, 0.0f);
+    DrawTextureEx(arrowTexture, {180, 250}, 0.0f, 0.04f, WHITE);
+    rlPopMatrix();
+
+    editDownButton.tick();
+    editSmallRightButton.tick();
+    editSmallUpButton.tick();
+    editSmallLeftButton.tick();
+    editSmallDownButton.tick();
+
+    editKeyTimer += GetFrameTime();
+    
+    if (editKeyTimer > editKeyTime) {
+      editKeyTimer = 0.0f;
+      if (IsKeyDown(KEY_W)) {
+        for (GameObject* gameObject : selectedObjects) {
+          gameObject->rect.y -= IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
+        }
+      }
+
+      if (IsKeyDown(KEY_S)) {
+        for (GameObject* gameObject : selectedObjects) {
+          gameObject->rect.y += IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
+        }
+      }
+      
+      if (IsKeyDown(KEY_A)) {
+        for (GameObject* gameObject : selectedObjects) {
+          gameObject->rect.x -= IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
+        }
+      }
+
+      if (IsKeyDown(KEY_D)) {
+        for (GameObject* gameObject : selectedObjects) {
+          gameObject->rect.x += IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
+        }
+      }
+
+      if (IsKeyDown(KEY_BACKSPACE) || IsKeyDown(KEY_DELETE)) {
+        for (GameObject* gameObject : selectedObjects) {
+          level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObject));
+        }
+        selectedObjects.clear();
+      }
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      if (!selecting) {
+        selx1 = GetMousePosition().x;
+        sely1 = GetMousePosition().y;
+      }
+
+      selecting = true;
+
+      selx2 = GetMousePosition().x;
+      sely2 = GetMousePosition().y;
+    } else {
+      if ((selection.width > 0 && selection.height > 0) || selecting) {
+        Vector2 posToWorld = GetScreenToWorld2D({selection.x, selection.y}, camera);
+        Vector2 pos2ToWorld = GetScreenToWorld2D({selection.x + selection.width, selection.y + selection.height}, camera);
+
+        Rectangle selectionWorld = {posToWorld.x, posToWorld.y, pos2ToWorld.x - posToWorld.x, pos2ToWorld.y - posToWorld.y};
+        selectedObjects = getAllGameObjectsInRect(selectionWorld, zLayer);
+      }
+      selecting = false;
+      selx1 = 0;
+      selx2 = 0;
+      sely1 = 0;
+      sely2 = 0;
+    }
   }
 
   configButton.tick();
@@ -364,6 +498,47 @@ void Editor::deselectAll() {
   buildConveyorButton.setSelected(false);
   buildCheckpointButton.setSelected(false);
   buildPlayerButton.setSelected(false);
+}
+
+void Editor::rightButton() {
+
+}
+
+void Editor::leftButton() {
+
+}
+
+void Editor::upButton() {
+
+}
+
+void Editor::downButton() {
+
+}
+
+void Editor::smallRightButton() {
+
+}
+
+void Editor::smallLeftButton() {
+
+}
+
+void Editor::smallUpButton() {
+
+}
+
+void Editor::smallDownButton() {
+
+}
+
+std::vector<GameObject*> Editor::getAllGameObjectsInRect(Rectangle rect, int layer) {
+  std::vector<GameObject*> result;
+
+  for (GameObject* gameObject : level->gameObjects) {
+    if (CheckCollisionRecs(rect, gameObject->rect) && (layer == gameObject->zLayer || layer == 0)) result.push_back(gameObject);
+  }
+  return result;
 }
 
 std::vector<GameObject*> Editor::getAllGameObjectsInPos(Vector2 pos, int layer) {

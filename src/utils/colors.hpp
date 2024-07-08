@@ -40,5 +40,6 @@ static const Color enumWidgetFillColor = RAYWHITE;
 static const Color editorUIColor = Color{245, 245, 245, 255};
 static const Color editorGradient1Color = Color{75, 75, 75, 255};
 static const Color editorGradient2Color = Color{124, 124, 124, 255};
+static const Color editorSelectColor = Color{0, 255, 0, 80};
 
 #endif

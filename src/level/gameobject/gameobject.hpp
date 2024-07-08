@@ -17,6 +17,8 @@ public:
   virtual void tick(Player* player);
 
   GameObject(Rectangle rect, bool solid, Level* level, int zLayer) : rect(rect), solid(solid), level(level), zLayer(zLayer) {};
+
+  virtual GameObject* clone() = 0;
 };
 
 #endif

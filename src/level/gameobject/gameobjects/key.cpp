@@ -25,3 +25,10 @@ void Key::tick(Player* player) {
     isBeingCollected = true;
   }
 }
+
+Key* Key::clone() {
+  Key* clone = new Key({rect.x, rect.y}, keyId, level, zLayer);
+  clone->rect = rect;
+  clone->paths = paths;
+  return clone;
+}

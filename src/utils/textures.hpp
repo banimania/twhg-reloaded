@@ -11,7 +11,12 @@ inline Texture arrowLeftTexture;
 inline Texture arrowRightTexture;
 inline Texture configurationTexture;
 inline Texture playTexture;
-inline Texture arrowTexture;
+inline Texture rightArrowTexture;
+inline Texture downArrowTexture;
+inline Texture leftArrowTexture;
+inline Texture upArrowTexture;
+inline Texture trashTexture;
+inline Texture duplicateTexture;
 
 void loadTextures();
 Texture GetTextureFromName(std::string textureName);

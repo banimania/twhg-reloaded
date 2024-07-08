@@ -15,6 +15,8 @@ public:
 
   void updateWallBlock(std::vector<WallBlock*> wallBlocks);
 
+  WallBlock* clone() override;
+
   WallBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {};
 };
 

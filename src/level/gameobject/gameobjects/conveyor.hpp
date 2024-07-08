@@ -22,6 +22,8 @@ public:
   void tick(Player* player) override;
 
   Conveyor(Vector2 pos, Direction direction, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer), speed(40.0f), direction(direction) {};
+
+  Conveyor* clone() override;
 };
 
 extern std::unordered_map<float, std::pair<float, float>> speedOffsetMap;

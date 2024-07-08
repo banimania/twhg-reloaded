@@ -124,7 +124,7 @@ void Editor::tick() {
             object = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level, zLayer);
             break;
           case 8:
-            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, false, level, zLayer);
             break;
           case 9:
             level->startX = (float) ((int) (pos.x / 40) * 40) + 5;
@@ -286,87 +286,61 @@ void Editor::tick() {
     rlPopMatrix();
   } else if (mode == EDIT) {
     editRightButton.tick();
-    rlPushMatrix();
-    float difHalf = (editRightButton.rect.width * editRightButton.scale - editRightButton.rect.width) / 2.0f;
-    rlTranslatef(20 - difHalf, 250 - difHalf, 0.0f);
-    rlScalef(editRightButton.scale, editRightButton.scale, 1.0f);
-    rlTranslatef(-20, -250, 0.0f);
-    DrawTextureEx(arrowTexture, {20, 250}, 0.0f, 0.04f, WHITE);
-    rlPopMatrix();
-
-
     editLeftButton.tick();
-    rlPushMatrix();
-    difHalf = (editLeftButton.rect.width * editLeftButton.scale - editLeftButton.rect.width) / 2.0f;
-    rlTranslatef(100 - difHalf, 250 - difHalf, 0.0f);
-    rlScalef(editLeftButton.scale, editLeftButton.scale, 1.0f);
-    rlRotatef(180, 0, 0, 1);
-    rlTranslatef(-100 - 40, -250 - 40, 0.0f);
-    DrawTextureEx(arrowTexture, {100, 250}, 0.0f, 0.04f, WHITE);
-    rlPopMatrix();
-    
     editUpButton.tick();
-    rlPushMatrix();
-    difHalf = (editUpButton.rect.width * editUpButton.scale - editUpButton.rect.width) / 2.0f;
-    rlTranslatef(180 - difHalf, 250 - difHalf, 0.0f);
-    rlScalef(editUpButton.scale, editUpButton.scale, 1.0f);
-    rlRotatef(-90, 0, 0, 1);
-    rlTranslatef(-180 - 40, -250, 0.0f);
-    DrawTextureEx(arrowTexture, {180, 250}, 0.0f, 0.04f, WHITE);
-    rlPopMatrix();
-
     editDownButton.tick();
+    
     editSmallRightButton.tick();
     editSmallUpButton.tick();
     editSmallLeftButton.tick();
     editSmallDownButton.tick();
+
+    editTrashButton.tick();
+
+    editDuplicateButton.tick();
 
     editKeyTimer += GetFrameTime();
     
     if (editKeyTimer > editKeyTime) {
       editKeyTimer = 0.0f;
       if (IsKeyDown(KEY_W)) {
-        for (GameObject* gameObject : selectedObjects) {
-          gameObject->rect.y -= IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
-        }
+        IsKeyDown(KEY_LEFT_SHIFT) ? smallUpButton() : upButton();
       }
 
       if (IsKeyDown(KEY_S)) {
-        for (GameObject* gameObject : selectedObjects) {
-          gameObject->rect.y += IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
-        }
+        IsKeyDown(KEY_LEFT_SHIFT) ? smallDownButton() : downButton();
       }
       
       if (IsKeyDown(KEY_A)) {
-        for (GameObject* gameObject : selectedObjects) {
-          gameObject->rect.x -= IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
-        }
+        IsKeyDown(KEY_LEFT_SHIFT) ? smallLeftButton() : leftButton();
       }
 
       if (IsKeyDown(KEY_D)) {
-        for (GameObject* gameObject : selectedObjects) {
-          gameObject->rect.x += IsKeyDown(KEY_LEFT_SHIFT) ? 1 : 40;
-        }
+        IsKeyDown(KEY_LEFT_SHIFT) ? smallRightButton() : rightButton();
       }
 
       if (IsKeyDown(KEY_BACKSPACE) || IsKeyDown(KEY_DELETE)) {
-        for (GameObject* gameObject : selectedObjects) {
-          level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObject));
-        }
-        selectedObjects.clear();
+        trashButton();
       }
     }
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-      if (!selecting) {
-        selx1 = GetMousePosition().x;
-        sely1 = GetMousePosition().y;
+      if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240, SCREEN_HEIGHT - 80})) {
+        if (!selecting) {
+          selx1 = GetMousePosition().x;
+          sely1 = GetMousePosition().y;
+        }
+
+        selecting = true;
+
+        selx2 = GetMousePosition().x;
+        sely2 = GetMousePosition().y;
+      } else {
+        if (selecting) {
+          selx2 = std::max(240.0f, GetMousePosition().x);
+          sely2 = std::max(80.0f, GetMousePosition().y);
+        }
       }
-
-      selecting = true;
-
-      selx2 = GetMousePosition().x;
-      sely2 = GetMousePosition().y;
     } else {
       if ((selection.width > 0 && selection.height > 0) || selecting) {
         Vector2 posToWorld = GetScreenToWorld2D({selection.x, selection.y}, camera);
@@ -433,6 +407,7 @@ void Editor::buildEditButton() {
   buildButton.setSelected(false);
   editButton.setSelected(true);
 }
+
 
 void Editor::selectWallblockButton() {
   selectedObject = 1;
@@ -501,35 +476,64 @@ void Editor::deselectAll() {
 }
 
 void Editor::rightButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.x += 40;
+  }
 }
 
 void Editor::leftButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.x -= 40;
+  }
 }
 
 void Editor::upButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.y -= 40;
+  }
 }
 
 void Editor::downButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.y += 40;
+  }
 }
 
 void Editor::smallRightButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.x += 1;
+  }
 }
 
 void Editor::smallLeftButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.x -= 1;
+  }
 }
 
 void Editor::smallUpButton() {
-
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.y -= 1;
+  }
 }
 
 void Editor::smallDownButton() {
+  for (GameObject* gameObject : selectedObjects) {
+    gameObject->rect.y += 1;
+  }
+}
 
+void Editor::trashButton() {
+  for (GameObject* gameObject : selectedObjects) {
+    level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObject));
+  }
+  selectedObjects.clear();
+}
+
+void Editor::duplicateButton() {
+  for (GameObject* gameObject : selectedObjects) {
+    level->gameObjects.push_back(gameObject->clone());
+  }
 }
 
 std::vector<GameObject*> Editor::getAllGameObjectsInRect(Rectangle rect, int layer) {

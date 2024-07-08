@@ -15,6 +15,8 @@ public:
   void tick(Player* player) override;
 
   KeyBlock(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer), keyId(keyId) {};
+
+  KeyBlock* clone() override;
 };
 
 #endif

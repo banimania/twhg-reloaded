@@ -33,3 +33,10 @@ void KeyBlock::tick(Player* player) {
     }
   }
 }
+
+KeyBlock* KeyBlock::clone() {
+  KeyBlock* clone = new KeyBlock({rect.x, rect.y}, keyId, level, zLayer);
+  clone->rect = rect;
+  clone->paths = paths;
+  return clone;
+}

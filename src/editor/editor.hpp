@@ -57,17 +57,19 @@ public:
   ButtonWidget buildConveyorButton = ButtonWidget("", 0, {10, 400, 60, 60}, std::bind(&Editor::selectConveyorButton, this));
   Conveyor conveyor = Conveyor({20, 410}, RIGHT, level, 0);
   ButtonWidget buildCheckpointButton = ButtonWidget("", 0, {90, 400, 60, 60}, std::bind(&Editor::selectCheckpointButton, this));
-  Checkpoint checkpoint = Checkpoint({100, 410}, level, 0);
+  Checkpoint checkpoint = Checkpoint({100, 410}, false, level, 0);
   ButtonWidget buildPlayerButton = ButtonWidget("", 0, {170, 400, 60, 60}, std::bind(&Editor::selectPlayerButton, this));
  
-  ButtonWidget editRightButton = ButtonWidget("", 0, {10, 240, 60, 60}, std::bind(&Editor::rightButton, this));
-  ButtonWidget editLeftButton = ButtonWidget("", 0, {90, 240, 60, 60}, std::bind(&Editor::leftButton, this));
-  ButtonWidget editUpButton = ButtonWidget("", 0, {170, 240, 60, 60}, std::bind(&Editor::upButton, this));
-  ButtonWidget editDownButton = ButtonWidget("", 0, {10, 320, 60, 60}, std::bind(&Editor::downButton, this));
-  ButtonWidget editSmallRightButton = ButtonWidget("", 0, {90, 320, 60, 60}, std::bind(&Editor::smallRightButton, this));
-  ButtonWidget editSmallLeftButton = ButtonWidget("", 0, {170, 320, 60, 60}, std::bind(&Editor::smallLeftButton, this));
-  ButtonWidget editSmallUpButton = ButtonWidget("", 0, {10, 400, 60, 60}, std::bind(&Editor::smallUpButton, this));
-  ButtonWidget editSmallDownButton = ButtonWidget("", 0, {90, 400, 60, 60}, std::bind(&Editor::smallDownButton, this));
+  ButtonWidget editRightButton = ButtonWidget("rightArrowTexture", 0.04f, {10, 240, 60, 60}, std::bind(&Editor::rightButton, this));
+  ButtonWidget editLeftButton = ButtonWidget("leftArrowTexture", 0.04f, {90, 240, 60, 60}, std::bind(&Editor::leftButton, this));
+  ButtonWidget editUpButton = ButtonWidget("upArrowTexture", 0.04f, {170, 240, 60, 60}, std::bind(&Editor::upButton, this));
+  ButtonWidget editDownButton = ButtonWidget("downArrowTexture", 0.04f, {10, 320, 60, 60}, std::bind(&Editor::downButton, this));
+  ButtonWidget editSmallRightButton = ButtonWidget("rightArrowTexture", 0.02f, {90, 320, 60, 60}, std::bind(&Editor::smallRightButton, this));
+  ButtonWidget editSmallLeftButton = ButtonWidget("leftArrowTexture", 0.02f, {170, 320, 60, 60}, std::bind(&Editor::smallLeftButton, this));
+  ButtonWidget editSmallUpButton = ButtonWidget("upArrowTexture", 0.02f, {10, 400, 60, 60}, std::bind(&Editor::smallUpButton, this));
+  ButtonWidget editSmallDownButton = ButtonWidget("downArrowTexture", 0.02f, {90, 400, 60, 60}, std::bind(&Editor::smallDownButton, this));
+  ButtonWidget editTrashButton = ButtonWidget("trashTexture", 0.08f, {170, 400, 60, 60}, std::bind(&Editor::trashButton, this));
+  ButtonWidget editDuplicateButton = ButtonWidget("duplicateTexture", 0.08f, {10, 480, 60, 60}, std::bind(&Editor::duplicateButton, this));
 
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildModeButton, this));
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildEditButton, this));
@@ -108,6 +110,10 @@ public:
   void smallLeftButton();
   void smallUpButton();
   void smallDownButton();
+
+  void trashButton();
+
+  void duplicateButton();
 
   std::vector<GameObject*> getAllGameObjectsInPos(Vector2 pos, int layer);
 

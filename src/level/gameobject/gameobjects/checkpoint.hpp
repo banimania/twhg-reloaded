@@ -7,9 +7,13 @@
 
 class Checkpoint : public GameObject {
 public:
+  bool goal;
+
   void tick(Player* player) override;
 
-  Checkpoint(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer) {};
+  Checkpoint(Vector2 pos, bool goal, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer), goal(goal) {};
+
+  Checkpoint* clone() override;
 };
 
 #endif

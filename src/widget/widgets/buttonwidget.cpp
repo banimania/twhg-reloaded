@@ -29,7 +29,7 @@ void ButtonWidget::tick() {
     Texture tex = GetTextureFromName(textureName);
     float x = rect.x - difHalf + (rect.width * scale / 2.0f) - (tex.width * scale * textureScale / 2.0f);
     float y = rect.y - difHalf + (rect.height * scale / 2.0f) - (tex.height * scale * textureScale / 2.0f);
-    DrawTextureEx(tex, {x, y}, 0.0f, textureScale, WHITE);
+    DrawTextureEx(tex, {x, y}, 0.0f, textureScale * scale, WHITE);
     return;
   }
 

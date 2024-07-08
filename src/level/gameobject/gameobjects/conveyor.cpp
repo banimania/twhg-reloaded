@@ -110,6 +110,13 @@ void Conveyor::tick(Player* player) {
   }
 }
 
+Conveyor* Conveyor::clone() {
+  Conveyor* clone = new Conveyor({rect.x, rect.y}, direction, level, zLayer);
+  clone->rect = rect;
+  clone->paths = paths;
+  clone->speed = speed;
+  return clone;
+}
 std::unordered_map<float, std::pair<float, float>> speedOffsetMap;
 
 void tickConveyorManager() {

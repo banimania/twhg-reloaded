@@ -17,7 +17,7 @@ int main() {
   loadFonts();
   loadTextures();
 
-  SetTargetFPS(60);
+  SetTargetFPS(240);
 
   while(!WindowShouldClose()) {
     BeginDrawing();

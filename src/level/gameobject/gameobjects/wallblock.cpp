@@ -50,3 +50,10 @@ void WallBlock::updateWallBlock(std::vector<WallBlock*> wallBlocks) {
   if (d3 && !states[1] && !states[2]) states[5] = false;
   if (d4 && !states[0] && !states[1]) states[4] = false;
 }
+
+WallBlock* WallBlock::clone() {
+  WallBlock* clone = new WallBlock({rect.x, rect.y}, level, zLayer);
+  clone->rect = rect;
+  clone->paths = paths;
+  return clone;
+}

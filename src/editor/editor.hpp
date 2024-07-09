@@ -42,6 +42,8 @@ public:
   float selx1 = 0, selx2 = 0, sely1 = 0, sely2 = 0;
   std::vector<GameObject*> selectedObjects;
 
+  std::vector<Widget*> propertyWidgets;
+
   ButtonWidget buildButton = ButtonWidget("BUILD", 35, {10, 130, 100, 50}, std::bind(&Editor::buildModeButton, this));
   ButtonWidget editButton = ButtonWidget("EDIT", 35, {130, 130, 100, 50}, std::bind(&Editor::buildEditButton, this));
 
@@ -78,13 +80,17 @@ public:
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::playTestButton, this));
  
   bool propertiesOpen = true;
-  Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80};
-  
+  Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80 + 1000};
+
+
+  float propertyScroll = 0.0f, maxScroll = 0.0f;
+  bool scrollAllowed = false;
+
   BooleanWidget freeCameraWidget = BooleanWidget("Free Camera", false, {propertiesRect.x, propertiesRect.y + 40}, 240, 35);
-  ButtonWidget checkerboardWidget = ButtonWidget("", 1, {propertiesRect.x + 10, propertiesRect.y + 90, 100, 100}, std::bind(&Editor::checkerboardButton, this));
-  ButtonWidget plainWidget = ButtonWidget("", 1, {propertiesRect.x + propertiesRect.width - 110, propertiesRect.y + 90, 100, 100}, std::bind(&Editor::plainButton, this));
-  ColorWidget backgroundPrimaryColorWidget = ColorWidget("Color 1", backgroundColorPrimary, {propertiesRect.x, propertiesRect.y + 200}, 240);
-  ColorWidget backgroundSecondaryColorWidget = ColorWidget("Color 2", backgroundColorSecondary, {propertiesRect.x, propertiesRect.y + 200 + 270}, 240);
+  ButtonWidget checkerboardWidget = ButtonWidget("", 1, {propertiesRect.x + 10, propertiesRect.y + 90 + 40, 100, 100}, std::bind(&Editor::checkerboardButton, this));
+  ButtonWidget plainWidget = ButtonWidget("", 1, {propertiesRect.x + propertiesRect.width - 110, propertiesRect.y + 90 + 40, 100, 100}, std::bind(&Editor::plainButton, this));
+  ColorWidget backgroundPrimaryColorWidget = ColorWidget("Color 1", backgroundColorPrimary, {propertiesRect.x, propertiesRect.y + 200 + 40}, 240);
+  ColorWidget backgroundSecondaryColorWidget = ColorWidget("Color 2", backgroundColorSecondary, {propertiesRect.x, propertiesRect.y + 200 + 270 + 40}, 240);
 
   ColorWidget outlineColorWidgetWallblock = ColorWidget("Outline", wallBlockColorOutline, {propertiesRect.x, propertiesRect.y + 40}, 240);
   ColorWidget fillColorWidgetWallblock = ColorWidget("Fill", wallBlockColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40}, 240);
@@ -133,6 +139,33 @@ public:
 
     backgroundPrimaryColorWidget.color = level->background.colorPrimary;
     backgroundSecondaryColorWidget.color = level->background.colorSecondary;
+
+    propertyWidgets.push_back(&outlineColorWidgetWallblock);
+    propertyWidgets.push_back(&fillColorWidgetWallblock);
+    propertyWidgets.push_back(&fillColorWidgetBackgroundblock);
+    propertyWidgets.push_back(&outlineColorWidgetEnemy);
+    propertyWidgets.push_back(&fillColorWidgetEnemy);
+    propertyWidgets.push_back(&outlineColorWidgetCoin);
+    propertyWidgets.push_back(&fillColorWidgetCoin);
+    propertyWidgets.push_back(&outlineColorWidgetKey);
+    propertyWidgets.push_back(&fillColorWidgetKey);
+    propertyWidgets.push_back(&idWidgetKey);
+    propertyWidgets.push_back(&fillColorWidgetKeyBlock);
+    propertyWidgets.push_back(&outlineColorWidgetKeyBlock);
+    propertyWidgets.push_back(&idWidgetKeyBlock);
+    propertyWidgets.push_back(&speedWidgetConveyor);
+    propertyWidgets.push_back(&directionWidgetConveyor);
+    propertyWidgets.push_back(&fillColorWidgetConveyor);
+    propertyWidgets.push_back(&arrowColorWidgetConveyor);
+    propertyWidgets.push_back(&goalWidgetCheckpoint);
+    propertyWidgets.push_back(&saveCoinsWidgetCheckpoint);
+    propertyWidgets.push_back(&saveKeysWidgetCheckpoint);
+    propertyWidgets.push_back(&fillColorWidgetCheckpoint);
+    propertyWidgets.push_back(&freeCameraWidget);
+    propertyWidgets.push_back(&plainWidget);
+    propertyWidgets.push_back(&checkerboardWidget);
+    propertyWidgets.push_back(&backgroundPrimaryColorWidget);
+    propertyWidgets.push_back(&backgroundSecondaryColorWidget);
   }
 
   

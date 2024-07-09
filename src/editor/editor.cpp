@@ -29,7 +29,8 @@ void Editor::tick() {
   }
 
   float wheel = GetMouseWheelMove();
-  if (wheel != 0) {
+
+  if (wheel != 0 && CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
     Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
     camera.offset = GetMousePosition();
@@ -91,7 +92,6 @@ void Editor::tick() {
   DrawRectangleRec({selection.x, selection.y + 5, 5, selection.height - 10}, editorSelectColor);
   DrawRectangleRec({selection.x + selection.width - 5, selection.y + 5, 5, selection.height - 10}, editorSelectColor);
 
-  level->hud.tickEditor();
   drawOutline();
 
   buildButton.tick();
@@ -103,9 +103,6 @@ void Editor::tick() {
 
   if (propertiesOpen && ((mode == BUILD && ((selectedObject > 0 && selectedObject < 9) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)))) {
     DrawRectangleRec(propertiesRect, editorUIColor);
-    DrawRectangleGradientH(propertiesRect.x, propertiesRect.y, 120, 40, editorGradient1Color, editorGradient2Color);
-    DrawRectangleGradientH(propertiesRect.x + 120, propertiesRect.y, 120, 40, editorGradient2Color, editorGradient1Color);
-    DrawOutlinedCenteredText(editorFontBold, "PROPERTIES", {propertiesRect.x, propertiesRect.y, 240, 40}, 35, WHITE, 2, BLACK);
     if (selectedObject == 1) tickSettings(&wallBlock);
     else if (selectedObject == 2) tickSettings(&backgroundBlock);
     else if (selectedObject == 3) tickSettings(&enemy);
@@ -115,6 +112,9 @@ void Editor::tick() {
     else if (selectedObject == 7) tickSettings(&conveyor);
     else if (selectedObject == 8) tickSettings(&checkpoint);
     else if (configButton.selected) tickSettings(nullptr);
+    DrawRectangleGradientH(propertiesRect.x, propertiesRect.y, 120, 40, editorGradient1Color, editorGradient2Color);
+    DrawRectangleGradientH(propertiesRect.x + 120, propertiesRect.y, 120, 40, editorGradient2Color, editorGradient1Color);
+    DrawOutlinedCenteredText(editorFontBold, "PROPERTIES", {propertiesRect.x, propertiesRect.y, 240, 40}, 35, WHITE, 2, BLACK);
   }
 
   if (mode == BUILD) {
@@ -485,6 +485,9 @@ void Editor::tick() {
 
   configButton.tick();
   playButton.tick();
+
+
+  level->hud.tickEditor();
 }
 
 void Editor::drawGrid() {
@@ -705,6 +708,45 @@ void Editor::plainButton() {
 }
 
 void Editor::tickSettings(GameObject* object) {
+
+  if (scrollAllowed) {
+    float propertyScrollDelta = -GetMouseWheelMove() * GetFrameTime() * 2000;
+
+    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) propertyScrollDelta = 0;
+
+    if (propertyScroll + propertyScrollDelta < 0) {
+      propertyScrollDelta = -propertyScroll;
+    } else if (propertyScroll + propertyScrollDelta > maxScroll) propertyScrollDelta = 0;
+    propertyScroll += propertyScrollDelta;
+    
+
+    propertiesRect.y -= propertyScrollDelta;
+    for (Widget* widget : propertyWidgets) {
+      widget->rect.y -= propertyScrollDelta;
+      if (ColorWidget* colorWidget = dynamic_cast<ColorWidget*>(widget)) {
+        colorWidget->redWidget.rect.y -= propertyScrollDelta;
+        colorWidget->greenWidget.rect.y -= propertyScrollDelta;
+        colorWidget->blueWidget.rect.y -= propertyScrollDelta;
+      }
+    }
+
+  } else {
+    propertiesRect.y += propertyScroll;
+    for (Widget* widget : propertyWidgets) {
+      widget->rect.y += propertyScroll;
+      if (ColorWidget* colorWidget = dynamic_cast<ColorWidget*>(widget)) {
+        colorWidget->redWidget.rect.y += propertyScroll;
+        colorWidget->greenWidget.rect.y += propertyScroll;
+        colorWidget->blueWidget.rect.y += propertyScroll;
+      }
+    }
+    propertyScroll = 0;
+  }
+
+  //propertiesRect.y = 80 - propertyScroll;
+
+  scrollAllowed = false;
+
   if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(object)) {
     outlineColorWidgetWallblock.tick();
     fillColorWidgetWallblock.tick();
@@ -717,16 +759,25 @@ void Editor::tickSettings(GameObject* object) {
     outlineColorWidgetCoin.tick();
     fillColorWidgetCoin.tick();
   } else if (Key* key = dynamic_cast<Key*>(object)) {
+    scrollAllowed = true;
+    maxScroll = 100;
+
     outlineColorWidgetKey.tick();
     fillColorWidgetKey.tick();
     if (idWidgetKey.text.empty() && !idWidgetKey.active) idWidgetKey.text = std::to_string(1);
     idWidgetKey.tick();
   } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(object)) {
+    scrollAllowed = true;
+    maxScroll = 100;
+    
     outlineColorWidgetKeyBlock.tick();
     fillColorWidgetKeyBlock.tick();
     if (idWidgetKeyBlock.text.empty() && !idWidgetKeyBlock.active) idWidgetKeyBlock.text = std::to_string(1);
     idWidgetKeyBlock.tick();
   } else if (Conveyor* conveyor = dynamic_cast<Conveyor*>(object)) {
+    scrollAllowed = true;
+    maxScroll = 100;
+
     arrowColorWidgetConveyor.tick();
     fillColorWidgetConveyor.tick();
     if (speedWidgetConveyor.text.empty() && !speedWidgetConveyor.active) speedWidgetConveyor.text = std::to_string(80);
@@ -740,8 +791,11 @@ void Editor::tickSettings(GameObject* object) {
   } else if (object == nullptr) {
     freeCameraWidget.tick();
 
-    DrawRectangleRec({propertiesRect.x, propertiesRect.y + 40, propertiesRect.width, 40}, {174, 174, 174, 255});
-    DrawTextEx(hudFontBold, "Background", {propertiesRect.x + 10, propertiesRect.y + 40 + 2}, 35, 0, textFieldWidgetBorderColor);
+    scrollAllowed = true;
+    maxScroll = 170;
+
+    DrawRectangleRec({propertiesRect.x, propertiesRect.y + 40 + 40, propertiesRect.width, 40}, {174, 174, 174, 255});
+    DrawTextEx(hudFontBold, "Background", {propertiesRect.x + 10, propertiesRect.y + 40 + 40 + 2}, 35, 0, RAYWHITE);
 
     checkerboardWidget.tick();
     plainWidget.tick();

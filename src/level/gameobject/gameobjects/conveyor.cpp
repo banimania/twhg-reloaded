@@ -9,7 +9,7 @@
 void Conveyor::drawArrow(Rectangle rect) {
   rlBegin(RL_QUADS);
 
-  rlColor4f(conveyorColorArrow.r / 255.0f, conveyorColorArrow.g / 255.0f, conveyorColorArrow.b / 255.0f, conveyorColorArrow.a / 255.0f);
+  rlColor4f(arrowColor.r / 255.0f, arrowColor.g / 255.0f, arrowColor.b / 255.0f, arrowColor.a / 255.0f);
 
   rlVertex2f(rect.x, rect.y);
   rlVertex2f(rect.x + (rect.width / 4) + 10, rect.y + rect.height / 2);
@@ -28,7 +28,7 @@ void Conveyor::tick(Player* player) {
   GameObject::tick(player);
   
   //Background
-  DrawRectangle(rect.x, rect.y, rect.width, rect.height, conveyorColorFill);
+  DrawRectangle(rect.x, rect.y, rect.width, rect.height, fillColor);
 
   int rotation = 0;
 

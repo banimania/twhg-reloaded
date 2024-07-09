@@ -45,6 +45,10 @@ void Editor::tick() {
   for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
     wallBlock->updateWallBlock(getAllGameObjectsInLayer<WallBlock>(zLayer));
   }
+  
+  for (KeyBlock* keyBlock : getAllGameObjectsInLayer<KeyBlock>(zLayer)) {
+    keyBlock->updateKeyBlock(getAllGameObjectsInLayer<KeyBlock>(zLayer));
+  }
 
   BeginMode2D(camera);
   
@@ -63,6 +67,12 @@ void Editor::tick() {
       } else if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
         DrawCircle(coin->rect.x + 10, coin->rect.y + 10, 10.0f, editorSelectColor);
       } else DrawRectangleRec(gameObject->rect, editorSelectColor);
+    } else {
+      if (gameObject->zLayer != zLayer && zLayer != 0) {
+        if (Key* key = dynamic_cast<Key*>(gameObject)) {
+          DrawRectangleRec({gameObject->rect.x - 10, gameObject->rect.y - 10, gameObject->rect.width + 20, gameObject->rect.height + 20}, editorOtherLayerColor);
+        } else DrawRectangleRec(gameObject->rect, editorOtherLayerColor);
+      }
     }
   }
 
@@ -92,40 +102,96 @@ void Editor::tick() {
 
   deleteTimer += GetFrameTime();
 
+  if (propertiesOpen && (mode == BUILD && selectedObject > 0 && selectedObject < 9)) {
+    DrawRectangleRec(propertiesRect, editorUIColor);
+    DrawRectangleGradientH(propertiesRect.x, propertiesRect.y, 120, 40, editorGradient1Color, editorGradient2Color);
+    DrawRectangleGradientH(propertiesRect.x + 120, propertiesRect.y, 120, 40, editorGradient2Color, editorGradient1Color);
+    DrawOutlinedCenteredText(editorFontBold, "PROPERTIES", {propertiesRect.x, propertiesRect.y, 240, 40}, 35, WHITE, 2, BLACK);
+    if (selectedObject == 1) tickSettings(&wallBlock);
+    else if (selectedObject == 2) tickSettings(&backgroundBlock);
+    else if (selectedObject == 3) tickSettings(&enemy);
+    else if (selectedObject == 4) tickSettings(&coin);
+    else if (selectedObject == 5) tickSettings(&key);
+    else if (selectedObject == 6) tickSettings(&keyBlock);
+    else if (selectedObject == 7) tickSettings(&conveyor);
+    else if (selectedObject == 8) tickSettings(&checkpoint);
+  }
+
   if (mode == BUILD) {
 
     selectedObjects = {};
 
-    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240, SCREEN_HEIGHT - 80})) {
+    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
       Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
       if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && selectedObject != -1) {
         GameObject* object;
 
         switch (selectedObject) {
-          case 1:
-            object = new WallBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+          case 1: {
+            WallBlock* wall = new WallBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+            wall->outlineColor = outlineColorWidgetWallblock.color;
+            wall->fillColor = fillColorWidgetWallblock.color;
+            object = wall;
             break;
-          case 2:
-            object = new BackgroundBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+          }
+          case 2: {
+            BackgroundBlock* background = new BackgroundBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+            background->fillColor = fillColorWidgetBackgroundblock.color;
+            object = background;
             break;
-          case 3:
-            object = new Enemy({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
+          }
+          case 3: {
+            Enemy* enemy = new Enemy({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
+            enemy->outlineColor = outlineColorWidgetEnemy.color;
+            enemy->fillColor = fillColorWidgetEnemy.color;
+            object = enemy;
             break;
-          case 4:
-            object = new Coin({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
+          }
+          case 4: {
+            Coin* coin = new Coin({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 10, level, zLayer);
+            coin->outlineColor = outlineColorWidgetEnemy.color;
+            coin->fillColor = fillColorWidgetEnemy.color;
+            object = coin;
             break;
-          case 5:
-            object = new Key({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 1, level, zLayer);
+          }
+          case 5: {
+            Key* key = new Key({(float) ((int) (pos.x / 40) * 40) + 20, (float) ((int) (pos.y / 40) * 40) + 20}, 1, level, zLayer);
+            key->outlineColor = outlineColorWidgetKey.color;
+            key->fillColor = fillColorWidgetKey.color;
+            key->keyId = idWidgetKey.text.empty() ? 1 : std::stoi(idWidgetKey.text);
+            object = key;
             break;
-          case 6:
-            object = new KeyBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, 1, level, zLayer);
+          }
+          case 6: {
+            KeyBlock* keyBlock = new KeyBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, 1, level, zLayer);
+            keyBlock->outlineColor = outlineColorWidgetKeyBlock.color;
+            keyBlock->fillColor = fillColorWidgetKeyBlock.color;
+            keyBlock->keyId = idWidgetKeyBlock.text.empty() ? 1 : std::stoi(idWidgetKeyBlock.text);
+            object = keyBlock;
             break;
-          case 7:
-            object = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level, zLayer);
+          }
+          case 7: {
+            Conveyor* conveyor = new Conveyor({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, RIGHT, level, zLayer);
+            conveyor->arrowColor = arrowColorWidgetConveyor.color;
+            conveyor->fillColor = fillColorWidgetConveyor.color;
+            conveyor->speed = speedWidgetConveyor.text.empty() ? 80: std::stoi(speedWidgetConveyor.text);
+            
+            if (directionWidgetConveyor.selectedOption == "Right") conveyor->direction = RIGHT;
+            else if (directionWidgetConveyor.selectedOption == "Left") conveyor->direction = LEFT;
+            else if (directionWidgetConveyor.selectedOption == "Up") conveyor->direction = UP;
+            else if (directionWidgetConveyor.selectedOption == "Down") conveyor->direction = DOWN;
+            object = conveyor;
             break;
-          case 8:
-            object = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, false, level, zLayer);
+          }
+          case 8: {
+            Checkpoint* checkpoint = new Checkpoint({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, false, level, zLayer);
+            checkpoint->fillColor = fillColorWidgetCheckpoint.color;
+            checkpoint->goal = goalWidgetCheckpoint.value;
+            checkpoint->saveKeys = saveKeysWidgetCheckpoint.value;
+            checkpoint->saveCoins = saveCoinsWidgetCheckpoint.value;
+            object = checkpoint;
             break;
+          }
           case 9:
             level->startX = (float) ((int) (pos.x / 40) * 40) + 5;
             level->startY = (float) ((int) (pos.y / 40) * 40) + 5;
@@ -169,6 +235,8 @@ void Editor::tick() {
     rlTranslatef(wallBlock.rect.x - difHalf, wallBlock.rect.y - difHalf, 0.0f);
     rlScalef(buildWallblockButton.scale, buildWallblockButton.scale, 1.0f);
     rlTranslatef(-wallBlock.rect.x, -wallBlock.rect.y, 0.0f);
+    wallBlock.fillColor = fillColorWidgetWallblock.color;
+    wallBlock.outlineColor = outlineColorWidgetWallblock.color;
     wallBlock.tick(&level->player);
     rlPopMatrix();
 
@@ -185,6 +253,7 @@ void Editor::tick() {
     rlTranslatef(backgroundBlock.rect.x - difHalf, backgroundBlock.rect.y - difHalf, 0.0f);
     rlScalef(buildBackgroundBlockButton.scale, buildBackgroundBlockButton.scale, 1.0f);
     rlTranslatef(-backgroundBlock.rect.x, -backgroundBlock.rect.y, 0.0f);
+    backgroundBlock.fillColor = fillColorWidgetBackgroundblock.color;
     backgroundBlock.tick(&level->player);
     rlPopMatrix();
 
@@ -202,6 +271,8 @@ void Editor::tick() {
     rlTranslatef(enemy.rect.x - difHalf * 0.7, enemy.rect.y - difHalf * 0.7, 0.0f);
     rlScalef(buildEnemyButton.scale, buildEnemyButton.scale, 1.0f);
     rlTranslatef(-enemy.rect.x, -enemy.rect.y, 0.0f);
+    enemy.outlineColor = outlineColorWidgetEnemy.color;
+    enemy.fillColor = fillColorWidgetEnemy.color;
     enemy.tick(&level->player);
     rlPopMatrix();
 
@@ -219,6 +290,8 @@ void Editor::tick() {
     rlTranslatef(coin.rect.x - difHalf * 0.7, coin.rect.y - difHalf * 0.7, 0.0f);
     rlScalef(buildCoinButton.scale, buildCoinButton.scale, 1.0f);
     rlTranslatef(-coin.rect.x, -coin.rect.y, 0.0f);
+    coin.fillColor = fillColorWidgetCoin.color;
+    coin.outlineColor = outlineColorWidgetCoin.color;
     coin.tick(&level->player);
     rlPopMatrix();
 
@@ -236,6 +309,8 @@ void Editor::tick() {
     rlTranslatef(key.rect.x - difHalf * 0.7, key.rect.y - difHalf * 0.7, 0.0f);
     rlScalef(buildKeyButton.scale, buildKeyButton.scale, 1.0f);
     rlTranslatef(-key.rect.x, -key.rect.y, 0.0f);
+    key.fillColor = fillColorWidgetKey.color;
+    key.outlineColor = outlineColorWidgetKey.color;
     key.tick(&level->player);
     rlPopMatrix();
 
@@ -245,6 +320,8 @@ void Editor::tick() {
     rlTranslatef(keyBlock.rect.x - difHalf, keyBlock.rect.y - difHalf, 0.0f);
     rlScalef(buildKeyBlockButton.scale, buildKeyBlockButton.scale, 1.0f);
     rlTranslatef(-keyBlock.rect.x, -keyBlock.rect.y, 0.0f);
+    keyBlock.fillColor = fillColorWidgetKeyBlock.color;
+    keyBlock.outlineColor = outlineColorWidgetKeyBlock.color;
     keyBlock.tick(&level->player);
     rlPopMatrix();
    
@@ -263,7 +340,14 @@ void Editor::tick() {
       410 - (buildConveyorButton.rect.height * buildConveyorButton.scale - buildConveyorButton.rect.height) / 2.0f,
       40 * buildConveyorButton.scale,
       40 * buildConveyorButton.scale};
-    conveyor.tick(&level->player);  
+    conveyor.fillColor = fillColorWidgetConveyor.color;
+    conveyor.arrowColor = arrowColorWidgetConveyor.color;
+    conveyor.speed = speedWidgetConveyor.text.empty() ? 80 : std::stoi(speedWidgetConveyor.text);
+    if (directionWidgetConveyor.selectedOption == "Right") conveyor.direction = RIGHT;
+    else if (directionWidgetConveyor.selectedOption == "Left") conveyor.direction = LEFT;
+    else if (directionWidgetConveyor.selectedOption == "Up") conveyor.direction = UP;
+    else if (directionWidgetConveyor.selectedOption == "Down") conveyor.direction = DOWN;
+    conveyor.tick(&level->player); 
     
     rlPushMatrix();
     buildCheckpointButton.tick();
@@ -271,6 +355,7 @@ void Editor::tick() {
     rlTranslatef(checkpoint.rect.x - difHalf, checkpoint.rect.y - difHalf, 0.0f);
     rlScalef(buildCheckpointButton.scale, buildCheckpointButton.scale, 1.0f);
     rlTranslatef(-checkpoint.rect.x, -checkpoint.rect.y, 0.0f);
+    checkpoint.fillColor = fillColorWidgetCheckpoint.color;
     checkpoint.tick(&level->player);
     rlPopMatrix();
 
@@ -381,7 +466,7 @@ void Editor::drawOutline() {
   DrawRectangleGradientH(0, 80, 120, 40, editorGradient1Color, editorGradient2Color);
   DrawRectangleGradientH(120, 80, 120, 40, editorGradient2Color, editorGradient1Color);
 
-  DrawOutlinedText(editorFontBold, "Layer", 30, 80, 35, WHITE, 2, BLACK);
+  DrawOutlinedText(editorFontBold, "LAYER", 17, 80, 35, WHITE, 2, BLACK);
   DrawOutlinedText(editorFontBold, zLayer == 0 ? "All" : std::to_string(zLayer).c_str(), zLayer == 0 ? 155 : 160, zLayer == 0 ? 86 : 80, zLayer == 0 ? 25 : 35, WHITE, 2, BLACK);
 
   DrawTextureEx(arrowLeftTexture, {120, 83}, 0.0f, 0.1f, RAYWHITE);
@@ -410,57 +495,75 @@ void Editor::buildEditButton() {
 
 
 void Editor::selectWallblockButton() {
+  bool wasSelected = buildWallblockButton.selected;
   selectedObject = 1;
   deselectAll();
-  buildWallblockButton.setSelected(true);
+  buildWallblockButton.setSelected(!wasSelected);
+  if (!buildWallblockButton.selected) selectedObject = 0;
 }
 
 void Editor::selectBackgroundBlockButton() {
+  bool wasSelected = buildBackgroundBlockButton.selected;
   selectedObject = 2;
   deselectAll();
-  buildBackgroundBlockButton.setSelected(true);
+  buildBackgroundBlockButton.setSelected(!wasSelected);
+  if (!buildBackgroundBlockButton.selected) selectedObject = 0;
 }
 
 void Editor::selectEnemyButton() {
+  bool wasSelected = buildEnemyButton.selected;
   selectedObject = 3;
   deselectAll();
-  buildEnemyButton.setSelected(true);
+  buildEnemyButton.setSelected(!wasSelected);
+  if (!buildEnemyButton.selected) selectedObject = 0;
 }
 
 void Editor::selectCoinButton() {
+  bool wasSelected = buildCoinButton.selected;
   selectedObject = 4;
   deselectAll();
-  buildCoinButton.setSelected(true);
+  buildCoinButton.setSelected(!wasSelected);
+  if (!buildCoinButton.selected) selectedObject = 0;
 }
 
 void Editor::selectKeyButton() {
+  bool wasSelected = buildKeyButton.selected;
   selectedObject = 5;
   deselectAll();
-  buildKeyButton.setSelected(true);
+  buildKeyButton.setSelected(!wasSelected);
+  if (!buildKeyButton.selected) selectedObject = 0;
 }
 
 void Editor::selectKeyBlockButton() {
+  bool wasSelected = buildKeyBlockButton.selected;
   selectedObject = 6;
   deselectAll();
-  buildKeyBlockButton.setSelected(true);
+  buildKeyBlockButton.setSelected(!wasSelected);
+  if (!buildKeyBlockButton.selected) selectedObject = 0;
 }
 
 void Editor::selectConveyorButton() {
+  bool wasSelected = buildConveyorButton.selected;
   selectedObject = 7;
   deselectAll();
-  buildConveyorButton.setSelected(true);
+  buildConveyorButton.setSelected(!wasSelected);
+  if (!buildConveyorButton.selected) selectedObject = 0;
 }
 
 void Editor::selectCheckpointButton() {
+  bool wasSelected = buildCheckpointButton.selected;
   selectedObject = 8;
   deselectAll();
-  buildCheckpointButton.setSelected(true);
+  buildCheckpointButton.setSelected(!wasSelected);
+  if (!buildCheckpointButton.selected) selectedObject = 0;
 }
 
 void Editor::selectPlayerButton() {
+  bool wasSelected = buildPlayerButton.selected;
   selectedObject = 9;
   deselectAll();
-  buildPlayerButton.setSelected(true);
+  buildPlayerButton.setSelected(!wasSelected);
+  if (!buildPlayerButton.selected) selectedObject = 0;
 }
 
 void Editor::deselectAll() {
@@ -533,6 +636,42 @@ void Editor::trashButton() {
 void Editor::duplicateButton() {
   for (GameObject* gameObject : selectedObjects) {
     level->gameObjects.push_back(gameObject->clone());
+  }
+}
+
+void Editor::tickSettings(GameObject* object) {
+  if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(object)) {
+    outlineColorWidgetWallblock.tick();
+    fillColorWidgetWallblock.tick();
+  } else if (BackgroundBlock* backgroundBlock = dynamic_cast<BackgroundBlock*>(object)) {
+    fillColorWidgetBackgroundblock.tick();
+  } else if (Enemy* enemy = dynamic_cast<Enemy*>(object)) {
+    outlineColorWidgetEnemy.tick();
+    fillColorWidgetEnemy.tick();
+  } else if (Coin* coin = dynamic_cast<Coin*>(object)) {
+    outlineColorWidgetCoin.tick();
+    fillColorWidgetCoin.tick();
+  } else if (Key* key = dynamic_cast<Key*>(object)) {
+    outlineColorWidgetKey.tick();
+    fillColorWidgetKey.tick();
+    if (idWidgetKey.text.empty() && !idWidgetKey.active) idWidgetKey.text = std::to_string(1);
+    idWidgetKey.tick();
+  } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(object)) {
+    outlineColorWidgetKeyBlock.tick();
+    fillColorWidgetKeyBlock.tick();
+    if (idWidgetKeyBlock.text.empty() && !idWidgetKeyBlock.active) idWidgetKeyBlock.text = std::to_string(1);
+    idWidgetKeyBlock.tick();
+  } else if (Conveyor* conveyor = dynamic_cast<Conveyor*>(object)) {
+    arrowColorWidgetConveyor.tick();
+    fillColorWidgetConveyor.tick();
+    if (speedWidgetConveyor.text.empty() && !speedWidgetConveyor.active) speedWidgetConveyor.text = std::to_string(80);
+    speedWidgetConveyor.tick();
+    directionWidgetConveyor.tick();
+  } else if (Checkpoint* checkpoint = dynamic_cast<Checkpoint*>(object)) {
+    fillColorWidgetCheckpoint.tick();
+    goalWidgetCheckpoint.tick();
+    saveCoinsWidgetCheckpoint.tick();
+    saveKeysWidgetCheckpoint.tick();
   }
 }
 

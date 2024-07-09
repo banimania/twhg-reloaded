@@ -7,6 +7,8 @@
 
 class Enemy : public GameObject {
 public:
+  Color outlineColor = enemyColorOutline, fillColor = enemyColorFill;
+
   float radius;
 
   void tick(Player* player) override;

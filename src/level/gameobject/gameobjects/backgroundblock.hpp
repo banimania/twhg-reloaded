@@ -7,6 +7,8 @@
 
 class BackgroundBlock : public GameObject {
 public:
+  Color fillColor = wallBlockColorFill;
+
   void tick(Player* player) override;
 
   BackgroundBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {};

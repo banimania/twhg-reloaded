@@ -4,7 +4,9 @@
 void Coin::tick(Player* player) {
 
   if (isBeingCollected) {
-    DrawTextureEx(coinTexture, {rect.x, rect.y}, 0.0f, (2.0f / coinTexture.width) * radius, {255, 255, 255, (static_cast<unsigned char>((1 - collectTimer / collectTime) * 255.0f))});
+    //DrawTextureEx(coinTexture, {rect.x, rect.y}, 0.0f, (2.0f / coinTexture.width) * radius, {255, 255, 255, (static_cast<unsigned char>((1 - collectTimer / collectTime) * 255.0f))});
+    DrawCircle(rect.x + 10, rect.y + 10, 10.0f, {outlineColor.r, outlineColor.g, outlineColor.b, (static_cast<unsigned char>((1 - collectTimer / collectTime) * 255.0f))});
+    DrawCircle(rect.x + 10, rect.y + 10, 6.0f, {fillColor.r, fillColor.g, fillColor.b, (static_cast<unsigned char>((1 - collectTimer / collectTime) * 255.0f))});
     collectTimer += GetFrameTime();
     if (collectTimer > collectTime) {
       isBeingCollected = false;
@@ -15,7 +17,9 @@ void Coin::tick(Player* player) {
   if (collected) return;
 
   GameObject::tick(player);
-  DrawTextureEx(coinTexture, {rect.x, rect.y}, 0.0f, (2.0f / coinTexture.width) * radius, WHITE);
+  //DrawTextureEx(coinTexture, {rect.x, rect.y}, 0.0f, (2.0f / coinTexture.width) * radius, WHITE);
+  DrawCircle(rect.x + 10, rect.y + 10, 10.0f, outlineColor);
+  DrawCircle(rect.x + 10, rect.y + 10, 6.0f, fillColor);
 
   //Check collision
   if (CheckCollisionCircleRec({rect.x + rect.width / 2.0f, rect.y + rect.height / 2.0f}, radius / 2.0f, player->rect)) {

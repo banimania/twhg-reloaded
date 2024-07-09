@@ -3,7 +3,7 @@
 
 void Checkpoint::tick(Player* player) {
   GameObject::tick(player);
-  DrawRectangleRec(rect, checkpointColorFill);
+  DrawRectangleRec(rect, fillColor);
 }
 
 Checkpoint* Checkpoint::clone() {

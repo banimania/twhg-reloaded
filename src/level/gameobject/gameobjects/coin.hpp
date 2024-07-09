@@ -8,6 +8,9 @@
 
 class Coin : public GameObject {
 public:
+  Color outlineColor = coinColorOutline;
+  Color fillColor = coinColorFill;
+  
   float radius;
 
   bool collected = false;

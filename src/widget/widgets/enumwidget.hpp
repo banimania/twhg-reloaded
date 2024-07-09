@@ -19,10 +19,12 @@ public:
 
   bool dropDown = false;
 
+  std::string title;
+
   std::vector<std::string> options;
   std::string selectedOption;
 
-  EnumWidget(Vector2 pos, float width, int fontSize, std::vector<std::string> options, std::string selectedOption) : Widget({pos.x, pos.y, width, fontSize + 10.0f}), options(options), selectedOption(selectedOption), fontSize(fontSize) {};
+  EnumWidget(std::string title, Vector2 pos, float width, int fontSize, std::vector<std::string> options, std::string selectedOption) : Widget({pos.x, pos.y, width, fontSize + 10.0f}), options(options), selectedOption(selectedOption), fontSize(fontSize), title(title) {};
   
   void tick() override;
   

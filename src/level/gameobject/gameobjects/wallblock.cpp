@@ -3,24 +3,23 @@
 
 void WallBlock::tick(Player* player) {
   GameObject::tick(player);
-  DrawRectangle(rect.x, rect.y, rect.width, rect.height, wallBlockColorFill);
+  DrawRectangle(rect.x, rect.y, rect.width, rect.height, fillColor);
 
+  if (states[0]) DrawRectangle(rect.x, rect.y + wallThickness, wallThickness, rect.height - 2 * wallThickness, outlineColor);
 
-  if (states[0]) DrawRectangle(rect.x, rect.y + wallThickness, wallThickness, rect.height - 2 * wallThickness, wallBlockColorOutline);
+  if (states[1]) DrawRectangle(rect.x + wallThickness, rect.y, rect.width - 2 * wallThickness, wallThickness, outlineColor);
 
-  if (states[1]) DrawRectangle(rect.x + wallThickness, rect.y, rect.width - 2 * wallThickness, wallThickness, wallBlockColorOutline);
+  if (states[2]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y + wallThickness, wallThickness, rect.height - 2 * wallThickness, outlineColor);
 
-  if (states[2]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y + wallThickness, wallThickness, rect.height - 2 * wallThickness, wallBlockColorOutline);
+  if (states[3]) DrawRectangle(rect.x + wallThickness, rect.y + rect.height - wallThickness, rect.width - 2 * wallThickness, wallThickness, outlineColor);
 
-  if (states[3]) DrawRectangle(rect.x + wallThickness, rect.y + rect.height - wallThickness, rect.width - 2 * wallThickness, wallThickness, wallBlockColorOutline);
+  if (states[4]) DrawRectangle(rect.x, rect.y, wallThickness, wallThickness, outlineColor);
 
-  if (states[4]) DrawRectangle(rect.x, rect.y, wallThickness, wallThickness, wallBlockColorOutline);
+  if (states[5]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y, wallThickness, wallThickness, outlineColor);
 
-  if (states[5]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y, wallThickness, wallThickness, wallBlockColorOutline);
+  if (states[6]) DrawRectangle(rect.x, rect.y + rect.height - wallThickness, wallThickness, wallThickness, outlineColor);
 
-  if (states[6]) DrawRectangle(rect.x, rect.y + rect.height - wallThickness, wallThickness, wallThickness, wallBlockColorOutline);
-
-  if (states[7]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y + rect.height - wallThickness, wallThickness, wallThickness, wallBlockColorOutline);
+  if (states[7]) DrawRectangle(rect.x + rect.width - wallThickness, rect.y + rect.height - wallThickness, wallThickness, wallThickness, outlineColor);
 }
 
 void WallBlock::updateWallBlock(std::vector<WallBlock*> wallBlocks) {

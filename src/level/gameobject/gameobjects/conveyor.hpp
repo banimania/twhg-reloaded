@@ -13,6 +13,9 @@ enum Direction {
 
 class Conveyor : public GameObject {
 public:
+  Color fillColor = conveyorColorFill;
+  Color arrowColor = conveyorColorArrow;
+
   float speed;
   Direction direction;
 

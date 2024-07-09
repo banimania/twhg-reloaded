@@ -4,8 +4,6 @@
 #include <raylib.h>
 #include <string>
 
-inline Texture enemyTexture;
-inline Texture coinTexture;
 inline Texture keyTexture;
 inline Texture arrowLeftTexture;
 inline Texture arrowRightTexture;

@@ -3,6 +3,9 @@
 
 #include "../level/level.hpp"
 #include "../widget/widgets/buttonwidget.hpp"
+#include "../widget/widgets/enumwidget.hpp"
+#include "../widget/widgets/booleanwidget.hpp"
+#include "../widget/widgets/colorwidget.hpp"
 #include "../level/gameobject/gameobjects/wallblock.hpp"
 #include "../level/gameobject/gameobjects/backgroundblock.hpp"
 #include "../level/gameobject/gameobjects/enemy.hpp"
@@ -73,6 +76,40 @@ public:
 
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildModeButton, this));
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildEditButton, this));
+ 
+  bool propertiesOpen = true;
+  Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80};
+
+  ColorWidget outlineColorWidgetWallblock = ColorWidget("Outline", wallBlockColorOutline, {propertiesRect.x, propertiesRect.y + 40}, 240);
+  ColorWidget fillColorWidgetWallblock = ColorWidget("Fill", wallBlockColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40}, 240);
+  
+  ColorWidget fillColorWidgetBackgroundblock = ColorWidget("Fill", wallBlockColorFill, {propertiesRect.x, propertiesRect.y + 40}, 240);
+
+  ColorWidget outlineColorWidgetEnemy = ColorWidget("Outline", enemyColorOutline, {propertiesRect.x, propertiesRect.y + 40}, 240);
+  ColorWidget fillColorWidgetEnemy = ColorWidget("Fill", enemyColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40}, 240);
+
+  ColorWidget outlineColorWidgetCoin = ColorWidget("Outline", coinColorOutline, {propertiesRect.x, propertiesRect.y + 40}, 240);
+  ColorWidget fillColorWidgetCoin = ColorWidget("Fill", coinColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40}, 240);
+ 
+  TextFieldWidget idWidgetKey = TextFieldWidget("Key ID", {propertiesRect.x + 10, propertiesRect.y + 70}, 220, 35, true, 4);
+  ColorWidget outlineColorWidgetKey = ColorWidget("Outline", keyColorOutline, {propertiesRect.x, propertiesRect.y + 40 + 75}, 240);
+  ColorWidget fillColorWidgetKey = ColorWidget("Fill", keyColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40 + 75}, 240);
+  
+  TextFieldWidget idWidgetKeyBlock = TextFieldWidget("Key ID", {propertiesRect.x + 10, propertiesRect.y + 70}, 220, 35, true, 4);
+  ColorWidget outlineColorWidgetKeyBlock = ColorWidget("Outline", keyColorOutline, {propertiesRect.x, propertiesRect.y + 40 + 75}, 240);
+  ColorWidget fillColorWidgetKeyBlock = ColorWidget("Fill", keyColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40 + 75}, 240);
+ 
+
+  std::vector<std::string> options = std::vector<std::string>{"Up", "Down", "Right", "Left"};
+  TextFieldWidget speedWidgetConveyor = TextFieldWidget("Speed", {propertiesRect.x + 10, propertiesRect.y + 70}, 220, 35, true, 3);
+  EnumWidget directionWidgetConveyor = EnumWidget("Direction", {propertiesRect.x + 10, propertiesRect.y + 70 + 75}, 220, 35, options, "Right");
+  ColorWidget arrowColorWidgetConveyor = ColorWidget("Arrow", conveyorColorArrow, {propertiesRect.x, propertiesRect.y + 40 + 75 + 75}, 240);
+  ColorWidget fillColorWidgetConveyor = ColorWidget("Fill", conveyorColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40 + 75 + 75}, 240);
+ 
+  BooleanWidget goalWidgetCheckpoint = BooleanWidget("Is Goal", false, {propertiesRect.x, propertiesRect.y + 40}, 240, 35);
+  BooleanWidget saveKeysWidgetCheckpoint = BooleanWidget("Save Keys", true, {propertiesRect.x, propertiesRect.y + 40 + 40}, 240, 35);
+  BooleanWidget saveCoinsWidgetCheckpoint = BooleanWidget("Save Coins", true, {propertiesRect.x, propertiesRect.y + 40 + 40 + 40}, 240, 35);
+  ColorWidget fillColorWidgetCheckpoint = ColorWidget("Fill", checkpointColorFill, {propertiesRect.x, propertiesRect.y + 40 + 40 + 40 + 40}, 240);
   
   Editor() {
     camera.zoom = 1;
@@ -80,6 +117,10 @@ public:
     camera.target = {-155, -80};
 
     buildButton.setSelected(true);
+
+    speedWidgetConveyor.maxNumber = 300;
+    idWidgetKey.maxNumber = 999;
+    idWidgetKeyBlock.maxNumber = 999;
   }
 
   
@@ -114,6 +155,8 @@ public:
   void trashButton();
 
   void duplicateButton();
+
+  void tickSettings(GameObject* object);
 
   std::vector<GameObject*> getAllGameObjectsInPos(Vector2 pos, int layer);
 

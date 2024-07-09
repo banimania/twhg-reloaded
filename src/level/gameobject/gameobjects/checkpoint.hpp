@@ -7,7 +7,11 @@
 
 class Checkpoint : public GameObject {
 public:
-  bool goal;
+  Color fillColor = checkpointColorFill;
+
+  bool goal = false;
+  bool saveCoins = true;
+  bool saveKeys = true;
 
   void tick(Player* player) override;
 

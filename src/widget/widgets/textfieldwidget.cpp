@@ -20,7 +20,13 @@ void TextFieldWidget::tick() {
     int keyPressed = GetCharPressed();
     if (keyPressed >= 32 && keyPressed < 126) {
       if (!(onlyNumbers && !isdigit(keyPressed)) && text.length() < maxLength) {
-        text += (char) keyPressed;
+        int num = 0;
+        if (onlyNumbers) {
+          num = std::stoi(text + (char) keyPressed);
+          if (num <= maxNumber) {
+            text += (char) keyPressed;
+          }
+        } else text += (char) keyPressed;
       } 
     }
 
@@ -31,6 +37,7 @@ void TextFieldWidget::tick() {
     }
   }
 
+  DrawTextEx(font, title.c_str(), {rect.x, rect.y - 35}, fontSize, 0, borderColor);
   BeginScissorMode(rect.x, rect.y, rect.width, rect.height);
   DrawTextEx(font, text.c_str(), {rect.x + borderThickness + 1, rect.y + 2}, fontSize, 0, borderColor);
   if (blink) DrawRectangle(rect.x + MeasureTextEx(font, text.c_str(), fontSize, 0).x + borderThickness + 3, rect.y + borderThickness + 1, 3, rect.height - borderThickness * 2 - 2, borderColor);

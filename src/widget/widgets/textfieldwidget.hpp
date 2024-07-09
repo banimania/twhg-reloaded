@@ -22,14 +22,16 @@ public:
 
   float backTimer = 0, backTime = 0.1f;
 
+  std::string title;
   std::string text = "";
   int maxLength;
+  int maxNumber = 0;
 
   int fontSize;
 
   Font font;
 
-  TextFieldWidget(Vector2 pos, float width, int fontSize, bool onlyNumbers, int maxLength) : Widget({pos.x, pos.y, width, fontSize + 10.0f}), fontSize(fontSize), text(""), onlyNumbers(onlyNumbers), maxLength(maxLength) {};
+  TextFieldWidget(std::string title, Vector2 pos, float width, int fontSize, bool onlyNumbers, int maxLength) : Widget({pos.x, pos.y, width, fontSize + 10.0f}), fontSize(fontSize), text(""), onlyNumbers(onlyNumbers), maxLength(maxLength), title(title) {};
 
   void tick() override;
 

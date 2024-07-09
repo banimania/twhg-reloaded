@@ -7,6 +7,8 @@
 
 class WallBlock : public GameObject {
 public:
+  Color outlineColor = wallBlockColorOutline, fillColor = wallBlockColorFill;
+
   bool states[8] = {true, true, true, true, true, true, true, true};
 
   int wallThickness = 5;

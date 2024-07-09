@@ -692,18 +692,6 @@ void Editor::playTestButton() {
 
 }
 
-void Editor::checkerboardButton() {
-  level->background.backgroundType = CHECKERBOARD;
-  checkerboardWidget.setSelected(true);
-  plainWidget.setSelected(false);
-}
-
-void Editor::plainButton() {
-  level->background.backgroundType = PLAIN;
-  checkerboardWidget.setSelected(false);
-  plainWidget.setSelected(true);
-}
-
 void Editor::tickSettings(GameObject* object) {
   if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(object)) {
     outlineColorWidgetWallblock.tick();
@@ -741,34 +729,8 @@ void Editor::tickSettings(GameObject* object) {
     freeCameraWidget.tick();
 
     DrawRectangleRec({propertiesRect.x, propertiesRect.y + 40, propertiesRect.width, 40}, {174, 174, 174, 255});
+
     DrawTextEx(hudFontBold, "Background", {propertiesRect.x + 10, propertiesRect.y + 40 + 2}, 35, 0, textFieldWidgetBorderColor);
-
-    checkerboardWidget.tick();
-    plainWidget.tick();
-
-    rlPushMatrix();
-    float difHalf = (checkerboardWidget.rect.width * checkerboardWidget.scale - checkerboardWidget.rect.width) / 2.0f;
-    rlTranslatef(checkerboardWidget.rect.x + checkerboardWidget.rect.width / 2.0f + difHalf, checkerboardWidget.rect.y + checkerboardWidget.rect.height / 2.0f + difHalf, 0.0f);
-    rlScalef(checkerboardWidget.scale, checkerboardWidget.scale, 1.0f);
-    rlTranslatef(-checkerboardWidget.rect.x - checkerboardWidget.rect.width / 2.0f - difHalf, -checkerboardWidget.rect.y - checkerboardWidget.rect.height / 2.0f - difHalf, 0.0f);
-    DrawRectangleRec({checkerboardWidget.rect.x + checkerboardWidget.borderThickness, checkerboardWidget.rect.y + checkerboardWidget.borderThickness, checkerboardWidget.rect.width - 2 * checkerboardWidget.borderThickness, checkerboardWidget.rect.height - 2 * checkerboardWidget.borderThickness}, level->background.colorPrimary);
-    DrawRectangleRec({checkerboardWidget.rect.x + checkerboardWidget.borderThickness, checkerboardWidget.rect.y + checkerboardWidget.borderThickness, checkerboardWidget.rect.width / 2.0f - checkerboardWidget.borderThickness, checkerboardWidget.rect.height / 2.0f - checkerboardWidget.borderThickness}, level->background.colorSecondary);
-    DrawRectangleRec({checkerboardWidget.rect.x + checkerboardWidget.rect.width / 2.0f, checkerboardWidget.rect.y + checkerboardWidget.rect.height / 2.0f, checkerboardWidget.rect.width / 2.0f - checkerboardWidget.borderThickness, checkerboardWidget.rect.height / 2.0f - checkerboardWidget.borderThickness}, level->background.colorSecondary);
-    rlPopMatrix();
-
-    rlPushMatrix();
-    difHalf = (plainWidget.rect.width * plainWidget.scale - plainWidget.rect.width) / 2.0f;
-    rlTranslatef(plainWidget.rect.x + plainWidget.rect.width / 2.0f + difHalf, plainWidget.rect.y + plainWidget.rect.height / 2.0f + difHalf, 0.0f);
-    rlScalef(plainWidget.scale, plainWidget.scale, 1.0f);
-    rlTranslatef(-plainWidget.rect.x - plainWidget.rect.width / 2.0f - difHalf, -plainWidget.rect.y - plainWidget.rect.height / 2.0f - difHalf, 0.0f);
-    DrawRectangleRec({plainWidget.rect.x + plainWidget.borderThickness, plainWidget.rect.y + plainWidget.borderThickness, plainWidget.rect.width - 2 * plainWidget.borderThickness, plainWidget.rect.height - 2 * plainWidget.borderThickness}, level->background.colorPrimary);
-    rlPopMatrix();
-
-    backgroundPrimaryColorWidget.tick();
-    backgroundSecondaryColorWidget.tick();
-
-    level->background.colorPrimary = backgroundPrimaryColorWidget.color;
-    level->background.colorSecondary = backgroundSecondaryColorWidget.color;
   }
 }
 

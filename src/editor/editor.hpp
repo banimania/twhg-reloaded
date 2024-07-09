@@ -74,11 +74,17 @@ public:
   ButtonWidget editTrashButton = ButtonWidget("trashTexture", 0.08f, {170, 400, 60, 60}, std::bind(&Editor::trashButton, this));
   ButtonWidget editDuplicateButton = ButtonWidget("duplicateTexture", 0.08f, {10, 480, 60, 60}, std::bind(&Editor::duplicateButton, this));
 
-  ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildModeButton, this));
-  ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::buildEditButton, this));
+  ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::configurationButton, this));
+  ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::playTestButton, this));
  
   bool propertiesOpen = true;
   Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80};
+  
+  BooleanWidget freeCameraWidget = BooleanWidget("Free Camera", false, {propertiesRect.x, propertiesRect.y + 40}, 240, 35);
+  ButtonWidget checkerboardWidget = ButtonWidget("", 1, {propertiesRect.x + 10, propertiesRect.y + 90, 100, 100}, std::bind(&Editor::checkerboardButton, this));
+  ButtonWidget plainWidget = ButtonWidget("", 1, {propertiesRect.x + propertiesRect.width - 110, propertiesRect.y + 90, 100, 100}, std::bind(&Editor::plainButton, this));
+  ColorWidget backgroundPrimaryColorWidget = ColorWidget("Color 1", backgroundColorPrimary, {propertiesRect.x, propertiesRect.y + 200}, 240);
+  ColorWidget backgroundSecondaryColorWidget = ColorWidget("Color 2", backgroundColorSecondary, {propertiesRect.x, propertiesRect.y + 200 + 270}, 240);
 
   ColorWidget outlineColorWidgetWallblock = ColorWidget("Outline", wallBlockColorOutline, {propertiesRect.x, propertiesRect.y + 40}, 240);
   ColorWidget fillColorWidgetWallblock = ColorWidget("Fill", wallBlockColorFill, {propertiesRect.x, propertiesRect.y + 270 + 40}, 240);
@@ -121,6 +127,12 @@ public:
     speedWidgetConveyor.maxNumber = 300;
     idWidgetKey.maxNumber = 999;
     idWidgetKeyBlock.maxNumber = 999;
+
+    if (level->background.backgroundType == PLAIN) plainWidget.setSelected(true);
+    else checkerboardWidget.setSelected(true);
+
+    backgroundPrimaryColorWidget.color = level->background.colorPrimary;
+    backgroundSecondaryColorWidget.color = level->background.colorSecondary;
   }
 
   
@@ -156,6 +168,12 @@ public:
 
   void duplicateButton();
 
+  void configurationButton();
+  void playTestButton();
+
+  void checkerboardButton();
+  void plainButton();
+
   void tickSettings(GameObject* object);
 
   std::vector<GameObject*> getAllGameObjectsInPos(Vector2 pos, int layer);
@@ -168,6 +186,8 @@ public:
   template <typename T>
   std::vector<T*> getGameObjectsInPosAndLayer(Vector2 pos, int layer);
 
+  bool isSingleType(std::vector<GameObject*>& gameObjects);
+  
   void deselectAll();
 };
 

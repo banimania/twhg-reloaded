@@ -8,7 +8,7 @@ void ColorWidget::tick() {
   DrawRectangleRec({rect.x, rect.y, rect.width, 40}, {174, 174, 174, 255});
   DrawRectangleRec({rect.x + rect.width - 35, rect.y + 5, 30, 30}, color);
 
-  DrawTextEx(hudFontBold, name.c_str(), {rect.x + 10, rect.y + 2}, 35, 0, WHITE);
+  DrawTextEx(hudFontBold, name.c_str(), {rect.x + 10, rect.y + 2}, 35, 0, textFieldWidgetBorderColor);
 
   redWidget.tick();
   greenWidget.tick();

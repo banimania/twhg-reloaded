@@ -19,7 +19,7 @@ int main() {
 
   SetTargetFPS(240);
 
-  while(!WindowShouldClose()) {
+  while(true) {
     BeginDrawing();
 
     switch(TWHGReloaded::state) {
@@ -30,6 +30,13 @@ int main() {
         break;
       case PLAYING:
         TWHGReloaded::level.tick();
+        break;
+      case PLAYTEST:
+        TWHGReloaded::editor.level->tick();
+        if (IsKeyReleased(KEY_ESCAPE)) {
+          TWHGReloaded::state = EDITOR;
+          TWHGReloaded::editor.level->reset();
+        }
         break;
     }
 

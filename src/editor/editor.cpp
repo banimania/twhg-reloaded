@@ -4,6 +4,7 @@
 #include <rlgl.h>
 #include "../utils/fonts.hpp"
 #include "../utils/textures.hpp"
+#include "../utils/needed.hpp"
 
 void Editor::initWidgets() {
   init = true;
@@ -692,7 +693,7 @@ void Editor::configurationButton() {
 }
 
 void Editor::playTestButton() {
-
+  TWHGReloaded::state = PLAYTEST;
 }
 
 void Editor::checkerboardButton() {

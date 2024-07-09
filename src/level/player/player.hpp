@@ -12,6 +12,8 @@ public:
   float speed;
   Color outlineColor = playerColorOutline, fillColor = playerColorFill;
 
+  Vector2 lastCheckpoint;
+
   bool isDying = false;
   float dyingTimer = 0.0f, dyingTime = 0.5f;
 
@@ -22,8 +24,8 @@ public:
   void tick(Level* level);
   void die();
 
-  Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed) {};
-  Player() : rect({100, 100, 30, 30}), speed(150) {};
+  Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed), lastCheckpoint(pos) {};
+  Player() : rect({100, 100, 30, 30}), lastCheckpoint({100, 100}), speed(150) {};
 };
 
 #endif

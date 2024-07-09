@@ -25,6 +25,9 @@ public:
 
   void tick();
 
+  void death();
+  void reset();
+
   Level(float startX, float startY, std::string name, Player player, Background background) : startX(startX), startY(startY), name(name), player(player), background(background) {};
   Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {}; 
 };

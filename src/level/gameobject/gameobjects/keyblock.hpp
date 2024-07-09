@@ -12,6 +12,8 @@ public:
 
   bool states[8] = {true, true, true, true, true, true, true, true};
 
+  bool saved = false;
+
   int keyId;
   bool open = false;
   bool isOpening = false;

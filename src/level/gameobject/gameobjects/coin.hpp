@@ -13,6 +13,8 @@ public:
   
   float radius;
 
+  bool saved = false;
+
   bool collected = false;
   bool isBeingCollected = false;
   float collectTimer = 0.0f, collectTime = 0.4f;

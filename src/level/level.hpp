@@ -23,6 +23,9 @@ public:
   Camera2D camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
   HUD hud = HUD(this);
 
+  bool freeCameraMode = false;
+  float camGoalX = 0, camGoalY = 0, camMoveSpeed = 500;
+
   void tick();
 
   void death();

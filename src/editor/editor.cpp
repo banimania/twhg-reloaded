@@ -102,7 +102,9 @@ void Editor::tick() {
 
   deleteTimer += GetFrameTime();
 
-  if (propertiesOpen && ((mode == BUILD && ((selectedObject > 0 && selectedObject < 9) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)))) {
+  propertiesOpen = ((mode == BUILD && ((selectedObject > 0 && selectedObject < 9) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)));
+
+  if (propertiesOpen) {
     DrawRectangleRec(propertiesRect, editorUIColor);
     if (selectedObject == 1) tickSettings(&wallBlock);
     else if (selectedObject == 2) tickSettings(&backgroundBlock);
@@ -122,7 +124,7 @@ void Editor::tick() {
 
     selectedObjects = {};
 
-    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
+    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
       Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
       if (pos.x < 0) pos.x -= 40;
       if (pos.y < 0) pos.y -= 40;
@@ -414,7 +416,7 @@ void Editor::tick() {
     }
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-      if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
+      if (CheckCollisionPointRec(GetMousePosition(), {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
         if (!selecting) {
           selx1 = GetMousePosition().x;
           sely1 = GetMousePosition().y;
@@ -702,6 +704,7 @@ void Editor::configurationButton() {
 }
 
 void Editor::playTestButton() {
+  level->reset();
   TWHGReloaded::state = PLAYTEST;
 }
 
@@ -833,6 +836,8 @@ void Editor::tickSettings(GameObject* object) {
 
     level->background.colorPrimary = backgroundPrimaryColorWidget.color;
     level->background.colorSecondary = backgroundSecondaryColorWidget.color;
+
+    level->freeCameraMode = freeCameraWidget.value;
   }
 }
 

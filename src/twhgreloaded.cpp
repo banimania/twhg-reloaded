@@ -8,8 +8,19 @@
 #if defined(PLATFORM_WEB)
   #include <emscripten/emscripten.h>
 #endif
+
+bool running = true;
+
 void mainLoop() {
   BeginDrawing();
+
+  if (IsKeyPressed(KEY_Q)) {
+    running = false;
+  }
+
+  if (IsKeyPressed(KEY_F)) {
+    ToggleFullscreen();
+  }
 
   switch(TWHGReloaded::state) {
     case MENU:
@@ -50,7 +61,7 @@ int main() {
 
   SetTargetFPS(240);
 
-  while(!WindowShouldClose()) {
+  while(running) {
     mainLoop();
   }
 

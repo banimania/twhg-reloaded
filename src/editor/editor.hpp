@@ -79,7 +79,7 @@ public:
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::configurationButton, this));
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::playTestButton, this));
  
-  bool propertiesOpen = true;
+  bool propertiesOpen = false;
   Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80 + 1000};
 
 

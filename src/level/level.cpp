@@ -3,9 +3,40 @@
 #include "gameobject/gameobjects/key.hpp"
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
+#include <algorithm>
+#include <cstdlib>
 #include <raylib.h>
 
 void Level::tick() {
+  if (freeCameraMode) {
+    //Vector2 centerWorld = GetScreenToWorld2D({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, camera);
+    Vector2 target = {player.rect.x + player.rect.width / 2.0f - SCREEN_WIDTH / 2.0f, player.rect.y + player.rect.height / 2.0f - SCREEN_HEIGHT / 2.0f};
+    camera.target = target;
+    /*Vector2 move = {target.x - camera.target.x, target.y - camera.target.y};
+    camera.target.x += std::clamp(move.x, -player.speed / 240, player.speed / 240);
+    camera.target.y += std::clamp(move.y, -player.speed / 240, player.speed / 240);*/
+  } else {
+    if (player.rect.x + player.rect.width / 2.0f > camGoalX + SCREEN_WIDTH) {
+      camGoalX += SCREEN_WIDTH;
+    } else if (player.rect.x + player.rect.width / 2.0f < camGoalX) {
+      camGoalX -= SCREEN_WIDTH;
+    }
+
+    if (std::abs(camGoalX - camera.target.x) <= GetFrameTime() * camMoveSpeed) camera.target.x = camGoalX;
+    if (camera.target.x > camGoalX) camera.target.x -= GetFrameTime() * camMoveSpeed;
+    else if (camera.target.x < camGoalX) camera.target.x += GetFrameTime() * camMoveSpeed;
+    
+    if (player.rect.y + player.rect.height / 2.0f > camGoalY + SCREEN_HEIGHT) {
+      camGoalY += SCREEN_HEIGHT - 80;
+    } else if (player.rect.y + player.rect.height / 2.0f < camGoalY + 80) {
+      camGoalY -= SCREEN_HEIGHT - 80;
+    }
+
+    if (std::abs(camGoalY - camera.target.y) <= GetFrameTime() * camMoveSpeed) camera.target.y = camGoalY;
+    if (camera.target.y > camGoalY) camera.target.y -= GetFrameTime() * camMoveSpeed;
+    else if (camera.target.y < camGoalY) camera.target.y += GetFrameTime() * camMoveSpeed;
+  }
+
   time += GetFrameTime();
 
   BeginMode2D(camera);
@@ -46,6 +77,11 @@ void Level::death() {
 
   player.deaths++;
 
+  camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
+  if (freeCameraMode) {
+    camera.target = {player.rect.x + player.rect.width / 2.0f - SCREEN_WIDTH / 2.0f, player.rect.y + player.rect.height / 2.0f - SCREEN_HEIGHT / 2.0f};
+  }
+
   for (GameObject* gameObject : gameObjects) {
     if (Key* keyObject = dynamic_cast<Key*>(gameObject)) {
       if (keyObject->saved) continue;
@@ -67,6 +103,7 @@ void Level::death() {
 }
 
 void Level::reset() {
+
   death();
 
   player.rect.x = startX;

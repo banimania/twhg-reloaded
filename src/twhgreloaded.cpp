@@ -5,6 +5,32 @@
 #include "utils/needed.hpp"
 #include "utils/sounds.hpp"
 #include "utils/textures.hpp"
+#if defined(PLATFORM_WEB)
+  #include <emscripten/emscripten.h>
+#endif
+void mainLoop() {
+  BeginDrawing();
+
+  switch(TWHGReloaded::state) {
+    case MENU:
+      break;
+    case EDITOR:
+      TWHGReloaded::editor.tick();
+      break;
+    case PLAYING:
+      TWHGReloaded::level.tick();
+      break;
+    case PLAYTEST:
+      TWHGReloaded::editor.level->tick();
+      if (IsKeyReleased(KEY_ESCAPE)) {
+        TWHGReloaded::state = EDITOR;
+        TWHGReloaded::editor.level->reset();
+      }
+      break;
+  }
+
+  EndDrawing();
+}
 
 int main() {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -17,31 +43,18 @@ int main() {
   loadFonts();
   loadTextures();
 
+
+#if defined(__EMSCRIPTEN__)
+  emscripten_set_main_loop(mainLoop, 240, 1);
+#else
+
   SetTargetFPS(240);
 
-  while(true) {
-    BeginDrawing();
-
-    switch(TWHGReloaded::state) {
-      case MENU:
-        break;
-      case EDITOR:
-        TWHGReloaded::editor.tick();
-        break;
-      case PLAYING:
-        TWHGReloaded::level.tick();
-        break;
-      case PLAYTEST:
-        TWHGReloaded::editor.level->tick();
-        if (IsKeyReleased(KEY_ESCAPE)) {
-          TWHGReloaded::state = EDITOR;
-          TWHGReloaded::editor.level->reset();
-        }
-        break;
-    }
-
-    EndDrawing();
+  while(!WindowShouldClose()) {
+    mainLoop();
   }
+
+#endif
 
   CloseAudioDevice();
   CloseWindow();

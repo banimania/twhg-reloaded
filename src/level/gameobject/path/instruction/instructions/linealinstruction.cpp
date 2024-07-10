@@ -1,4 +1,5 @@
 #include "linealinstruction.hpp"
+#include <cmath>
 
 void LinealInstruction::calculateMovement() {
   Vector2 oldMoved = moved;
@@ -9,11 +10,11 @@ void LinealInstruction::calculateMovement() {
   bool moveX = std::abs(movement.x) > std::abs(moved.x); 
   bool moveY = std::abs(movement.y) > std::abs(moved.y);
   if (moveX) {
-    if (std::abs(movement.x) < std::abs(moved.x) + std::abs(dx)) dx = (std::max(movement.x, moved.x) - std::min(movement.x, moved.x)) * (dx > 0 ? 1 : -1);  
+    if (std::abs(movement.x) < std::abs(moved.x) + std::abs(dx)) dx = (fmax(movement.x, moved.x) - fmin(movement.x, moved.x)) * (dx > 0 ? 1 : -1);  
     moved.x += dx;
   }
   if (moveY) {
-    if (std::abs(movement.y) < std::abs(moved.y) + std::abs(dy)) dy = (std::max(movement.y, moved.y) - std::min(movement.y, moved.y)) * (dy > 0 ? 1 : -1);
+    if (std::abs(movement.y) < std::abs(moved.y) + std::abs(dy)) dy = (fmax(movement.y, moved.y) - fmin(movement.y, moved.y)) * (dy > 0 ? 1 : -1);
     moved.y += dy;
   }
 

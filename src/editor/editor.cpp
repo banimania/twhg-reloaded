@@ -124,6 +124,8 @@ void Editor::tick() {
 
     if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
       Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
+      if (pos.x < 0) pos.x -= 40;
+      if (pos.y < 0) pos.y -= 40;
       if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && selectedObject != -1) {
         GameObject* object;
 
@@ -434,7 +436,14 @@ void Editor::tick() {
         Vector2 pos2ToWorld = GetScreenToWorld2D({selection.x + selection.width, selection.y + selection.height}, camera);
 
         Rectangle selectionWorld = {posToWorld.x, posToWorld.y, pos2ToWorld.x - posToWorld.x, pos2ToWorld.y - posToWorld.y};
-        selectedObjects = getAllGameObjectsInRect(selectionWorld, zLayer);
+        
+        if (!IsKeyDown(KEY_LEFT_SHIFT)) {
+          selectedObjects.clear();
+        }
+
+        for (GameObject* gameObject : getAllGameObjectsInRect(selectionWorld, zLayer)) {
+          selectedObjects.push_back(gameObject);
+        }
       }
       selecting = false;
       selx1 = 0;
@@ -445,7 +454,7 @@ void Editor::tick() {
   }
 
   if (isSingleType(selectedObjects)) {
-    for (GameObject* gameObject : level->gameObjects) {
+    for (GameObject* gameObject : selectedObjects) {
       if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(gameObject)) {
         wallBlock->fillColor = fillColorWidgetWallblock.color;
         wallBlock->outlineColor = outlineColorWidgetWallblock.color;

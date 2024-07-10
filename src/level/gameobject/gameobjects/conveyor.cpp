@@ -49,7 +49,8 @@ void Conveyor::tick(Player* player) {
   //Arrows
   Vector2 posScreen = GetWorldToScreen2D({rect.x, rect.y}, level->camera);
   Vector2 pos2Screen = GetWorldToScreen2D({rect.x + rect.width, rect.y + rect.height}, level->camera);
-  Vector2 sizeScreen = {pos2Screen.x - posScreen.x, pos2Screen.y - posScreen.y};
+  Vector2 sizeScreen = {pos2Screen.x - posScreen.x + 1, pos2Screen.y - posScreen.y + 1};
+  //TODO: this +1 wont fix it properly
 
   BeginScissorMode(isEditorSample ? rect.x : posScreen.x, isEditorSample ? rect.y : posScreen.y, isEditorSample ? rect.width : sizeScreen.x, isEditorSample ? rect.height : sizeScreen.y);
   rlPushMatrix();

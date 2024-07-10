@@ -124,7 +124,7 @@ public:
   ColorWidget fillColorWidgetCheckpoint = ColorWidget("Fill", checkpointColorFill, {propertiesRect.x, propertiesRect.y + 40 + 40 + 40 + 40}, 240);
   
   Editor() {
-    camera.zoom = 1;
+    camera.zoom = 0.8f;
     camera.rotation = 0.0f;
     camera.target = {-155, -80};
 

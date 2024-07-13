@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include "../gameobject.hpp"
 #include "../../../utils/colors.hpp"
+#include "key.hpp"
 
 class KeyBlock : public GameObject {
 public:

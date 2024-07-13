@@ -1,8 +1,4 @@
 #include "key.hpp"
-#include <algorithm>
-#include <map>
-#include <raylib.h>
-#include <utility>
 
 void Key::tick(Player* player) {
   GameObject::tick(player);
@@ -34,6 +30,9 @@ Key* Key::clone() {
   Key* clone = new Key({rect.x, rect.y}, keyId, level, zLayer);
   clone->rect = rect;
   clone->paths = paths;
+  clone->keyId = keyId;
+  clone->outlineColor = outlineColor;
+  clone->fillColor = fillColor;
   return clone;
 }
 

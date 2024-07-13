@@ -9,5 +9,6 @@ BackgroundBlock* BackgroundBlock::clone() {
   BackgroundBlock* clone = new BackgroundBlock({rect.x, rect.y}, level, zLayer);
   clone->rect = rect;
   clone->paths = paths;
+  clone->fillColor = fillColor;
   return clone;
 }

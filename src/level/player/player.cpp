@@ -1,8 +1,5 @@
 #include "player.hpp"
 #include "../level.hpp"
-#include "../gameobject/gameobjects/enemy.hpp"
-#include "../gameobject/gameobjects/keyblock.hpp"
-#include "../../utils/sounds.hpp"
 
 void Player::tick(Level* level) {
   float dx = 0.0f, dy = 0.0f;
@@ -26,37 +23,38 @@ void Player::tick(Level* level) {
     }
   }
 
-  if (nx != rect.x || ny != rect.y) {
+  if (!isDying) {
     bool xCol = false, yCol = false;
 
-    for (GameObject* gameObject : level->gameObjects) {
-      if (gameObject->solid) {
-        if (CheckCollisionRecs({nx, rect.y, rect.width, rect.height}, gameObject->rect)) xCol = true;
-        if (CheckCollisionRecs({rect.x, ny, rect.width, rect.height}, gameObject->rect)) yCol = true;
-      }
-
-      if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
-        if (keyBlock->open) {
-          xCol = false;
-          yCol = false;
+    if (dx != 0.0f || force.x != 0.0f) {
+      nx = rect.x + dx + force.x;
+      for (GameObject* gameObject : level->gameObjects) {
+        if (gameObject->solid) {
+          if (CheckCollisionRecs({nx, rect.y, rect.width, rect.height}, gameObject->rect)) {
+            xCol = true;
+            if (rect.x < gameObject->rect.x) rect.x = gameObject->rect.x - rect.width;
+            else rect.x = gameObject->rect.x + gameObject->rect.width;
+            break;
+          }
         }
       }
-
-      if (xCol) {
-        if (rect.x < gameObject->rect.x) rect.x = gameObject->rect.x - rect.width;
-        else rect.x = gameObject->rect.x + gameObject->rect.width;
-      }
-
-      if (yCol) {
-        if (rect.y < gameObject->rect.y) rect.y = gameObject->rect.y - rect.height;
-        else rect.y = gameObject->rect.y + gameObject->rect.height;
-      }
-
-      if (xCol || yCol) break;
+      if (!xCol) rect.x = nx;
     }
 
-    if (!xCol) rect.x += dx + force.x;
-    if (!yCol) rect.y += dy + force.y;
+    if (dy != 0.0f || force.y != 0.0f) {
+      ny = rect.y + dy + force.y;
+      for (GameObject* gameObject : level->gameObjects) {
+        if (gameObject->solid) {
+          if (CheckCollisionRecs({rect.x, ny, rect.width, rect.height}, gameObject->rect)) {
+            yCol = true;
+            if (rect.y < gameObject->rect.y) rect.y = gameObject->rect.y - rect.height;
+            else rect.y = gameObject->rect.y + gameObject->rect.height;
+            break;
+          }
+        }
+      }
+      if (!yCol) rect.y = ny;
+    }
   }
 
   force = {0, 0};

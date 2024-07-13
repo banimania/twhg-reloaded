@@ -1,11 +1,9 @@
 #include "level.hpp"
+#include "gameobject/gameobjects/checkpoint.hpp"
 #include "gameobject/gameobjects/conveyor.hpp"
 #include "gameobject/gameobjects/key.hpp"
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
-#include <algorithm>
-#include <cstdlib>
-#include <raylib.h>
 
 void Level::tick() {
   if (freeCameraMode) {
@@ -44,6 +42,19 @@ void Level::tick() {
   background.tick(camera);
 
   tickConveyorManager();
+
+  bool setAnimationCheckpoint = true;
+  for (Checkpoint* checkpoint : getGameObjects<Checkpoint>()) {
+    if (CheckCollisionRecs(player.rect, checkpoint->rect)) {
+      setAnimationCheckpoint = false;
+      break;
+    }
+  }
+  if (setAnimationCheckpoint) {
+    for (Checkpoint* checkpoint : getGameObjects<Checkpoint>()) {
+      checkpoint->shouldAnimate = true;
+    }
+  }
 
   std::vector<Path*> pathsTicked;
   for (int i = 0; i < gameObjects.size(); i++) {
@@ -125,4 +136,17 @@ void Level::reset() {
       coin->isBeingCollected = false;
     }
   }
+}
+
+Rectangle Level::getObjectRectangle(std::vector<GameObject*> objects) {
+  float x = 999999, y = 999999, x2 = -999999, y2 = -999999;
+
+  for (GameObject* object : objects) {
+    if (object->rect.x < x) x = object->rect.x;
+    if (object->rect.y < y) y = object->rect.y;
+    if (object->rect.x + object->rect.width > x2) x2 = object->rect.x + object->rect.width;
+    if (object->rect.y + object->rect.height > y2) y2 = object->rect.y + object->rect.height;
+  }
+
+  return {x, y, x2 - x, y2 - y};
 }

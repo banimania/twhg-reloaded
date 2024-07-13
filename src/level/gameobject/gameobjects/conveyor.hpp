@@ -2,6 +2,7 @@
 #define CONVEYOR_HPP
 
 #include "../gameobject.hpp"
+#include <rlgl.h>
 #include <unordered_map>
 
 enum Direction {

@@ -1,5 +1,4 @@
 #include "path.hpp"
-#include "../gameobject.hpp"
 
 void Path::tick() {
   Instruction* currentInstruction = getCurrentInstruction();

@@ -1,9 +1,4 @@
 #include "conveyor.hpp"
-#include <raylib.h>
-#include <rlgl.h>
-#include <unordered_map>
-#include <utility>
-#include <iostream>
 #include "../../level.hpp"
 
 void Conveyor::drawArrow(Rectangle rect) {
@@ -116,6 +111,9 @@ Conveyor* Conveyor::clone() {
   clone->rect = rect;
   clone->paths = paths;
   clone->speed = speed;
+  clone->direction = direction;
+  clone->fillColor = fillColor;
+  clone->arrowColor = arrowColor;
   return clone;
 }
 std::unordered_map<float, std::pair<float, float>> speedOffsetMap;

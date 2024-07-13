@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include "../../utils/colors.hpp"
+#include "../../utils/sounds.hpp"
 
 class Level;
 

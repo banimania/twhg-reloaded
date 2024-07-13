@@ -1,6 +1,7 @@
 #include "enumwidget.hpp"
 #include <raylib.h>
 #include <rlgl.h>
+#include "../../utils/needed.hpp"
 
 void EnumWidget::tick() {
   Widget::tick();
@@ -23,7 +24,7 @@ void EnumWidget::tick() {
      
       Rectangle newRec = {rect.x, rect.y + count * rect.height, rect.width, rect.height};
 
-      if (CheckCollisionPointRec({(float) GetMouseX(), (float) GetMouseY()}, newRec)) {
+      if (CheckCollisionPointRec({(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y}, newRec)) {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
           selectedOption = option;
           dropDown = false;
@@ -32,7 +33,7 @@ void EnumWidget::tick() {
       }
 
       Color selCol = {static_cast<unsigned char>(fillColor.r * 0.8), static_cast<unsigned char>(fillColor.g * 0.8), static_cast<unsigned char>(fillColor.b * 0.8), fillColor.a};
-      DrawRectangleRec(newRec, CheckCollisionPointRec({(float) GetMouseX(), (float) GetMouseY()}, newRec) ? selCol : fillColor);
+      DrawRectangleRec(newRec, CheckCollisionPointRec({(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y}, newRec) ? selCol : fillColor);
       DrawTextEx(font, option.c_str(), {rect.x + borderThickness + 1, rect.y + 2 + count * rect.height}, fontSize, 0, borderColor);
     
       DrawRectangleRec({newRec.x, newRec.y, (float) borderThickness, newRec.height}, borderColor);

@@ -1,5 +1,4 @@
 #include "wallblock.hpp"
-#include <raylib.h>
 
 void WallBlock::tick(Player* player) {
   GameObject::tick(player);
@@ -54,5 +53,7 @@ WallBlock* WallBlock::clone() {
   WallBlock* clone = new WallBlock({rect.x, rect.y}, level, zLayer);
   clone->rect = rect;
   clone->paths = paths;
+  clone->fillColor = fillColor;
+  clone->outlineColor = outlineColor;
   return clone;
 }

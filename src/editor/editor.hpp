@@ -16,6 +16,7 @@
 #include "../level/gameobject/gameobjects/checkpoint.hpp"
 #include <functional>
 #include <raylib.h>
+#include <rlgl.h>
 
 enum Mode { BUILD, EDIT };
 

@@ -4,6 +4,10 @@
 #include <raylib.h>
 #include "../gameobject.hpp"
 #include "../../../utils/colors.hpp"
+#include "../../level.hpp"
+#include "coin.hpp"
+#include "key.hpp"
+#include "keyblock.hpp"
 
 class Checkpoint : public GameObject {
 public:
@@ -12,6 +16,10 @@ public:
   bool goal = false;
   bool saveCoins = true;
   bool saveKeys = true;
+
+  bool shouldAnimate = true;
+  bool animation = false;
+  float animateTimer = 0, animateTime = 0.5f;
 
   void tick(Player* player) override;
 

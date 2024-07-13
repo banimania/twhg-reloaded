@@ -1,15 +1,15 @@
 #include "widget.hpp"
-#include <raylib.h>
+#include "../utils/needed.hpp"
 
 void Widget::tick() {
   if (!init) initWidget();
 
-  hovered = (CheckCollisionPointRec({static_cast<float>(GetMouseX()), static_cast<float>(GetMouseY())}, rect));
+  hovered = (CheckCollisionPointRec({static_cast<float>(TWHGReloaded::mouse.x), static_cast<float>(TWHGReloaded::mouse.y)}, rect));
 
   if (hovered) {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) handleClick(MOUSE_BUTTON_RIGHT, GetMouseX(), GetMouseY());
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleClick(MOUSE_BUTTON_LEFT, GetMouseX(), GetMouseY());
-    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) handleClick(MOUSE_BUTTON_MIDDLE, GetMouseX(), GetMouseY());
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) handleClick(MOUSE_BUTTON_RIGHT, TWHGReloaded::mouse.x, TWHGReloaded::mouse.y);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) handleClick(MOUSE_BUTTON_LEFT, TWHGReloaded::mouse.x, TWHGReloaded::mouse.y);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) handleClick(MOUSE_BUTTON_MIDDLE, TWHGReloaded::mouse.x, TWHGReloaded::mouse.y);
   } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) {
     active = false;
   }

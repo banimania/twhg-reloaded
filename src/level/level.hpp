@@ -32,7 +32,50 @@ public:
   void reset();
 
   Level(float startX, float startY, std::string name, Player player, Background background) : startX(startX), startY(startY), name(name), player(player), background(background) {};
-  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {}; 
+  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {};
+
+  Rectangle getObjectRectangle(std::vector<GameObject*> objects);
+
+  template <typename T>
+  std::vector<T*> getConsecutiveGameObjects(Vector2 pos) {
+    std::vector<T*> result;
+    std::vector<Vector2> positions = {pos};
+
+    int i = 0;
+    while (result.size() >= i) {
+      Vector2 currentPos = positions.at(i);
+      for (GameObject* gameObject : gameObjects) {
+        if (T* object = dynamic_cast<T*>(gameObject)) {
+          if ((CheckCollisionRecs({currentPos.x + 40, currentPos.y, 40, 40}, gameObject->rect))
+          || (CheckCollisionRecs({currentPos.x, currentPos.y + 40, 40, 40}, gameObject->rect))
+          || (CheckCollisionRecs({currentPos.x - 40, currentPos.y, 40, 40}, gameObject->rect))
+          || (CheckCollisionRecs({currentPos.x, currentPos.y - 40, 40, 40}, gameObject->rect))
+          ) {
+            if (std::find(result.begin(), result.end(), object) == result.end()) {
+              positions.push_back({gameObject->rect.x, gameObject->rect.y});
+              result.push_back(object);
+            }
+          }
+        }
+      }
+      i++;
+    }
+
+    return result;
+  }
+
+  template <typename T>
+  std::vector<T*> getGameObjects() {
+    std::vector<T*> result;
+
+    for (GameObject* gameObject : gameObjects) {
+      if (T* object = dynamic_cast<T*>(gameObject)) {
+        result.push_back(object);
+      }
+    }
+
+    return result;
+  }
 };
 
 #endif

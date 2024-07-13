@@ -1,5 +1,4 @@
 #include "coin.hpp"
-#include <raylib.h>
 
 void Coin::tick(Player* player) {
 
@@ -34,5 +33,7 @@ Coin* Coin::clone() {
   Coin* clone = new Coin({rect.x, rect.y}, 10.0f, level, zLayer);
   clone->rect = rect;
   clone->paths = paths;
+  clone->fillColor = fillColor;
+  clone->outlineColor = outlineColor;
   return clone;
 }

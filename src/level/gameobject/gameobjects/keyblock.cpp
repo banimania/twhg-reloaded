@@ -1,6 +1,5 @@
 #include "keyblock.hpp"
 #include "../../level.hpp"
-#include "key.hpp"
 
 void KeyBlock::tick(Player* player) {
   GameObject::tick(player);
@@ -95,5 +94,8 @@ KeyBlock* KeyBlock::clone() {
   KeyBlock* clone = new KeyBlock({rect.x, rect.y}, keyId, level, zLayer);
   clone->rect = rect;
   clone->paths = paths;
+  clone->fillColor = fillColor;
+  clone->outlineColor = outlineColor;
+  clone->keyId = keyId;
   return clone;
 }

@@ -1,9 +1,4 @@
 #include "editor.hpp"
-#include <algorithm>
-#include <raylib.h>
-#include <rlgl.h>
-#include "../utils/fonts.hpp"
-#include "../utils/textures.hpp"
 #include "../utils/needed.hpp"
 
 void Editor::initWidgets() {
@@ -14,7 +9,7 @@ void Editor::tick() {
   if (!init) initWidgets();
 
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
-    Vector2 mouseVec = {(float) GetMouseX(), (float) GetMouseY()};
+    Vector2 mouseVec = {(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y};
     if (CheckCollisionPointRec(mouseVec, {120, 83, 32, 32})) {
       zLayer--;
     } else if (CheckCollisionPointRec(mouseVec, {185, 83, 32, 32})) {
@@ -31,10 +26,10 @@ void Editor::tick() {
 
   float wheel = GetMouseWheelMove();
 
-  if (wheel != 0 && CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
-    Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+  if (wheel != 0 && CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
+    Vector2 mouseWorldPos = GetScreenToWorld2D(TWHGReloaded::mouse, camera);
 
-    camera.offset = GetMousePosition();
+    camera.offset = TWHGReloaded::mouse;
 
     camera.target = mouseWorldPos;
 
@@ -124,8 +119,8 @@ void Editor::tick() {
 
     selectedObjects = {};
 
-    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
-      Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);
+    if (CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
+      Vector2 pos = GetScreenToWorld2D(TWHGReloaded::mouse, camera);
       if (pos.x < 0) pos.x -= 40;
       if (pos.y < 0) pos.y -= 40;
       if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && selectedObject != -1) {
@@ -416,20 +411,20 @@ void Editor::tick() {
     }
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-      if (CheckCollisionPointRec(GetMousePosition(), {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
+      if (CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
         if (!selecting) {
-          selx1 = GetMousePosition().x;
-          sely1 = GetMousePosition().y;
+          selx1 = TWHGReloaded::mouse.x;
+          sely1 = TWHGReloaded::mouse.y;
         }
 
         selecting = true;
 
-        selx2 = GetMousePosition().x;
-        sely2 = GetMousePosition().y;
+        selx2 = TWHGReloaded::mouse.x;
+        sely2 = TWHGReloaded::mouse.y;
       } else {
         if (selecting) {
-          selx2 = std::max(240.0f, GetMousePosition().x);
-          sely2 = std::max(80.0f, GetMousePosition().y);
+          selx2 = std::max(240.0f, TWHGReloaded::mouse.x);
+          sely2 = std::max(80.0f, TWHGReloaded::mouse.y);
         }
       }
     } else {
@@ -725,7 +720,7 @@ void Editor::tickSettings(GameObject* object) {
   if (scrollAllowed) {
     float propertyScrollDelta = -GetMouseWheelMove() * GetFrameTime() * 2000;
 
-    if (CheckCollisionPointRec(GetMousePosition(), {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) propertyScrollDelta = 0;
+    if (CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) propertyScrollDelta = 0;
 
     if (propertyScroll + propertyScrollDelta < 0) {
       propertyScrollDelta = -propertyScroll;

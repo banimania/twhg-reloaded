@@ -4,9 +4,8 @@
 #include "gameobject/gameobjects/key.hpp"
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
-#include "gameobject/path/instruction/instructions/linealinstruction.hpp"
-#include "gameobject/path/instruction/instructions/circularinstruction.hpp"
-#include "gameobject/path/instruction/instructions/waitinstruction.hpp"
+#include "../utils/shaders.hpp"
+#include <raylib.h>
 
 void Level::tick() {
   if (freeCameraMode) {
@@ -81,6 +80,16 @@ void Level::tick() {
   player.tick(this);
 
   EndMode2D();
+
+  if (player.fogRadius != player.fogStarterRadius) {
+    Vector2 fogCenterVector = GetWorldToScreen2D({player.rect.x + player.rect.width / 2.0f, player.rect.y + player.rect.height / 2.0f}, camera);
+    fogCenterVector.y = SCREEN_HEIGHT - fogCenterVector.y;
+    SetShaderValue(fogShader, GetShaderLocation(fogShader, "fogCenter"), &fogCenterVector, SHADER_UNIFORM_VEC2);
+    SetShaderValue(fogShader, GetShaderLocation(fogShader, "fogRadius"), &(player.fogRadius), SHADER_UNIFORM_FLOAT);
+    BeginShaderMode(fogShader);
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
+    EndShaderMode();
+  }
 
   hud.tick();
 }

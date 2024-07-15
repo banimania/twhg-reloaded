@@ -14,6 +14,7 @@
 #include "../level/gameobject/gameobjects/keyblock.hpp"
 #include "../level/gameobject/gameobjects/conveyor.hpp"
 #include "../level/gameobject/gameobjects/checkpoint.hpp"
+#include "../level/gameobject/gameobjects/fog.hpp"
 #include <functional>
 #include <raylib.h>
 #include <rlgl.h>
@@ -64,8 +65,11 @@ public:
   Conveyor conveyor = Conveyor({20, 410}, RIGHT, level, 0);
   ButtonWidget buildCheckpointButton = ButtonWidget("", 0, {90, 400, 60, 60}, std::bind(&Editor::selectCheckpointButton, this));
   Checkpoint checkpoint = Checkpoint({100, 410}, false, level, 0);
-  ButtonWidget buildPlayerButton = ButtonWidget("", 0, {170, 400, 60, 60}, std::bind(&Editor::selectPlayerButton, this));
- 
+  ButtonWidget buildFogBlockButton = ButtonWidget("", 0, {170, 400, 60, 60}, std::bind(&Editor::selectFogButton, this));
+  FogBlock fogBlock = FogBlock({180, 410}, level, 0);
+
+  ButtonWidget buildPlayerButton = ButtonWidget("", 0, {10, 480, 60, 60}, std::bind(&Editor::selectPlayerButton, this));
+  
   ButtonWidget editRightButton = ButtonWidget("rightArrowTexture", 0.04f, {10, 240, 60, 60}, std::bind(&Editor::rightButton, this));
   ButtonWidget editLeftButton = ButtonWidget("leftArrowTexture", 0.04f, {90, 240, 60, 60}, std::bind(&Editor::leftButton, this));
   ButtonWidget editUpButton = ButtonWidget("upArrowTexture", 0.04f, {170, 240, 60, 60}, std::bind(&Editor::upButton, this));
@@ -124,6 +128,9 @@ public:
   BooleanWidget saveCoinsWidgetCheckpoint = BooleanWidget("Save Coins", true, {propertiesRect.x, propertiesRect.y + 40 + 40 + 40}, 240, 35);
   ColorWidget fillColorWidgetCheckpoint = ColorWidget("Fill", checkpointColorFill, {propertiesRect.x, propertiesRect.y + 40 + 40 + 40 + 40}, 240);
   
+  BooleanWidget visibleWidgetFog = BooleanWidget("Visible", true, {propertiesRect.x, propertiesRect.y + 40}, 240, 35);
+  TextFieldWidget radiusWidgetFog = TextFieldWidget("Radius", {propertiesRect.x + 10, propertiesRect.y + 40 + 70}, 220, 35, true, 3);
+  
   Editor() {
     camera.zoom = 0.8f;
     camera.rotation = 0.0f;
@@ -134,6 +141,7 @@ public:
     speedWidgetConveyor.maxNumber = 300;
     idWidgetKey.maxNumber = 999;
     idWidgetKeyBlock.maxNumber = 999;
+    radiusWidgetFog.maxNumber = 999;
 
     if (level->background.backgroundType == PLAIN) plainWidget.setSelected(true);
     else checkerboardWidget.setSelected(true);
@@ -167,6 +175,8 @@ public:
     propertyWidgets.push_back(&checkerboardWidget);
     propertyWidgets.push_back(&backgroundPrimaryColorWidget);
     propertyWidgets.push_back(&backgroundSecondaryColorWidget);
+    propertyWidgets.push_back(&visibleWidgetFog);
+    propertyWidgets.push_back(&radiusWidgetFog);
   }
 
   
@@ -187,6 +197,7 @@ public:
   void selectKeyBlockButton();
   void selectConveyorButton();
   void selectCheckpointButton();
+  void selectFogButton();
   void selectPlayerButton();
 
   void rightButton();

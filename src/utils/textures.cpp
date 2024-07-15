@@ -1,6 +1,8 @@
 #include "textures.hpp"
 #include "colors.hpp"
 #include <raylib.h>
+#include "constants.hpp"
+#include "needed.hpp"
 
 void loadTextures() {
   Image i = LoadImage("./res/img/key.png");
@@ -30,6 +32,12 @@ void loadTextures() {
   trashTexture = LoadTexture("./res/img/trash.png");
   
   duplicateTexture = LoadTexture("./res/img/duplicate.png");
+  
+  Image fogIm = GenImageColor(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, BLACK);
+  ImageDrawCircle(&fogIm, SCREEN_WIDTH, SCREEN_HEIGHT, 128.0f, GREEN);
+  ImageColorReplace(&fogIm, GREEN, {0, 0, 0, 0});
+  fogTexture = LoadTextureFromImage(fogIm);
+  UnloadImage(fogIm);
 }
 
 Texture GetTextureFromName(std::string textureName) {

@@ -13,6 +13,11 @@ public:
   float speed;
   Color outlineColor = playerColorOutline, fillColor = playerColorFill;
 
+  float fogStarterRadius = 1600;
+  float fogFinalRadius = 100;
+  float fogRadius = fogStarterRadius;
+  bool inFog = false;
+
   Vector2 lastCheckpoint;
 
   bool isDying = false;

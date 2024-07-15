@@ -4,6 +4,7 @@
 #include "utils/constants.hpp"
 #include "utils/fonts.hpp"
 #include "utils/needed.hpp"
+#include "utils/shaders.hpp"
 #include "utils/sounds.hpp"
 #include "utils/textures.hpp"
 #if defined(__EMSCRIPTEN__)
@@ -79,7 +80,7 @@ int main() {
   loadSounds();
   loadFonts();
   loadTextures();
-
+  loadShaders();
 
 #if defined(__EMSCRIPTEN__)
   emscripten_set_main_loop(mainLoop, 240, 1);

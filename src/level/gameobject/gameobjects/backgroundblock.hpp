@@ -11,7 +11,7 @@ public:
 
   void tick(Player* player) override;
 
-  BackgroundBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {};
+  BackgroundBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer) {};
 
   BackgroundBlock* clone() override;
 };

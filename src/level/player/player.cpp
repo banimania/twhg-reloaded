@@ -1,7 +1,32 @@
 #include "player.hpp"
 #include "../level.hpp"
+#include "../gameobject/gameobjects/fog.hpp"
+#include <raylib.h>
 
 void Player::tick(Level* level) {
+
+  inFog = false;
+  for (GameObject* gameObject : level->gameObjects) {
+    if (FogBlock* fogBlock = dynamic_cast<FogBlock*>(gameObject)) {
+      if (CheckCollisionRecs(rect, fogBlock->rect)) {
+        inFog = true;
+        fogFinalRadius = fogBlock->radius;
+        break;
+      }
+    }
+  }
+
+  float fogSpeed = GetFrameTime() * 2000;
+  if (inFog) {
+    if (fogRadius > fogFinalRadius) {
+      fogRadius -= fogSpeed;
+    } else if (fogRadius < fogFinalRadius) fogRadius = fogFinalRadius;
+  } else {
+    if (fogRadius < fogStarterRadius) {
+      fogRadius += fogSpeed;
+    } else if (fogRadius > fogStarterRadius) fogRadius = fogStarterRadius;
+  }
+
   float dx = 0.0f, dy = 0.0f;
 
   if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) dy -= speed * GetFrameTime();

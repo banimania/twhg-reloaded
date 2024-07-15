@@ -1,5 +1,6 @@
 #include "editor.hpp"
 #include "../utils/needed.hpp"
+#include <string>
 
 void Editor::initWidgets() {
   init = true;
@@ -97,7 +98,7 @@ void Editor::tick() {
 
   deleteTimer += GetFrameTime();
 
-  propertiesOpen = ((mode == BUILD && ((selectedObject > 0 && selectedObject < 9) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)));
+  propertiesOpen = ((mode == BUILD && ((selectedObject > 0 && selectedObject < 10) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)));
 
   if (propertiesOpen) {
     DrawRectangleRec(propertiesRect, editorUIColor);
@@ -109,6 +110,7 @@ void Editor::tick() {
     else if (selectedObject == 6) tickSettings(&keyBlock);
     else if (selectedObject == 7) tickSettings(&conveyor);
     else if (selectedObject == 8) tickSettings(&checkpoint);
+    else if (selectedObject == 9) tickSettings(&fogBlock);
     else if (configButton.selected) tickSettings(nullptr);
     DrawRectangleGradientH(propertiesRect.x, propertiesRect.y, 120, 40, editorGradient1Color, editorGradient2Color);
     DrawRectangleGradientH(propertiesRect.x + 120, propertiesRect.y, 120, 40, editorGradient2Color, editorGradient1Color);
@@ -193,6 +195,13 @@ void Editor::tick() {
             break;
           }
           case 9: {
+            FogBlock* fogBlock = new FogBlock({(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)}, level, zLayer);
+            fogBlock->visible = visibleWidgetFog.value;
+            fogBlock->radius = radiusWidgetFog.text.empty() ? 100 : std::stoi(radiusWidgetFog.text);
+            object = fogBlock;
+            break;
+          }
+          case 10: {
             level->startX = (float) ((int) (pos.x / 40) * 40) + 5;
             level->startY = (float) ((int) (pos.y / 40) * 40) + 5;
             object = nullptr;
@@ -209,6 +218,7 @@ void Editor::tick() {
         else if (selectedObject == 6 && !getGameObjectsInPosAndLayer<KeyBlock>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
         else if (selectedObject == 7 && !getGameObjectsInPosAndLayer<Conveyor>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
         else if (selectedObject == 8 && !getGameObjectsInPosAndLayer<Checkpoint>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
+        else if (selectedObject == 9 && !getGameObjectsInPosAndLayer<FogBlock>({object->rect.x, object->rect.y}, zLayer).empty()) object = nullptr;
 
         if (object != nullptr) {
           level->gameObjects.push_back(object);
@@ -361,9 +371,18 @@ void Editor::tick() {
     rlPopMatrix();
 
     rlPushMatrix();
+    buildFogBlockButton.tick();
+    difHalf = (buildFogBlockButton.rect.width * buildFogBlockButton.scale - buildFogBlockButton.rect.width) / 2.0f;
+    rlTranslatef(fogBlock.rect.x - difHalf, fogBlock.rect.y - difHalf, 0.0f);
+    rlScalef(buildFogBlockButton.scale, buildFogBlockButton.scale, 1.0f);
+    rlTranslatef(-fogBlock.rect.x, -fogBlock.rect.y, 0.0f);
+    fogBlock.tick(&level->player);
+    rlPopMatrix();
+
+    rlPushMatrix();
     buildPlayerButton.tick();
     difHalf = (buildPlayerButton.rect.width * buildPlayerButton.scale - buildPlayerButton.rect.width) / 2.0f;
-    Vector2 playerPos = {185, 415};
+    Vector2 playerPos = {buildPlayerButton.rect.x + 15, buildPlayerButton.rect.y + 15};
     rlTranslatef(playerPos.x - difHalf, playerPos.y - difHalf, 0.0f);
     rlScalef(buildPlayerButton.scale, buildPlayerButton.scale, 1.0f);
     rlTranslatef(-playerPos.x, -playerPos.y, 0.0f);
@@ -486,6 +505,9 @@ void Editor::tick() {
         checkpoint->saveKeys = saveKeysWidgetCheckpoint.value;
         checkpoint->saveCoins = saveCoinsWidgetCheckpoint.value;
         checkpoint->fillColor = fillColorWidgetCheckpoint.color;
+      } else if (FogBlock* fogBlock = dynamic_cast<FogBlock*>(gameObject)) {
+        fogBlock->visible = visibleWidgetFog.value;
+        fogBlock->radius = radiusWidgetFog.text.empty() ? 100 : std::stoi(radiusWidgetFog.text);
       }
     }
   }
@@ -609,9 +631,17 @@ void Editor::selectCheckpointButton() {
   if (!buildCheckpointButton.selected) selectedObject = 0;
 }
 
+void Editor::selectFogButton() {
+  bool wasSelected = buildFogBlockButton.selected;
+  selectedObject = 9;
+  deselectAll();
+  buildFogBlockButton.setSelected(!wasSelected);
+  if (!buildFogBlockButton.selected) selectedObject = 0;
+}
+
 void Editor::selectPlayerButton() {
   bool wasSelected = buildPlayerButton.selected;
-  selectedObject = 9;
+  selectedObject = 10;
   deselectAll();
   buildPlayerButton.setSelected(!wasSelected);
   if (!buildPlayerButton.selected) selectedObject = 0;
@@ -626,6 +656,7 @@ void Editor::deselectAll() {
   buildKeyBlockButton.setSelected(false);
   buildConveyorButton.setSelected(false);
   buildCheckpointButton.setSelected(false);
+  buildFogBlockButton.setSelected(false);
   buildPlayerButton.setSelected(false);
   configButton.setSelected(false);
 }
@@ -796,6 +827,10 @@ void Editor::tickSettings(GameObject* object) {
     goalWidgetCheckpoint.tick();
     saveCoinsWidgetCheckpoint.tick();
     saveKeysWidgetCheckpoint.tick();
+  } else if (FogBlock* fogBlock = dynamic_cast<FogBlock*>(object)) {
+    visibleWidgetFog.tick();
+    radiusWidgetFog.tick();
+    if (radiusWidgetFog.text.empty() && !radiusWidgetFog.active) radiusWidgetFog.text = std::to_string(100);
   } else if (object == nullptr) {
     freeCameraWidget.tick();
 
@@ -871,6 +906,7 @@ bool Editor::isSingleType(std::vector<GameObject*>& gameObjects) {
   else if (type == typeid(keyBlock)) selectedObject = 6;
   else if (type == typeid(conveyor)) selectedObject = 7;
   else if (type == typeid(checkpoint)) selectedObject = 8;
+  else if (type == typeid(fogBlock)) selectedObject = 9;
 
   return true;
 }

@@ -15,6 +15,7 @@ inline Texture leftArrowTexture;
 inline Texture upArrowTexture;
 inline Texture trashTexture;
 inline Texture duplicateTexture;
+inline Texture fogTexture;
 
 void loadTextures();
 Texture GetTextureFromName(std::string textureName);

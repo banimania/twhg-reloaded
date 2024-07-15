@@ -7,7 +7,7 @@
 void BooleanWidget::tick() {
   Widget::tick();
 
-  DrawTextEx(hudFontBold, title.c_str(), {rect.x + 5, rect.y}, fontSize, 0, textFieldWidgetBorderColor);
+  DrawTextEx(hudFontBold, title.c_str(), {rect.x + 10, rect.y}, fontSize, 0, textFieldWidgetBorderColor);
 
   DrawRectangleRec({rect.x + rect.width - 30, rect.y + 5, 25, 25}, textFieldWidgetBorderColor);
   DrawRectangleRec({rect.x + rect.width - 30 + 5, rect.y + 5 + 5, 25 - 10, 25 - 10}, editorUIColor);

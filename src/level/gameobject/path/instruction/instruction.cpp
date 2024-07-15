@@ -12,3 +12,7 @@ void Instruction::tick(GameObject*& gameObject) {
     gameObject->rect.y = (int) std::round(gameObject->rect.y);
   }
 }
+void Instruction::reset() {
+  isDone = false;
+  //last = {0.0f, 0.0f};
+}

@@ -1,4 +1,5 @@
 #include "path.hpp"
+#include <iostream>
 
 void Path::tick() {
   Instruction* currentInstruction = getCurrentInstruction();

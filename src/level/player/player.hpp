@@ -25,7 +25,6 @@ public:
   void tick(Level* level);
   void die();
 
-  Player(Vector2 pos, float size, float speed) : rect(Rectangle{pos.x, pos.y, size, size}), speed(speed), lastCheckpoint(pos) {};
   Player() : rect({100, 100, 30, 30}), lastCheckpoint({100, 100}), speed(150) {};
 };
 

@@ -25,3 +25,9 @@ void LinealInstruction::calculateMovement() {
     moved = {0.0f, 0.0f};
   }
 }
+
+void LinealInstruction::reset() {
+  Instruction::reset();
+  moved = {0.0f, 0.0f};
+  //movement = {0.0f, 0.0f};
+}

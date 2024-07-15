@@ -13,6 +13,7 @@ public:
 
   virtual void calculateMovement();
   virtual void tick(GameObject*& gameObject);
+  virtual void reset();
 
   Instruction() {};
 };

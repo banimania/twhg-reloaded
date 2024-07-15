@@ -34,3 +34,8 @@ void CircularInstruction::calculateMovement() {
     degreesMoved = initialDegree;
   }
 }
+
+void CircularInstruction::reset() {
+  Instruction::reset();
+  init = false;
+}

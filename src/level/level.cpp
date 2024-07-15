@@ -4,6 +4,9 @@
 #include "gameobject/gameobjects/key.hpp"
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
+#include "gameobject/path/instruction/instructions/linealinstruction.hpp"
+#include "gameobject/path/instruction/instructions/circularinstruction.hpp"
+#include "gameobject/path/instruction/instructions/waitinstruction.hpp"
 
 void Level::tick() {
   if (freeCameraMode) {
@@ -125,6 +128,14 @@ void Level::reset() {
   time = 0;
   player.deaths = 0;
   for (GameObject* gameObject : gameObjects) {
+    gameObject->rect = gameObject->originalRect;
+    for (Path* path : gameObject->paths) {
+      for (Instruction* instruction : path->instructions) {
+        path->getCurrentInstruction()->reset();
+      }
+      path->currentInstructionId = 0;
+    }
+
     if (Key* keyObject = dynamic_cast<Key*>(gameObject)) {
       keyObject->collected = false;
       keyObject->isBeingCollected = false;

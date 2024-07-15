@@ -9,6 +9,10 @@
 #include "gameobject/gameobject.hpp"
 #include "gameobject/gameobjects/conveyor.hpp"
 #include "gameobject/gameobjects/wallblock.hpp"
+#include "gameobject/path/path.hpp"
+#include "gameobject/path/instruction/instructions/linealinstruction.hpp"
+#include "gameobject/path/instruction/instructions/waitinstruction.hpp"
+#include "gameobject/path/instruction/instructions/circularinstruction.hpp"
 #include "hud/hud.hpp"
 #include "player/player.hpp"
 
@@ -31,8 +35,14 @@ public:
   void death();
   void reset();
 
-  Level(float startX, float startY, std::string name, Player player, Background background) : startX(startX), startY(startY), name(name), player(player), background(background) {};
-  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {};
+  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {
+    WallBlock* wallBlock = new WallBlock({200, 200}, this, 1);
+    Path* path = new Path();
+    path->instructions.push_back(new CircularInstruction({40, 40}, 400, 360));
+    path->instructions.push_back(new WaitInstruction(1));
+    wallBlock->paths.push_back(path);
+    gameObjects.push_back(wallBlock);
+  };
 
   Rectangle getObjectRectangle(std::vector<GameObject*> objects);
 

@@ -1,6 +1,7 @@
 #include "booleanwidget.hpp"
 #include "../../utils/colors.hpp"
 #include "../../utils/fonts.hpp"
+#include "../../utils/needed.hpp"
 #include <raylib.h>
 
 void BooleanWidget::tick() {
@@ -18,6 +19,6 @@ void BooleanWidget::handleClick(int action, int mouseX, int mouseY) {
   Widget::handleClick(action, mouseX, mouseY);
 
   if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-    if (CheckCollisionPointRec(GetMousePosition(),  {rect.x + rect.width - 30, rect.y + 5, 25, 25})) value = !value;
+    if (CheckCollisionPointRec(TWHGReloaded::mouse,  {rect.x + rect.width - 30, rect.y + 5, 25, 25})) value = !value;
   }
 }

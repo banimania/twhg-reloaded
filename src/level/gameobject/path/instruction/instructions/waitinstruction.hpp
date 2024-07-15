@@ -10,6 +10,8 @@ public:
 
   void tick(GameObject*& gameObject) override;
 
+  void reset() override;
+
   WaitInstruction(float time) : Instruction(), time(time) {};
 };
 

@@ -13,6 +13,8 @@ public:
 
   void calculateMovement() override;
 
+  void reset() override;
+
   CircularInstruction(Vector2 center, float angularSpeed, float degrees) : Instruction(), center(center), angularSpeed(angularSpeed), degrees(degrees) {};
 };
 

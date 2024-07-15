@@ -10,3 +10,8 @@ void WaitInstruction::tick(GameObject*& gameObject) {
     isDone = true;
   }
 }
+
+void WaitInstruction::reset() {
+  Instruction::reset();
+  timer = 0.0f;
+}

@@ -11,6 +11,8 @@ public:
 
   void calculateMovement() override;
 
+  void reset() override;
+
   LinealInstruction(Vector2 movement, Vector2 speed) : Instruction(), movement(movement), speed(speed) {};
 };
 

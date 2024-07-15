@@ -7,7 +7,7 @@
 
 class GameObject {
 public:
-  Rectangle rect;
+  Rectangle rect, originalRect;
   bool solid;
   Level* level;
   std::vector<Path*> paths;
@@ -16,7 +16,7 @@ public:
   
   virtual void tick(Player* player);
 
-  GameObject(Rectangle rect, bool solid, Level* level, int zLayer) : rect(rect), solid(solid), level(level), zLayer(zLayer) {};
+  GameObject(Rectangle rect, bool solid, Level* level, int zLayer) : rect(rect), solid(solid), level(level), zLayer(zLayer), originalRect(rect) {};
 
   virtual GameObject* clone() = 0;
 };

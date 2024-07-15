@@ -16,6 +16,8 @@ void Widget::tick() {
 }
 
 void Widget::handleClick(int action, int mouseX, int mouseY) {
+  if (freeze) return;
+
   active = true;
 }
 

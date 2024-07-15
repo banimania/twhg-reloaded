@@ -22,6 +22,8 @@ public:
   int fontSize;
   std::function<void()> func;
 
+  bool disabled = false;
+
   bool selected = false;
 
   bool textured = false;

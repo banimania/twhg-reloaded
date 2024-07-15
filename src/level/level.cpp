@@ -73,7 +73,9 @@ void Level::tick() {
    
     //last vector reset in order to fix inaccuracies (circle movement moment)
     for (Path* path : pathsTicked) {
-      if (i == gameObjects.size() - 1) path->getCurrentInstruction()->last = {0.0f, 0.0f};
+      if (!path->instructions.empty()) {
+        if (i == gameObjects.size() - 1) path->getCurrentInstruction()->last = {0.0f, 0.0f};
+      }
     }
   }
 
@@ -169,4 +171,28 @@ Rectangle Level::getObjectRectangle(std::vector<GameObject*> objects) {
   }
 
   return {x, y, x2 - x, y2 - y};
+}
+
+int Level::findPathId(Path* path) {
+  for (std::pair<int, Path*> pathSet : pathMap) {
+    if (pathSet.second == path) return pathSet.first;
+  }
+  return -1;
+}
+
+Path* Level::findPath(int pathId) {
+  for (std::pair<int, Path*> pathSet : pathMap) {
+    if (pathSet.first == pathId) return pathSet.second;
+  }
+  return nullptr;
+}
+
+int Level::highestEmptyPathId() {
+  int highest = 0;
+
+  for (std::pair<int, Path*> pathSet : pathMap) {
+    if (pathSet.first > highest) highest = pathSet.first;
+  }
+
+  return highest;
 }

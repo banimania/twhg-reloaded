@@ -5,6 +5,7 @@
 #include "../widget/widgets/buttonwidget.hpp"
 #include "../widget/widgets/enumwidget.hpp"
 #include "../widget/widgets/booleanwidget.hpp"
+#include "../widget/widgets/pathwidget.hpp"
 #include "../widget/widgets/colorwidget.hpp"
 #include "../level/gameobject/gameobjects/wallblock.hpp"
 #include "../level/gameobject/gameobjects/backgroundblock.hpp"
@@ -45,6 +46,7 @@ public:
   std::vector<GameObject*> selectedObjects;
 
   std::vector<Widget*> propertyWidgets;
+  std::vector<Widget*> buildEditWidgets;
 
   ButtonWidget buildButton = ButtonWidget("BUILD", 35, {10, 130, 100, 50}, std::bind(&Editor::buildModeButton, this));
   ButtonWidget editButton = ButtonWidget("EDIT", 35, {130, 130, 100, 50}, std::bind(&Editor::buildEditButton, this));
@@ -80,6 +82,7 @@ public:
   ButtonWidget editSmallDownButton = ButtonWidget("downArrowTexture", 0.02f, {90, 400, 60, 60}, std::bind(&Editor::smallDownButton, this));
   ButtonWidget editTrashButton = ButtonWidget("trashTexture", 0.08f, {170, 400, 60, 60}, std::bind(&Editor::trashButton, this));
   ButtonWidget editDuplicateButton = ButtonWidget("duplicateTexture", 0.08f, {10, 480, 60, 60}, std::bind(&Editor::duplicateButton, this));
+  ButtonWidget editPathButton = ButtonWidget("PATH", 20, {90, 480, 60, 60}, std::bind(&Editor::pathButton, this));
 
   ButtonWidget configButton = ButtonWidget("configurationTexture", 0.24f, {10, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::configurationButton, this));
   ButtonWidget playButton = ButtonWidget("playTexture", 0.24f, {130, SCREEN_HEIGHT - 75, 100, 60}, std::bind(&Editor::playTestButton, this));
@@ -87,6 +90,13 @@ public:
   bool propertiesOpen = false;
   Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80 + 1000};
 
+  bool pathEditorOpen = false;
+  bool pathEditorInit = false;
+  std::vector<PathWidget*> pathWidgets;
+  Rectangle pathEditorRect = {SCREEN_WIDTH / 4.0f, SCREEN_HEIGHT / 4.0f, SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+  ButtonWidget pathNewButton = ButtonWidget("NEW", 35, {pathEditorRect.x + 10 + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40), 50}, std::bind(&Editor::newPath, this));
+  ButtonWidget pathRemoveButton = ButtonWidget("CLEAR", 35, {pathEditorRect.x + 10 + 20 + (pathEditorRect.width / 2.0f - 40) + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40), 50}, std::bind(&Editor::deletePath, this));
 
   float propertyScroll = 0.0f, maxScroll = 0.0f;
   bool scrollAllowed = false;
@@ -148,6 +158,32 @@ public:
 
     backgroundPrimaryColorWidget.color = level->background.colorPrimary;
     backgroundSecondaryColorWidget.color = level->background.colorSecondary;
+
+    buildEditWidgets.push_back(&buildWallblockButton);
+    buildEditWidgets.push_back(&buildBackgroundBlockButton);
+    buildEditWidgets.push_back(&buildEnemyButton);
+    buildEditWidgets.push_back(&buildCoinButton);
+    buildEditWidgets.push_back(&buildKeyButton);
+    buildEditWidgets.push_back(&buildKeyBlockButton);
+    buildEditWidgets.push_back(&buildConveyorButton);
+    buildEditWidgets.push_back(&buildCheckpointButton);
+    buildEditWidgets.push_back(&buildFogBlockButton);
+    buildEditWidgets.push_back(&buildPlayerButton);
+    buildEditWidgets.push_back(&editUpButton);
+    buildEditWidgets.push_back(&editSmallUpButton);
+    buildEditWidgets.push_back(&editDownButton);
+    buildEditWidgets.push_back(&editSmallDownButton);
+    buildEditWidgets.push_back(&editRightButton);
+    buildEditWidgets.push_back(&editSmallRightButton);
+    buildEditWidgets.push_back(&editLeftButton);
+    buildEditWidgets.push_back(&editSmallLeftButton);
+    buildEditWidgets.push_back(&editDuplicateButton);
+    buildEditWidgets.push_back(&editTrashButton);
+    buildEditWidgets.push_back(&editPathButton);
+    buildEditWidgets.push_back(&configButton);
+    buildEditWidgets.push_back(&playButton);
+    buildEditWidgets.push_back(&editButton);
+    buildEditWidgets.push_back(&buildButton);
 
     propertyWidgets.push_back(&outlineColorWidgetWallblock);
     propertyWidgets.push_back(&fillColorWidgetWallblock);
@@ -212,6 +248,11 @@ public:
   void trashButton();
 
   void duplicateButton();
+  
+  void pathButton();
+
+  void newPath();
+  void deletePath();
 
   void configurationButton();
   void playTestButton();

@@ -4,7 +4,12 @@
 #include "../../utils/colors.hpp"
 
 void ColorWidget::tick() {
+  redWidget.freeze = freeze;
+  greenWidget.freeze = freeze;
+  blueWidget.freeze = freeze;
+
   Widget::tick();
+
   DrawRectangleRec({rect.x, rect.y, rect.width, 40}, {174, 174, 174, 255});
   DrawRectangleRec({rect.x + rect.width - 35, rect.y + 5, 30, 30}, color);
 

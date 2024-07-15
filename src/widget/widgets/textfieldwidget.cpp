@@ -16,7 +16,7 @@ void TextFieldWidget::tick() {
   DrawRectangleRec(rect, borderColor);
   DrawRectangleRec({rect.x + borderThickness, rect.y + borderThickness, rect.width - borderThickness * 2, rect.height - borderThickness * 2}, fillColor);
 
-  if (active) {
+  if (active && !freeze) {
     int keyPressed = GetCharPressed();
     if (keyPressed >= 32 && keyPressed < 126) {
       if (!(onlyNumbers && !isdigit(keyPressed)) && text.length() < maxLength) {

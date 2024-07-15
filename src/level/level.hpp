@@ -3,6 +3,8 @@
 
 #include <raylib.h>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 #include <algorithm>
 #include "background/background.hpp"
@@ -23,6 +25,7 @@ public:
   Player player;
   std::vector<GameObject*> gameObjects;
   std::string name;
+  std::unordered_map<int, Path*> pathMap;
   Background background;
   Camera2D camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
   HUD hud = HUD(this);
@@ -39,8 +42,13 @@ public:
     WallBlock* wallBlock = new WallBlock({200, 200}, this, 1);
     Path* path = new Path();
     path->instructions.push_back(new CircularInstruction({40, 40}, 400, 360));
-    path->instructions.push_back(new WaitInstruction(1));
+    pathMap.insert(std::make_pair(0, path));
     wallBlock->paths.push_back(path);
+    Path* path2 = new Path();
+    path2->instructions.push_back(new LinealInstruction({40, 0}, {40, 40}));
+    path2->instructions.push_back(new LinealInstruction({-40, 0}, {40, 40}));
+    pathMap.insert(std::make_pair(1, path2));
+    wallBlock->paths.push_back(path2);
     gameObjects.push_back(wallBlock);
   };
 
@@ -86,6 +94,10 @@ public:
 
     return result;
   }
+
+  int findPathId(Path* path);
+  Path* findPath(int pathId);
+  int highestEmptyPathId();
 };
 
 #endif

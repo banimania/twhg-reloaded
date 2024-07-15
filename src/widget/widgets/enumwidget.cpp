@@ -24,7 +24,7 @@ void EnumWidget::tick() {
      
       Rectangle newRec = {rect.x, rect.y + count * rect.height, rect.width, rect.height};
 
-      if (CheckCollisionPointRec({(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y}, newRec)) {
+      if (CheckCollisionPointRec({(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y}, newRec) && !freeze) {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
           selectedOption = option;
           dropDown = false;
@@ -45,6 +45,9 @@ void EnumWidget::tick() {
 
 void EnumWidget::handleClick(int action, int mouseX, int mouseY) {
   Widget::handleClick(action, mouseX, mouseY);
+  
+  if (freeze) return;
+
   dropDown = !dropDown;
 }
 

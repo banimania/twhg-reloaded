@@ -1,7 +1,8 @@
 #include "path.hpp"
-#include <iostream>
 
 void Path::tick() {
+  if (instructions.empty()) return;
+
   Instruction* currentInstruction = getCurrentInstruction();
   if (currentInstruction->isDone) {
     currentInstruction->isDone = false;
@@ -13,6 +14,8 @@ void Path::tick() {
 }
 
 void Path::updateObject(GameObject* gameObject) {
+  if (instructions.empty()) return;
+
   Instruction* currentInstruction = getCurrentInstruction();
   currentInstruction->tick(gameObject);
 }

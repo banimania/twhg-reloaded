@@ -1,5 +1,7 @@
 #include "editor.hpp"
 #include "../utils/needed.hpp"
+#include <cassert>
+#include <raylib.h>
 #include <string>
 
 void Editor::initWidgets() {
@@ -9,35 +11,43 @@ void Editor::initWidgets() {
 void Editor::tick() {
   if (!init) initWidgets();
 
-  if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
-    Vector2 mouseVec = {(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y};
-    if (CheckCollisionPointRec(mouseVec, {120, 83, 32, 32})) {
-      zLayer--;
-    } else if (CheckCollisionPointRec(mouseVec, {185, 83, 32, 32})) {
-      zLayer++;
+  if (IsKeyReleased(KEY_ESCAPE) && pathEditorOpen) {
+    pathEditorOpen = false;
+    pathEditorInit = false;
+  }
+
+  if (!pathEditorOpen) {
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
+      Vector2 mouseVec = {(float) TWHGReloaded::mouse.x, (float) TWHGReloaded::mouse.y};
+      if (CheckCollisionPointRec(mouseVec, {120, 83, 32, 32})) {
+        zLayer--;
+      } else if (CheckCollisionPointRec(mouseVec, {185, 83, 32, 32})) {
+        zLayer++;
+      }
+    }
+
+    if (zLayer > 9) zLayer = 9;
+    else if (zLayer < 0) zLayer = 0;
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
+      camera.target = {camera.target.x - GetMouseDelta().x / camera.zoom, camera.target.y - GetMouseDelta().y / camera.zoom};
+    }
+
+    float wheel = GetMouseWheelMove();
+
+    if (wheel != 0 && CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
+      Vector2 mouseWorldPos = GetScreenToWorld2D(TWHGReloaded::mouse, camera);
+
+      camera.offset = TWHGReloaded::mouse;
+
+      camera.target = mouseWorldPos;
+
+      float scaleFactor = 1.0f + (0.25f * fabsf(wheel));
+      if (wheel < 0) scaleFactor = 1.0f / scaleFactor;
+      camera.zoom = std::clamp(camera.zoom * scaleFactor, 0.7f, 2.5f);
     }
   }
-
-  if (zLayer > 9) zLayer = 9;
-  else if (zLayer < 0) zLayer = 0;
-
-  if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-    camera.target = {camera.target.x - GetMouseDelta().x / camera.zoom, camera.target.y - GetMouseDelta().y / camera.zoom};
-  }
-
-  float wheel = GetMouseWheelMove();
-
-  if (wheel != 0 && CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, SCREEN_WIDTH - 240 * 2, SCREEN_HEIGHT - 80})) {
-    Vector2 mouseWorldPos = GetScreenToWorld2D(TWHGReloaded::mouse, camera);
-
-    camera.offset = TWHGReloaded::mouse;
-
-    camera.target = mouseWorldPos;
-
-    float scaleFactor = 1.0f + (0.25f * fabsf(wheel));
-    if (wheel < 0) scaleFactor = 1.0f / scaleFactor;
-    camera.zoom = std::clamp(camera.zoom * scaleFactor, 0.7f, 2.5f);
-  }
+  
 
   for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
     wallBlock->updateWallBlock(getAllGameObjectsInLayer<WallBlock>(zLayer));
@@ -403,6 +413,8 @@ void Editor::tick() {
     editTrashButton.tick();
 
     editDuplicateButton.tick();
+    editPathButton.disabled = selectedObjects.size() != 1;
+    editPathButton.tick();
 
     editKeyTimer += GetFrameTime();
     
@@ -429,43 +441,46 @@ void Editor::tick() {
       }
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-      if (CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
-        if (!selecting) {
-          selx1 = TWHGReloaded::mouse.x;
-          sely1 = TWHGReloaded::mouse.y;
+    if (!pathEditorOpen) {
+
+      if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(TWHGReloaded::mouse, {240, 80, propertiesOpen ? SCREEN_WIDTH - 240.0f * 2 : SCREEN_WIDTH - 240.0f, SCREEN_HEIGHT - 80})) {
+          if (!selecting) {
+            selx1 = TWHGReloaded::mouse.x;
+            sely1 = TWHGReloaded::mouse.y;
+          }
+
+          selecting = true;
+
+          selx2 = TWHGReloaded::mouse.x;
+          sely2 = TWHGReloaded::mouse.y;
+        } else {
+          if (selecting) {
+            selx2 = std::max(240.0f, TWHGReloaded::mouse.x);
+            sely2 = std::max(80.0f, TWHGReloaded::mouse.y);
+          }
         }
-
-        selecting = true;
-
-        selx2 = TWHGReloaded::mouse.x;
-        sely2 = TWHGReloaded::mouse.y;
       } else {
-        if (selecting) {
-          selx2 = std::max(240.0f, TWHGReloaded::mouse.x);
-          sely2 = std::max(80.0f, TWHGReloaded::mouse.y);
-        }
-      }
-    } else {
-      if ((selection.width > 0 && selection.height > 0) || selecting) {
-        Vector2 posToWorld = GetScreenToWorld2D({selection.x, selection.y}, camera);
-        Vector2 pos2ToWorld = GetScreenToWorld2D({selection.x + selection.width, selection.y + selection.height}, camera);
+        if ((selection.width > 0 && selection.height > 0) || selecting) {
+          Vector2 posToWorld = GetScreenToWorld2D({selection.x, selection.y}, camera);
+          Vector2 pos2ToWorld = GetScreenToWorld2D({selection.x + selection.width, selection.y + selection.height}, camera);
 
-        Rectangle selectionWorld = {posToWorld.x, posToWorld.y, pos2ToWorld.x - posToWorld.x, pos2ToWorld.y - posToWorld.y};
-        
-        if (!IsKeyDown(KEY_LEFT_SHIFT)) {
-          selectedObjects.clear();
-        }
+          Rectangle selectionWorld = {posToWorld.x, posToWorld.y, pos2ToWorld.x - posToWorld.x, pos2ToWorld.y - posToWorld.y};
+          
+          if (!IsKeyDown(KEY_LEFT_SHIFT)) {
+            selectedObjects.clear();
+          }
 
-        for (GameObject* gameObject : getAllGameObjectsInRect(selectionWorld, zLayer)) {
-          selectedObjects.push_back(gameObject);
+          for (GameObject* gameObject : getAllGameObjectsInRect(selectionWorld, zLayer)) {
+            selectedObjects.push_back(gameObject);
+          }
         }
+        selecting = false;
+        selx1 = 0;
+        selx2 = 0;
+        sely1 = 0;
+        sely2 = 0;
       }
-      selecting = false;
-      selx1 = 0;
-      selx2 = 0;
-      sely1 = 0;
-      sely2 = 0;
     }
   }
 
@@ -515,8 +530,44 @@ void Editor::tick() {
   configButton.tick();
   playButton.tick();
 
-
   level->hud.tickEditor();
+
+  if (pathEditorOpen) {
+    if (!pathEditorInit) {
+      pathEditorInit = true;
+      pathWidgets.clear();
+      int i = 0;
+      for (Path* path : selectedObjects.at(0)->paths) {
+        pathWidgets.push_back(new PathWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 70, pathEditorRect.width - 40, 60}, level->findPathId(path)));
+        i++;
+      }
+    }
+    for (Widget* widget : buildEditWidgets) widget->freeze = true;
+    for (Widget* widget : propertyWidgets) widget->freeze = true;
+
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0, 0, 0, 100});
+    DrawRectangleRec(pathEditorRect, textFieldWidgetBorderColor);
+    DrawRectangleRec({pathEditorRect.x + 10, pathEditorRect.y + 10, pathEditorRect.width - 20, pathEditorRect.height - 20}, editorUIColor);
+    DrawRectangleGradientH(pathEditorRect.x + 10, pathEditorRect.y + 10, (pathEditorRect.width - 20) / 2.0f, 40, editorGradient1Color, editorGradient2Color);
+    DrawRectangleGradientH(pathEditorRect.x + 10 + (pathEditorRect.width - 20) / 2.0f, pathEditorRect.y + 10, (pathEditorRect.width - 20) / 2.0f, 40, editorGradient2Color, editorGradient1Color);
+    DrawOutlinedCenteredText(hudFontBold, "PATHS", {pathEditorRect.x, pathEditorRect.y + 10, pathEditorRect.width, 40}, 35, WHITE, 2.0f, BLACK);
+    DrawRectangleRec({pathEditorRect.x + 20, pathEditorRect.y + pathEditorRect.height - 10 - 72, pathEditorRect.width - 40, 2}, textFieldWidgetBorderColor);
+
+    assert(selectedObjects.size() == 1);
+
+    selectedObjects.at(0)->paths.clear();
+    for (PathWidget* pathWidget : pathWidgets) {
+      pathWidget->tick();
+      selectedObjects.at(0)->paths.push_back(level->findPath(pathWidget->pathId));
+    }
+
+    pathRemoveButton.disabled = selectedObjects.at(0)->paths.empty();
+    pathNewButton.tick();
+    pathRemoveButton.tick();
+  } else {
+    for (Widget* widget : buildEditWidgets) widget->freeze = false;
+    for (Widget* widget : propertyWidgets) widget->freeze = false;
+  }
 }
 
 void Editor::drawGrid() {
@@ -648,17 +699,11 @@ void Editor::selectPlayerButton() {
 }
 
 void Editor::deselectAll() {
-  buildWallblockButton.setSelected(false);
-  buildBackgroundBlockButton.setSelected(false);
-  buildEnemyButton.setSelected(false);
-  buildCoinButton.setSelected(false);
-  buildKeyButton.setSelected(false);
-  buildKeyBlockButton.setSelected(false);
-  buildConveyorButton.setSelected(false);
-  buildCheckpointButton.setSelected(false);
-  buildFogBlockButton.setSelected(false);
-  buildPlayerButton.setSelected(false);
-  configButton.setSelected(false);
+  for (Widget* widget : buildEditWidgets) {
+    if (ButtonWidget* buttonWidget = dynamic_cast<ButtonWidget*>(widget)) {
+      buttonWidget->selected = false;
+    }
+  }
 }
 
 void Editor::rightButton() {
@@ -720,6 +765,22 @@ void Editor::duplicateButton() {
   for (GameObject* gameObject : selectedObjects) {
     level->gameObjects.push_back(gameObject->clone());
   }
+}
+
+void Editor::pathButton() {
+  pathEditorOpen = true;
+}
+
+void Editor::newPath() {
+  Path* newPath = new Path();
+  level->pathMap.insert(std::make_pair(level->highestEmptyPathId() + 1, newPath));
+  selectedObjects.at(0)->paths.push_back(newPath);
+  pathEditorInit = false;
+}
+
+void Editor::deletePath() {
+  selectedObjects.at(0)->paths.clear();
+  pathEditorInit = false;
 }
 
 void Editor::configurationButton() {

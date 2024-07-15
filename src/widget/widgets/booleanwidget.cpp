@@ -18,6 +18,8 @@ void BooleanWidget::tick() {
 void BooleanWidget::handleClick(int action, int mouseX, int mouseY) {
   Widget::handleClick(action, mouseX, mouseY);
 
+  if (freeze) return;
+
   if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
     if (CheckCollisionPointRec(TWHGReloaded::mouse,  {rect.x + rect.width - 30, rect.y + 5, 25, 25})) value = !value;
   }

@@ -10,6 +10,7 @@ public:
   bool hovered = false;
   bool active = false;
   bool init = false;
+  bool freeze = false;
 
   Widget(Rectangle rect) : rect(rect) {};
 

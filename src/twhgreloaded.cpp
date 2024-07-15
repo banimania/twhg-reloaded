@@ -16,7 +16,7 @@ bool running = true;
 RenderTexture2D target;
 
 void mainLoop() {
-  float scale = std::min((float)GetScreenWidth() / SCREEN_WIDTH, (float)GetScreenHeight() / SCREEN_HEIGHT);
+  float scale = std::min((float) GetScreenWidth() / SCREEN_WIDTH, (float) GetScreenHeight() / SCREEN_HEIGHT);
 
   Vector2 mouse = GetMousePosition();
   TWHGReloaded::mouse.x = (mouse.x - (GetScreenWidth() - (SCREEN_WIDTH * scale)) * 0.5f) / scale;

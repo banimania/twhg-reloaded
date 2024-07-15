@@ -19,6 +19,9 @@ void DrawOutlinedText(Font font, const char *text, float posX, float posY, int f
 
 void loadFonts() {
   hudFont = LoadFontEx("./res/fonts/arial.ttf", 38, NULL, 0);
-  hudFontBold = LoadFontEx("./res/fonts/arial_bold.ttf", 35, NULL, 0);
+  SetTextureFilter(hudFont.texture, TEXTURE_FILTER_BILINEAR);
+  hudFontBold = LoadFontEx("./res/fonts/arial_bold.ttf", 38, NULL, 0);
+  SetTextureFilter(hudFontBold.texture, TEXTURE_FILTER_BILINEAR);
   editorFontBold = LoadFontEx("./res/fonts/arial_bold.ttf", 100, NULL, 0);
+  SetTextureFilter(editorFontBold.texture, TEXTURE_FILTER_BILINEAR);
 }

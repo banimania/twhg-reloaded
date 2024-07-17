@@ -15,6 +15,8 @@ public:
   void tick();
   void updateObject(GameObject* gameObject);
 
+  void removeInstruction(int instructionId);
+
   Path() {};
 };
 #endif

@@ -1,6 +1,7 @@
 #include "textfieldwidget.hpp"
 #include <cstddef>
 #include <raylib.h>
+#include <iostream>
 
 void TextFieldWidget::tick() {
   Widget::tick();
@@ -18,6 +19,9 @@ void TextFieldWidget::tick() {
 
   if (active && !freeze) {
     int keyPressed = GetCharPressed();
+    if (allowNegative && keyPressed == 45 && onlyNumbers && text.empty()) {
+      text = "-";
+    }
     if (keyPressed >= 32 && keyPressed < 126) {
       if (!(onlyNumbers && !isdigit(keyPressed)) && text.length() < maxLength) {
         int num = 0;

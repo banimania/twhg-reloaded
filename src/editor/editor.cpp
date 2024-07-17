@@ -1,3 +1,5 @@
+//I really hope nobody ever reads this code... And if you do, I'm sorry - danimania
+
 #include "editor.hpp"
 #include "../utils/needed.hpp"
 #include <cassert>
@@ -16,9 +18,31 @@ void Editor::tick() {
     if (instructions) {
       instructions = false;
       instructionsInit = false;
+      for (InstructionWidget* instructionWidget : instructionWidgets) {
+        instructionWidget->rect.y -= instructionScroll;
+        instructionWidget->timeWidget.rect.y -= instructionScroll;
+        instructionWidget->linealMovementWidgetX.rect.y -= instructionScroll;
+        instructionWidget->linealMovementWidgetY.rect.y -= instructionScroll;
+        instructionWidget->linealSpeedWidgetX.rect.y -= instructionScroll;
+        instructionWidget->linealSpeedWidgetY.rect.y -= instructionScroll;
+        instructionWidget->circularCenterWidgetX.rect.y -= instructionScroll;
+        instructionWidget->circularCenterWidgetY.rect.y -= instructionScroll;
+        instructionWidget->circularSpeedWidget.rect.y -= instructionScroll;
+        instructionWidget->circularDegreesWidget.rect.y -= instructionScroll;
+        instructionWidget->removeButton.rect.y -= instructionScroll;
+        instructionWidget->tick();
+      }
+      instructionScroll = 0;
     } else {
       pathEditorOpen = false;
       pathEditorInit = false;
+      for (PathWidget* pathWidget : pathWidgets) {
+        pathWidget->rect.y -= pathScroll;
+        pathWidget->editButton.rect.y -= pathScroll;
+        pathWidget->removeButton.rect.y -= pathScroll;
+        pathWidget->idWidget.rect.y -= pathScroll;
+      }
+      pathScroll = 0;
     }
   }
 
@@ -548,7 +572,7 @@ void Editor::tick() {
         instructionWidgets.clear();
         int i = 0;
         for (Instruction* instruction : level->findPath(pathEditing)->instructions) {
-          instructionWidgets.push_back(new InstructionWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 70, pathEditorRect.width - 40, 60}, i));
+          instructionWidgets.push_back(new InstructionWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 160, pathEditorRect.width - 40, 150}, i));
           i++;
         }
       }
@@ -562,12 +586,43 @@ void Editor::tick() {
 
       BeginScissorMode(pathEditorRect.x, pathEditorRect.y + 50, pathEditorRect.width, pathEditorRect.height - 130);
 
+      float maxScroll = instructionWidgets.size() * 150;
+      float instructionScrollDelta = -GetMouseWheelMove() * GetFrameTime() * 1000;
+      if (instructionScroll + instructionScrollDelta < 0) instructionScrollDelta = -instructionScroll;
+      else if (instructionScroll + instructionScrollDelta > maxScroll) instructionScrollDelta = 0;
+      instructionScroll += instructionScrollDelta;
+
       level->findPath(pathEditing)->instructions.clear();
+      int i = 0;
       for (InstructionWidget* instructionWidget : instructionWidgets) {
+        /*instructionWidget->rect.y -= instructionScrollDelta;
+        instructionWidget->timeWidget.rect.y -= instructionScrollDelta;
+        instructionWidget->linealMovementWidgetX.rect.y -= instructionScrollDelta;
+        instructionWidget->linealMovementWidgetY.rect.y -= instructionScrollDelta;
+        instructionWidget->linealSpeedWidgetX.rect.y -= instructionScrollDelta;
+        instructionWidget->linealSpeedWidgetY.rect.y -= instructionScrollDelta;
+        instructionWidget->circularCenterWidgetX.rect.y -= instructionScrollDelta;
+        instructionWidget->circularCenterWidgetY.rect.y -= instructionScrollDelta;
+        instructionWidget->circularSpeedWidget.rect.y -= instructionScrollDelta;
+        instructionWidget->circularDegreesWidget.rect.y -= instructionScrollDelta;
+        instructionWidget->removeButton.rect.y -= instructionScrollDelta;*/
+        instructionWidget->rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll;
+        instructionWidget->timeWidget.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 50;
+        instructionWidget->linealMovementWidgetX.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 50;
+        instructionWidget->linealMovementWidgetY.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 50;
+        instructionWidget->linealSpeedWidgetX.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 100;
+        instructionWidget->linealSpeedWidgetY.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 100;
+        instructionWidget->circularCenterWidgetX.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 50;
+        instructionWidget->circularCenterWidgetY.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 50;
+        instructionWidget->circularSpeedWidget.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 100;
+        instructionWidget->circularDegreesWidget.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 100;
+        instructionWidget->removeButton.rect.y = pathEditorRect.y + 60 + i * 160 - instructionScroll + 5;
+
         instructionWidget->tick();
         level->findPath(pathEditing)->instructions.push_back(level->findPath(pathEditing)->instructions[instructionWidget->instructionId]);
+        i++;
       }
-      
+
       EndScissorMode();
 
       instructionRemoveButton.disabled = level->findPath(pathEditing)->instructions.empty();
@@ -578,6 +633,7 @@ void Editor::tick() {
       if (!pathEditorInit) {
         pathEditorInit = true;
         pathWidgets.clear();
+
         int i = 0;
         for (Path* path : selectedObjects.at(0)->paths) {
           pathWidgets.push_back(new PathWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 70, pathEditorRect.width - 40, 60}, level->findPathId(path)));
@@ -594,15 +650,29 @@ void Editor::tick() {
       DrawRectangleRec({pathEditorRect.x + 20, pathEditorRect.y + pathEditorRect.height - 10 - 72, pathEditorRect.width - 40, 2}, textFieldWidgetBorderColor);
 
       BeginScissorMode(pathEditorRect.x, pathEditorRect.y + 50, pathEditorRect.width, pathEditorRect.height - 130);
-      
+
+      float maxScroll = pathWidgets.size() * 60;
+      float pathScrollDelta = -GetMouseWheelMove() * GetFrameTime() * 1000;
+      if (pathScroll + pathScrollDelta < 0) pathScrollDelta = -pathScroll;
+      else if (pathScroll + pathScrollDelta > maxScroll) pathScrollDelta = 0;
+      pathScroll += pathScrollDelta;
+
+      int i = 0;
       selectedObjects.at(0)->paths.clear();
       for (PathWidget* pathWidget : pathWidgets) {
+        
+        pathWidget->rect.y = pathEditorRect.y + 60 + i * 70 - pathScroll;
+        pathWidget->removeButton.rect.y = pathEditorRect.y + 60 + i * 70 + 5 - pathScroll;
+        pathWidget->editButton.rect.y = pathEditorRect.y + 60 + i * 70 + 5 - pathScroll;
+        pathWidget->idWidget.rect.y = pathEditorRect.y + 60 + i * 70 + 5 - pathScroll;
+
         pathWidget->tick();
         selectedObjects.at(0)->paths.push_back(level->findPath(pathWidget->pathId));
+        i++;
       }
 
       EndScissorMode();
-      
+
       pathRemoveButton.disabled = selectedObjects.at(0)->paths.empty();
       pathNewButton.tick();
       pathRemoveButton.tick();
@@ -830,11 +900,11 @@ void Editor::newInstruction() {
   Instruction* newInstruction;
 
   if (instructionTypeWidget.selectedOption == "Line") {
-    newInstruction = new LinealInstruction({0, 0}, {0, 0});
+    newInstruction = new LinealInstruction({40, 40}, {40, 40});
   } else if (instructionTypeWidget.selectedOption == "Circle") {
-    newInstruction = new CircularInstruction({0, 0}, 0, 0);
+    newInstruction = new CircularInstruction({40, 40}, 360, 360);
   } else if (instructionTypeWidget.selectedOption == "Wait") {
-    newInstruction = new WaitInstruction(0);
+    newInstruction = new WaitInstruction(1);
   }
 
   level->findPath(pathEditing)->instructions.push_back(newInstruction);

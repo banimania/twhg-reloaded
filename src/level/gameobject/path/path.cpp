@@ -27,3 +27,13 @@ Instruction* Path::getCurrentInstruction() {
 
   return instructions[currentInstructionId];
 }
+
+void Path::removeInstruction(int instructionId) {
+  if (instructionId < 0 || instructionId >= instructions.size()) return;
+  delete instructions[instructionId];
+  instructions.erase(instructions.begin() + instructionId);
+
+  if (currentInstructionId == instructionId) {
+    currentInstructionId--;
+  }
+}

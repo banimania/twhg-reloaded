@@ -97,6 +97,7 @@ public:
 
   bool pathEditorOpen = false;
   bool pathEditorInit = false;
+  float pathScroll = 0, instructionScroll = 0;
   std::vector<PathWidget*> pathWidgets;
   Rectangle pathEditorRect = {SCREEN_WIDTH / 4.0f, SCREEN_HEIGHT / 4.0f, SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 

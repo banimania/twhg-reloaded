@@ -46,7 +46,6 @@ public:
     wallBlock->paths.push_back(path);
     Path* path2 = new Path();
     path2->instructions.push_back(new LinealInstruction({40, 0}, {40, 40}));
-    path2->instructions.push_back(new LinealInstruction({-40, 0}, {40, 40}));
     pathMap.insert(std::make_pair(1, path2));
     wallBlock->paths.push_back(path2);
     gameObjects.push_back(wallBlock);

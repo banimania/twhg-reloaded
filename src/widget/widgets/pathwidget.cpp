@@ -29,7 +29,7 @@ void PathWidget::edit() {
 }
 
 void PathWidget::remove() {
-  //TWHGReloaded::editor.pathWidgets.erase(std::find(TWHGReloaded::editor.pathWidgets.begin(), TWHGReloaded::editor.pathWidgets.end(), this));
-  TWHGReloaded::editor.selectedObjects.at(0)->paths.erase(std::find(TWHGReloaded::editor.selectedObjects.at(0)->paths.begin(), TWHGReloaded::editor.selectedObjects.at(0)->paths.end(), TWHGReloaded::editor.level->findPath(pathId)));
-  TWHGReloaded::editor.pathEditorInit = false;
+  TWHGReloaded::editor.pathWidgets.erase(std::find(TWHGReloaded::editor.pathWidgets.begin(), TWHGReloaded::editor.pathWidgets.end(), this));
+  //TWHGReloaded::editor.selectedObjects.at(0)->paths.erase(std::find(TWHGReloaded::editor.selectedObjects.at(0)->paths.begin(), TWHGReloaded::editor.selectedObjects.at(0)->paths.end(), TWHGReloaded::editor.level->findPath(pathId)));
+  //TWHGReloaded::editor.pathEditorInit = false;
 }

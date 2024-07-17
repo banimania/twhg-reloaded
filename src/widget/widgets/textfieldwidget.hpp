@@ -15,7 +15,9 @@ public:
 
   int borderThickness = 5;
 
-  bool onlyNumbers;
+  bool onlyNumbers = false;
+
+  bool allowNegative = false;
 
   bool blink = false;
   float blinkTimer = 0, blinkTime = 0.5f;

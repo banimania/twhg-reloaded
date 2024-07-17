@@ -24,9 +24,12 @@ void PathWidget::handleClick(int action, int mouseX, int mouseY) {
 }
 
 void PathWidget::edit() {
-
+  TWHGReloaded::editor.instructions = true;
+  TWHGReloaded::editor.pathEditing = pathId;
 }
 
 void PathWidget::remove() {
-  TWHGReloaded::editor.pathWidgets.erase(std::find(TWHGReloaded::editor.pathWidgets.begin(), TWHGReloaded::editor.pathWidgets.end(), this));
+  //TWHGReloaded::editor.pathWidgets.erase(std::find(TWHGReloaded::editor.pathWidgets.begin(), TWHGReloaded::editor.pathWidgets.end(), this));
+  TWHGReloaded::editor.selectedObjects.at(0)->paths.erase(std::find(TWHGReloaded::editor.selectedObjects.at(0)->paths.begin(), TWHGReloaded::editor.selectedObjects.at(0)->paths.end(), TWHGReloaded::editor.level->findPath(pathId)));
+  TWHGReloaded::editor.pathEditorInit = false;
 }

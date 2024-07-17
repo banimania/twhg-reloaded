@@ -38,10 +38,10 @@ void TextFieldWidget::tick() {
   }
 
   DrawTextEx(font, title.c_str(), {rect.x, rect.y - 35}, fontSize, 0, borderColor);
-  BeginScissorMode(rect.x, rect.y, rect.width, rect.height);
+  //BeginScissorMode(rect.x, rect.y, rect.width, rect.height);
   DrawTextEx(font, text.c_str(), {rect.x + borderThickness + 1, rect.y + 2}, fontSize, 0, borderColor);
   if (blink) DrawRectangle(rect.x + MeasureTextEx(font, text.c_str(), fontSize, 0).x + borderThickness + 3, rect.y + borderThickness + 1, 3, rect.height - borderThickness * 2 - 2, borderColor);
-  EndScissorMode();
+  //EndScissorMode();
 }
 
 void TextFieldWidget::initWidget() {

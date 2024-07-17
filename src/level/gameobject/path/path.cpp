@@ -21,7 +21,8 @@ void Path::updateObject(GameObject* gameObject) {
 }
 
 Instruction* Path::getCurrentInstruction() {
-  if (instructions.empty()) return NULL;
+  if (instructions.empty()) return nullptr;
+
   if (instructions.size() <= currentInstructionId) currentInstructionId = 0;
 
   return instructions[currentInstructionId];

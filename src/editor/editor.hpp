@@ -7,6 +7,7 @@
 #include "../widget/widgets/booleanwidget.hpp"
 #include "../widget/widgets/pathwidget.hpp"
 #include "../widget/widgets/colorwidget.hpp"
+#include "../widget/widgets/instructionwidget.hpp"
 #include "../level/gameobject/gameobjects/wallblock.hpp"
 #include "../level/gameobject/gameobjects/backgroundblock.hpp"
 #include "../level/gameobject/gameobjects/enemy.hpp"
@@ -89,6 +90,10 @@ public:
  
   bool propertiesOpen = false;
   Rectangle propertiesRect = {SCREEN_WIDTH - 240, 80, 240, SCREEN_HEIGHT - 80 + 1000};
+  bool instructions = false;
+  int pathEditing = -1;
+  bool instructionsInit = false;
+  std::vector<InstructionWidget*> instructionWidgets;
 
   bool pathEditorOpen = false;
   bool pathEditorInit = false;
@@ -97,6 +102,11 @@ public:
 
   ButtonWidget pathNewButton = ButtonWidget("NEW", 35, {pathEditorRect.x + 10 + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40), 50}, std::bind(&Editor::newPath, this));
   ButtonWidget pathRemoveButton = ButtonWidget("CLEAR", 35, {pathEditorRect.x + 10 + 20 + (pathEditorRect.width / 2.0f - 40) + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40), 50}, std::bind(&Editor::deletePath, this));
+
+  ButtonWidget instructionNewButton = ButtonWidget("NEW", 35, {pathEditorRect.x + 10 + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40) - 150, 50}, std::bind(&Editor::newInstruction, this));
+  ButtonWidget instructionRemoveButton = ButtonWidget("CLEAR", 35, {pathEditorRect.x + 10 + 20 + (pathEditorRect.width / 2.0f - 40) + 20, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40, (pathEditorRect.width / 2.0f - 40), 50}, std::bind(&Editor::deleteInstruction, this));
+  std::vector<std::string> optionsType = std::vector<std::string>{"Line", "Circle", "Wait"};
+  EnumWidget instructionTypeWidget = EnumWidget("", {pathEditorRect.x + 20 + 20 + (pathEditorRect.width / 2.0f - 40) - 150, pathEditorRect.y + pathEditorRect.height - 10 - 20 - 40}, 150, 45, optionsType, "Line");
 
   float propertyScroll = 0.0f, maxScroll = 0.0f;
   bool scrollAllowed = false;
@@ -253,6 +263,9 @@ public:
 
   void newPath();
   void deletePath();
+
+  void newInstruction();
+  void deleteInstruction();
 
   void configurationButton();
   void playTestButton();

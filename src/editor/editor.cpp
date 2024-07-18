@@ -16,17 +16,21 @@ void Editor::initWidgets() {
 
 void Editor::tick() {
   if (!init) initWidgets();
-
   if (IsKeyDown(KEY_LEFT_CONTROL)) {
     if (IsKeyReleased(KEY_C)) {
-      copyTest = writeLevel(level);
-      std::cout << copyTest << std::endl;
+      level->serialize("level.dat");
     }
 
     if (IsKeyReleased(KEY_V)) {
-      level = loadLevel(copyTest);
-    }
+      level->deserialize("level.dat");
+      backgroundPrimaryColorWidget.color = level->background.colorPrimary;
+      backgroundSecondaryColorWidget.color = level->background.colorSecondary;
+      plainWidget.setSelected(level->background.backgroundType == PLAIN);
+      checkerboardWidget.setSelected(level->background.backgroundType == CHECKERBOARD);
+      freeCameraWidget.value = level->freeCameraMode;
+    } 
   }
+
   if (IsKeyReleased(KEY_ESCAPE) && pathEditorOpen) {
     if (instructions) {
       instructions = false;

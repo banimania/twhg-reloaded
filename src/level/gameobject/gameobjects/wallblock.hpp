@@ -19,7 +19,25 @@ public:
 
   WallBlock* clone() override;
 
-  WallBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {};
+  WallBlock(Vector2 pos, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer) {
+    typeId = 1;
+  };
+
+  void serialize(std::ofstream& ofs) const override {
+    GameObject::serialize(ofs);
+    
+    ofs.write((char*)&outlineColor, sizeof(outlineColor));    
+    ofs.write((char*)&fillColor, sizeof(fillColor));
+    ofs.write((char*)&states, sizeof(states));
+  }
+  
+  void deserialize(std::ifstream& ifs) override {
+    GameObject::deserialize(ifs);
+
+    ifs.read((char*)&outlineColor, sizeof(outlineColor));
+    ifs.read((char*)&fillColor, sizeof(fillColor));
+    ifs.read((char*)&states, sizeof(states));
+  }
 };
 
 #endif

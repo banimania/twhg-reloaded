@@ -141,4 +141,5 @@ std::pair<float, float> getConveyorOffsets(float speed) {
   for (std::pair<float, std::pair<float, float>> pair : speedOffsetMap) {
     if (speed == pair.first) return pair.second;
   }
+  return std::make_pair(0.0f, 0.0f);
 }

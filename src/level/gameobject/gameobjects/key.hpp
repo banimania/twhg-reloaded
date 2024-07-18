@@ -25,9 +25,27 @@ public:
 
   void tick(Player* player) override;
 
-  Key(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false, level, zLayer), keyId(keyId) {};
+  Key(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false, level, zLayer), keyId(keyId) {
+    typeId = 5;
+  };
 
   Key* clone() override;
+  
+  void serialize(std::ofstream& ofs) const override {
+    GameObject::serialize(ofs);
+    
+    ofs.write((char*)&outlineColor, sizeof(outlineColor));    
+    ofs.write((char*)&fillColor, sizeof(fillColor));
+    ofs.write((char*)&keyId, sizeof(keyId));
+  }
+  
+  void deserialize(std::ifstream& ifs) override {
+    GameObject::deserialize(ifs);
+
+    ifs.read((char*)&outlineColor, sizeof(outlineColor));
+    ifs.read((char*)&fillColor, sizeof(fillColor));
+    ifs.read((char*)&keyId, sizeof(keyId));
+  }
 };
 
 extern std::unordered_map<std::pair<Color, Color>, Texture, PairColorHash> keyTextures;

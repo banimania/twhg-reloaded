@@ -49,4 +49,6 @@ Texture GetTextureFromName(std::string textureName) {
   else if (textureName == "upArrowTexture") return upArrowTexture;
   else if (textureName == "trashTexture") return trashTexture;
   else if (textureName == "duplicateTexture") return duplicateTexture;
+
+  return keyTexture;
 }

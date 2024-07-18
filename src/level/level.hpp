@@ -9,14 +9,22 @@
 #include <algorithm>
 #include "background/background.hpp"
 #include "gameobject/gameobject.hpp"
+#include "gameobject/gameobjects/backgroundblock.hpp"
+#include "gameobject/gameobjects/coin.hpp"
 #include "gameobject/gameobjects/conveyor.hpp"
+#include "gameobject/gameobjects/enemy.hpp"
+#include "gameobject/gameobjects/fog.hpp"
+#include "gameobject/gameobjects/key.hpp"
+#include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/wallblock.hpp"
+#include "gameobject/gameobjects/checkpoint.hpp"
 #include "gameobject/path/path.hpp"
 #include "gameobject/path/instruction/instructions/linealinstruction.hpp"
 #include "gameobject/path/instruction/instructions/waitinstruction.hpp"
 #include "gameobject/path/instruction/instructions/circularinstruction.hpp"
 #include "hud/hud.hpp"
 #include "player/player.hpp"
+#include <fstream>
 
 class Level {
 public:
@@ -87,6 +95,88 @@ public:
   int findPathId(Path* path);
   Path* findPath(int pathId);
   int highestEmptyPathId();
+
+  void serialize(const std::string& filename) const {
+    std::ofstream ofs(filename, std::ios::binary);
+    ofs.write((char*)&startX, sizeof(startX));
+    ofs.write((char*)&startY, sizeof(startY));
+    ofs.write((char*)&time, sizeof(time));
+
+    size_t gameObjectsSize = gameObjects.size();
+    ofs.write((char*)&gameObjectsSize, sizeof(gameObjectsSize));
+    for (const auto& gameObject : gameObjects) {
+      gameObject->serialize(ofs);
+    }
+
+    size_t nameLength = name.size();
+    ofs.write((char*)&nameLength, sizeof(nameLength));
+    ofs.write(name.c_str(), nameLength);
+
+    size_t pathMapSize = pathMap.size();
+    ofs.write((char*)&pathMapSize, sizeof(pathMapSize));
+    for (const auto& pair : pathMap) {
+      ofs.write((char*)&pair.first, sizeof(pair.first));
+      //pair.second->serialize(ofs);
+    }
+
+    background.serialize(ofs);
+
+    ofs.write((char*)&freeCameraMode, sizeof(freeCameraMode));
+    ofs.write((char*)&camGoalX, sizeof(camGoalX));
+    ofs.write((char*)&camGoalY, sizeof(camGoalY));
+    ofs.write((char*)&camMoveSpeed, sizeof(camMoveSpeed));
+    ofs.close();
+  }
+  
+  void deserialize(const std::string& filename) {
+    std::ifstream ifs(filename, std::ios::binary);
+    ifs.read((char*)&startX, sizeof(startX));
+    ifs.read((char*)&startY, sizeof(startY));
+    ifs.read((char*)&time, sizeof(time));
+
+    size_t gameObjectsSize;
+    ifs.read((char*)&gameObjectsSize, sizeof(gameObjectsSize));
+    gameObjects.resize(gameObjectsSize, {});
+    for (auto& gameObject : gameObjects) {
+      int typeId;
+      ifs.read((char*)&typeId, sizeof(typeId));
+
+      if (typeId == 1) gameObject = new WallBlock({}, this, 0);
+      else if (typeId == 2) gameObject = new BackgroundBlock({}, this, 0);
+      else if (typeId == 3) gameObject = new Enemy({}, 10.0f, this, 0);
+      else if (typeId == 4) gameObject = new Coin({}, 10.0f, this, 0);
+      else if (typeId == 5) gameObject = new Key({}, 1, this, 0);
+      else if (typeId == 6) gameObject = new KeyBlock({}, 1, this, 0);
+      else if (typeId == 7) gameObject = new Conveyor({}, UP, this, 0);
+      else if (typeId == 8) gameObject = new Checkpoint({}, false, this, 0);
+      else if (typeId == 9) gameObject = new FogBlock({}, this, 0);
+
+      gameObject->deserialize(ifs);
+    }
+
+    size_t nameLength;
+    ifs.read((char*)&nameLength, sizeof(nameLength));
+    name.resize(nameLength);
+    ifs.read(&name[0], nameLength);
+
+    size_t pathMapSize;
+    ifs.read((char*)&pathMapSize, sizeof(pathMapSize));
+    for (size_t i = 0; i < pathMapSize; ++i) {
+      int key;
+      ifs.read((char*)&key, sizeof(key));
+      Path* path = new Path();
+      //path->deserialize(ifs);
+      pathMap[key] = path;
+    }
+
+    background.deserialize(ifs);
+
+    ifs.read((char*)&freeCameraMode, sizeof(freeCameraMode));
+    ifs.read((char*)&camGoalX, sizeof(camGoalX));
+    ifs.read((char*)&camGoalY, sizeof(camGoalY));
+    ifs.read((char*)&camMoveSpeed, sizeof(camMoveSpeed));
+    ifs.close();
+  }
 };
 
 #endif

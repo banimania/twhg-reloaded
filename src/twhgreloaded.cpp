@@ -3,6 +3,7 @@
 #include "level/level.hpp"
 #include "utils/constants.hpp"
 #include "utils/fonts.hpp"
+#include "utils/io.hpp"
 #include "utils/needed.hpp"
 #include "utils/shaders.hpp"
 #include "utils/sounds.hpp"

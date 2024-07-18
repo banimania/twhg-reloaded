@@ -6,6 +6,6 @@ enum GameState { MENU, EDITOR, PLAYING, PLAYTEST };
 namespace TWHGReloaded {
   inline GameState state = EDITOR;
   inline Level level = Level();
-  inline Editor editor = Editor();
+  inline Editor editor = Editor(new Level());
   inline Vector2 mouse = { 0 };
 }

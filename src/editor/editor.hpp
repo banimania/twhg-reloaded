@@ -25,9 +25,8 @@ enum Mode { BUILD, EDIT };
 
 class Editor {
 public:
-  std::string copyTest = "";
 
-  Level* level = new Level();
+  Level* level;
 
   Camera2D camera;
   
@@ -154,10 +153,13 @@ public:
   BooleanWidget visibleWidgetFog = BooleanWidget("Visible", true, {propertiesRect.x, propertiesRect.y + 40}, 240, 35);
   TextFieldWidget radiusWidgetFog = TextFieldWidget("Radius", {propertiesRect.x + 10, propertiesRect.y + 40 + 70}, 220, 35, true, 3);
   
-  Editor() {
+  Editor(Level* level) {
+    this->level = level;
     camera.zoom = 0.8f;
     camera.rotation = 0.0f;
     camera.target = {-155, -80};
+    
+    conveyor = Conveyor({20, 410}, RIGHT, level, 0);
 
     buildButton.setSelected(true);
 

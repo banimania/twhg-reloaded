@@ -24,11 +24,31 @@ public:
 
   void tick(Player* player) override;
 
-  KeyBlock(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer), keyId(keyId) {};
+  KeyBlock(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, true, level, zLayer), keyId(keyId) {
+    typeId = 6;
+  };
   
   void updateKeyBlock(std::vector<KeyBlock*> keyBlocks);
 
   KeyBlock* clone() override;
+  
+  void serialize(std::ofstream& ofs) const override {
+    GameObject::serialize(ofs);
+    
+    ofs.write((char*)&outlineColor, sizeof(outlineColor));    
+    ofs.write((char*)&fillColor, sizeof(fillColor));
+    ofs.write((char*)&states, sizeof(states));
+    ofs.write((char*)&keyId, sizeof(keyId));
+  }
+  
+  void deserialize(std::ifstream& ifs) override {
+    GameObject::deserialize(ifs);
+
+    ifs.read((char*)&outlineColor, sizeof(outlineColor));
+    ifs.read((char*)&fillColor, sizeof(fillColor));
+    ifs.read((char*)&states, sizeof(states));
+    ifs.read((char*)&keyId, sizeof(keyId));
+  }
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "checkpoint.hpp"
 #include "enemy.hpp"
+#include "../../level.hpp"
 
 void Checkpoint::tick(Player* player) {
   GameObject::tick(player);

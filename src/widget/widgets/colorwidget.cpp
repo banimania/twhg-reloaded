@@ -19,9 +19,9 @@ void ColorWidget::tick() {
   greenWidget.tick();
   blueWidget.tick();
 
-  if (redWidget.text.empty() && !redWidget.active) redWidget.text = std::to_string(color.r);
-  if (greenWidget.text.empty() && !greenWidget.active) greenWidget.text = std::to_string(color.g);
-  if (blueWidget.text.empty() && !blueWidget.active) blueWidget.text = std::to_string(color.b);
+  if (!redWidget.active) redWidget.text = std::to_string(color.r);
+  if (!greenWidget.active) greenWidget.text = std::to_string(color.g);
+  if (!blueWidget.active) blueWidget.text = std::to_string(color.b);
 
   color = {redWidget.text.empty() ? defaultColor.r : static_cast<unsigned char>(std::stoi(redWidget.text)), greenWidget.text.empty() ? defaultColor.g : static_cast<unsigned char>(std::stoi(greenWidget.text)), blueWidget.text.empty() ? defaultColor.b : static_cast<unsigned char>(std::stoi(blueWidget.text)), 255};
 }

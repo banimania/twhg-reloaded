@@ -292,6 +292,8 @@ public:
 
   bool isSingleType(std::vector<GameObject*>& gameObjects);
  
+  bool areSameProperties(std::vector<GameObject*>& gameObjects);
+
   bool areSamePath(std::vector<GameObject*>& gameObjects);
 
   void deselectAll();

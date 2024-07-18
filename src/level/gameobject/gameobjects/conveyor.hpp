@@ -28,6 +28,17 @@ public:
   Conveyor(Vector2 pos, Direction direction, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer), speed(40.0f), direction(direction) {
     typeId = 7;
   };
+  
+  bool operator==(const Conveyor& other) const {
+    return (speed == other.speed && direction == other.direction && arrowColor.r == other.arrowColor.r && arrowColor.g == other.arrowColor.g && arrowColor.b == other.arrowColor.b && arrowColor.a == other.arrowColor.a && fillColor.r == other.fillColor.r && fillColor.g == other.fillColor.g && fillColor.b == other.fillColor.b && fillColor.a == other.fillColor.a);
+  }
+  
+  bool equals(const GameObject& other) const override {
+    if (const Conveyor* o = dynamic_cast<const Conveyor*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
 
   Conveyor* clone() override;
   

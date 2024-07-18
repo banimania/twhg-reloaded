@@ -25,6 +25,17 @@ public:
   Checkpoint(Vector2 pos, bool goal, Level* level, int zLayer) : GameObject(Rectangle{pos.x, pos.y, 40.0f, 40.0f}, false, level, zLayer), goal(goal) {
     typeId = 8;
   };
+  
+  bool operator==(const Checkpoint& other) const {
+    return (goal == other.goal && saveCoins == other.saveCoins && saveKeys == other.saveKeys && fillColor.r == other.fillColor.r && fillColor.g == other.fillColor.g && fillColor.b == other.fillColor.b && fillColor.a == other.fillColor.a);
+  }
+
+  bool equals(const GameObject& other) const override {
+    if (const Checkpoint* o = dynamic_cast<const Checkpoint*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
 
   Checkpoint* clone() override;
   

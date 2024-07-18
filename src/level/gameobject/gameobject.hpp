@@ -20,6 +20,8 @@ public:
   GameObject(Rectangle rect, bool solid, Level* level, int zLayer) : rect(rect), solid(solid), level(level), zLayer(zLayer), originalRect(rect) {};
 
   virtual GameObject* clone() = 0;
+  
+  virtual bool equals(const GameObject& other) const = 0;
 
   int typeId = 0;
 

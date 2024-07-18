@@ -155,9 +155,59 @@ void Editor::tick() {
 
   deleteTimer += GetFrameTime();
 
-  propertiesOpen = ((mode == BUILD && ((selectedObject > 0 && selectedObject < 10) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects)));
+  bool werePropertiesOpen = propertiesOpen;
+
+  propertiesOpen = ((mode == BUILD && ((selectedObject > 0 && selectedObject < 10) || configButton.selected)) || (mode == EDIT && isSingleType(selectedObjects) && areSameProperties(selectedObjects)));
 
   if (propertiesOpen) {
+    if (!werePropertiesOpen) {
+
+      for (GameObject* gameObject : selectedObjects) {
+        if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(gameObject)) {
+          fillColorWidgetWallblock.color = wallBlock->fillColor;
+          outlineColorWidgetWallblock.color = wallBlock->outlineColor;
+        } else if (BackgroundBlock* backgroundBlock = dynamic_cast<BackgroundBlock*>(gameObject)) {
+          fillColorWidgetBackgroundblock.color = backgroundBlock->fillColor;
+        } else if (Enemy* enemy = dynamic_cast<Enemy*>(gameObject)) {
+          fillColorWidgetEnemy.color = enemy->fillColor;
+          outlineColorWidgetEnemy.color = enemy->outlineColor;
+        } else if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
+          fillColorWidgetCoin.color = coin->fillColor;
+          outlineColorWidgetEnemy.color = coin->outlineColor;
+        } else if (Key* key = dynamic_cast<Key*>(gameObject)) {
+          fillColorWidgetKey.color = key->fillColor;
+          outlineColorWidgetKey.color = key->outlineColor;
+          idWidgetKey.text = std::to_string(key->keyId);
+        } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
+          fillColorWidgetKeyBlock.color = keyBlock->fillColor;
+          outlineColorWidgetKeyBlock.color = keyBlock->outlineColor;
+          idWidgetKeyBlock.text = std::to_string(keyBlock->keyId);
+        } else if (Conveyor* conveyor = dynamic_cast<Conveyor*>(gameObject)) {
+          fillColorWidgetConveyor.color = conveyor->fillColor;
+          arrowColorWidgetConveyor.color = conveyor->arrowColor;
+
+          if (conveyor->direction == RIGHT)
+            directionWidgetConveyor.selectedOption = "Right";
+          else if (conveyor->direction == LEFT)
+            directionWidgetConveyor.selectedOption = "Left";
+          else if (conveyor->direction == UP)
+            directionWidgetConveyor.selectedOption = "Up";
+          else if (conveyor->direction == DOWN)
+            directionWidgetConveyor.selectedOption = "Down";
+
+          speedWidgetConveyor.text = std::to_string((int) conveyor->speed);
+        } else if (Checkpoint* checkpoint = dynamic_cast<Checkpoint*>(gameObject)) {
+          fillColorWidgetCheckpoint.color = checkpoint->fillColor;
+          goalWidgetCheckpoint.value = checkpoint->goal;
+          saveKeysWidgetCheckpoint.value = checkpoint->saveKeys;
+          saveCoinsWidgetCheckpoint.value = checkpoint->saveCoins;
+        } else if (FogBlock* fogBlock = dynamic_cast<FogBlock*>(gameObject)) {
+          visibleWidgetFog.value = fogBlock->visible;
+          radiusWidgetFog.text = std::to_string(fogBlock->radius);
+        }
+      }
+    }
+
     DrawRectangleRec(propertiesRect, editorUIColor);
     if (selectedObject == 1) tickSettings(&wallBlock);
     else if (selectedObject == 2) tickSettings(&backgroundBlock);
@@ -520,6 +570,7 @@ void Editor::tick() {
           for (GameObject* gameObject : getAllGameObjectsInRect(selectionWorld, zLayer)) {
             selectedObjects.push_back(gameObject);
           }
+          propertiesOpen = false;
         }
         selecting = false;
         selx1 = 0;
@@ -530,7 +581,7 @@ void Editor::tick() {
     }
   }
 
-  if (isSingleType(selectedObjects)) {
+  if (propertiesOpen) {
     for (GameObject* gameObject : selectedObjects) {
       if (WallBlock* wallBlock = dynamic_cast<WallBlock*>(gameObject)) {
         wallBlock->fillColor = fillColorWidgetWallblock.color;
@@ -1136,6 +1187,29 @@ bool Editor::areSamePath(std::vector<GameObject*>& gameObjects) {
     for (Path* path : gameObject->paths) {
       if (std::find(paths.begin(), paths.end(), path) == paths.end()) return false;
     }
+  }
+
+  return true;
+}
+
+bool Editor::areSameProperties(std::vector<GameObject*>& gameObjects) {
+  if (gameObjects.empty()) return false;
+  if (gameObjects.size() == 1) return true;
+
+  if (!isSingleType(gameObjects)) return false;
+
+  GameObject* f = gameObjects.at(0);
+
+  /*if (WallBlock* wb = dynamic_cast<WallBlock*>(f)) {
+    for (GameObject* gameObject : gameObjects) {
+      if (WallBlock* wb2 = dynamic_cast<WallBlock*>(gameObject)) {
+        if (!(*wb == *wb2)) return false;
+      } else return false;
+    }
+  }*/
+
+  for (GameObject* gameObject : gameObjects) {
+    if (!(f->equals(*gameObject))) return false;
   }
 
   return true;

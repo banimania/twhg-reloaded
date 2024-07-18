@@ -16,6 +16,17 @@ public:
     typeId = 9;
   };
 
+  bool operator==(const FogBlock& other) const {
+    return (visible == other.visible && radius == other.radius);
+  }
+  
+  bool equals(const GameObject& other) const override {
+    if (const FogBlock* o = dynamic_cast<const FogBlock*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
+
   FogBlock* clone() override;
   
   void serialize(std::ofstream& ofs) const override {

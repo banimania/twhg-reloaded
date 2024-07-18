@@ -28,6 +28,17 @@ public:
     typeId = 6;
   };
   
+  bool operator==(const KeyBlock& other) const {
+    return (keyId == other.keyId && outlineColor.r == other.outlineColor.r && outlineColor.g == other.outlineColor.g && outlineColor.b == other.outlineColor.b && outlineColor.a == other.outlineColor.a && fillColor.r == other.fillColor.r && fillColor.g == other.fillColor.g && fillColor.b == other.fillColor.b && fillColor.a == other.fillColor.a);
+  }
+
+  bool equals(const GameObject& other) const override {
+    if (const KeyBlock* o = dynamic_cast<const KeyBlock*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
+
   void updateKeyBlock(std::vector<KeyBlock*> keyBlocks);
 
   KeyBlock* clone() override;

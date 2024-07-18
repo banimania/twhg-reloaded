@@ -28,7 +28,17 @@ public:
   Key(Vector2 pos, int keyId, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 20.0f, 20.0f}, false, level, zLayer), keyId(keyId) {
     typeId = 5;
   };
+  
+  bool operator==(const Key& other) const {
+    return (keyId == other.keyId && outlineColor.r == other.outlineColor.r && outlineColor.g == other.outlineColor.g && outlineColor.b == other.outlineColor.b && outlineColor.a == other.outlineColor.a && fillColor.r == other.fillColor.r && fillColor.g == other.fillColor.g && fillColor.b == other.fillColor.b && fillColor.a == other.fillColor.a);
+  }
 
+  bool equals(const GameObject& other) const override {
+    if (const Key* o = dynamic_cast<const Key*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
   Key* clone() override;
   
   void serialize(std::ofstream& ofs) const override {

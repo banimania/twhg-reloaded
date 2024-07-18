@@ -24,6 +24,17 @@ public:
   Coin(Vector2 pos, float radius, Level* level, int zLayer) : GameObject(Rectangle{pos.x - 10.0f, pos.y - 10.0f, 2.0f * radius, 2.0f * radius}, false, level, zLayer), radius(radius) {
     typeId = 4;
   };
+  
+  bool operator==(const Coin& other) const {
+    return (radius == other.radius && outlineColor.r == other.outlineColor.r && outlineColor.g == other.outlineColor.g && outlineColor.b == other.outlineColor.b && outlineColor.a == other.outlineColor.a && fillColor.r == other.fillColor.r && fillColor.g == other.fillColor.g && fillColor.b == other.fillColor.b && fillColor.a == other.fillColor.a);
+  }
+  
+  bool equals(const GameObject& other) const override {
+    if (const Coin* o = dynamic_cast<const Coin*>(&other)) {
+      return *this == *o;
+    }
+    return false;
+  }
 
   Coin* clone() override;
   

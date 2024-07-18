@@ -39,16 +39,6 @@ public:
   void reset();
 
   Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {
-    WallBlock* wallBlock = new WallBlock({200, 200}, this, 1);
-    Path* path = new Path();
-    path->instructions.push_back(new CircularInstruction({40, 40}, 400, 360));
-    pathMap.insert(std::make_pair(0, path));
-    wallBlock->paths.push_back(path);
-    Path* path2 = new Path();
-    path2->instructions.push_back(new LinealInstruction({40, 0}, {40, 40}));
-    pathMap.insert(std::make_pair(1, path2));
-    wallBlock->paths.push_back(path2);
-    gameObjects.push_back(wallBlock);
   };
 
   Rectangle getObjectRectangle(std::vector<GameObject*> objects);

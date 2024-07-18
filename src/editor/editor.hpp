@@ -25,6 +25,8 @@ enum Mode { BUILD, EDIT };
 
 class Editor {
 public:
+  std::string copyTest = "";
+
   Level* level = new Level();
 
   Camera2D camera;
@@ -287,7 +289,9 @@ public:
   std::vector<T*> getGameObjectsInPosAndLayer(Vector2 pos, int layer);
 
   bool isSingleType(std::vector<GameObject*>& gameObjects);
-  
+ 
+  bool areSamePath(std::vector<GameObject*>& gameObjects);
+
   void deselectAll();
 };
 

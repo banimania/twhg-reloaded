@@ -2,9 +2,12 @@
 
 #include "editor.hpp"
 #include "../utils/needed.hpp"
+#include "../utils/io.hpp"
+#include <algorithm>
 #include <cassert>
 #include <raylib.h>
 #include <string>
+#include <iostream>
 #include "../widget/widgets/instructionwidget.hpp"
 
 void Editor::initWidgets() {
@@ -14,6 +17,16 @@ void Editor::initWidgets() {
 void Editor::tick() {
   if (!init) initWidgets();
 
+  if (IsKeyDown(KEY_LEFT_CONTROL)) {
+    if (IsKeyReleased(KEY_C)) {
+      copyTest = writeLevel(level);
+      std::cout << copyTest << std::endl;
+    }
+
+    if (IsKeyReleased(KEY_V)) {
+      level = loadLevel(copyTest);
+    }
+  }
   if (IsKeyReleased(KEY_ESCAPE) && pathEditorOpen) {
     if (instructions) {
       instructions = false;
@@ -443,12 +456,12 @@ void Editor::tick() {
     editTrashButton.tick();
 
     editDuplicateButton.tick();
-    editPathButton.disabled = selectedObjects.size() != 1;
+    editPathButton.disabled = !areSamePath(selectedObjects);
     editPathButton.tick();
 
     editKeyTimer += GetFrameTime();
     
-    if (editKeyTimer > editKeyTime && !pathEditing) {
+    if (editKeyTimer > editKeyTime && !pathEditorOpen) {
       editKeyTimer = 0.0f;
       if (IsKeyDown(KEY_W)) {
         IsKeyDown(KEY_LEFT_SHIFT) ? smallUpButton() : upButton();
@@ -733,88 +746,89 @@ void Editor::buildEditButton() {
 
 void Editor::selectWallblockButton() {
   bool wasSelected = buildWallblockButton.selected;
-  selectedObject = 1;
   deselectAll();
+  selectedObject = 1;
   buildWallblockButton.setSelected(!wasSelected);
-  if (!buildWallblockButton.selected) selectedObject = 0;
+  if (!buildWallblockButton.selected) selectedObject = -1;
 }
 
 void Editor::selectBackgroundBlockButton() {
   bool wasSelected = buildBackgroundBlockButton.selected;
-  selectedObject = 2;
   deselectAll();
+  selectedObject = 2;
   buildBackgroundBlockButton.setSelected(!wasSelected);
-  if (!buildBackgroundBlockButton.selected) selectedObject = 0;
+  if (!buildBackgroundBlockButton.selected) selectedObject = -1;
 }
 
 void Editor::selectEnemyButton() {
   bool wasSelected = buildEnemyButton.selected;
-  selectedObject = 3;
   deselectAll();
+  selectedObject = 3;
   buildEnemyButton.setSelected(!wasSelected);
-  if (!buildEnemyButton.selected) selectedObject = 0;
+  if (!buildEnemyButton.selected) selectedObject = -1;
 }
 
 void Editor::selectCoinButton() {
   bool wasSelected = buildCoinButton.selected;
-  selectedObject = 4;
   deselectAll();
+  selectedObject = 4;
   buildCoinButton.setSelected(!wasSelected);
-  if (!buildCoinButton.selected) selectedObject = 0;
+  if (!buildCoinButton.selected) selectedObject = -1;
 }
 
 void Editor::selectKeyButton() {
   bool wasSelected = buildKeyButton.selected;
-  selectedObject = 5;
   deselectAll();
+  selectedObject = 5;
   buildKeyButton.setSelected(!wasSelected);
-  if (!buildKeyButton.selected) selectedObject = 0;
+  if (!buildKeyButton.selected) selectedObject = -1;
 }
 
 void Editor::selectKeyBlockButton() {
   bool wasSelected = buildKeyBlockButton.selected;
-  selectedObject = 6;
   deselectAll();
+  selectedObject = 6;
   buildKeyBlockButton.setSelected(!wasSelected);
-  if (!buildKeyBlockButton.selected) selectedObject = 0;
+  if (!buildKeyBlockButton.selected) selectedObject = -1;
 }
 
 void Editor::selectConveyorButton() {
   bool wasSelected = buildConveyorButton.selected;
-  selectedObject = 7;
   deselectAll();
+  selectedObject = 7;
   buildConveyorButton.setSelected(!wasSelected);
-  if (!buildConveyorButton.selected) selectedObject = 0;
+  if (!buildConveyorButton.selected) selectedObject = -1;
 }
 
 void Editor::selectCheckpointButton() {
   bool wasSelected = buildCheckpointButton.selected;
-  selectedObject = 8;
   deselectAll();
+  selectedObject = 8;
   buildCheckpointButton.setSelected(!wasSelected);
-  if (!buildCheckpointButton.selected) selectedObject = 0;
+  if (!buildCheckpointButton.selected) selectedObject = -1;
 }
 
 void Editor::selectFogButton() {
   bool wasSelected = buildFogBlockButton.selected;
-  selectedObject = 9;
   deselectAll();
+  selectedObject = 9;
   buildFogBlockButton.setSelected(!wasSelected);
-  if (!buildFogBlockButton.selected) selectedObject = 0;
+  if (!buildFogBlockButton.selected) selectedObject = -1;
 }
 
 void Editor::selectPlayerButton() {
   bool wasSelected = buildPlayerButton.selected;
-  selectedObject = 10;
   deselectAll();
+  selectedObject = 10;
   buildPlayerButton.setSelected(!wasSelected);
-  if (!buildPlayerButton.selected) selectedObject = 0;
+  if (!buildPlayerButton.selected) selectedObject = -1;
 }
 
 void Editor::deselectAll() {
+  selectedObject = -1;
   for (Widget* widget : buildEditWidgets) {
     if (ButtonWidget* buttonWidget = dynamic_cast<ButtonWidget*>(widget)) {
-      buttonWidget->selected = false;
+      if (buttonWidget->text != buildButton.text && buttonWidget->text != editButton.text) buttonWidget->setSelected(false);
     }
   }
 }
@@ -887,12 +901,14 @@ void Editor::pathButton() {
 void Editor::newPath() {
   Path* newPath = new Path();
   level->pathMap.insert(std::make_pair(level->highestEmptyPathId() + 1, newPath));
-  selectedObjects.at(0)->paths.push_back(newPath);
+  for (GameObject* gameObject : selectedObjects) gameObject->paths.push_back(newPath);
+  //selectedObjects.at(0)->paths.push_back(newPath);
   pathEditorInit = false;
 }
 
 void Editor::deletePath() {
-  selectedObjects.at(0)->paths.clear();
+  for (GameObject* gameObject : selectedObjects) gameObject->paths.clear();
+  //selectedObjects.at(0)->paths.clear();
   pathEditorInit = false;
 }
 
@@ -1101,6 +1117,22 @@ bool Editor::isSingleType(std::vector<GameObject*>& gameObjects) {
   else if (type == typeid(conveyor)) selectedObject = 7;
   else if (type == typeid(checkpoint)) selectedObject = 8;
   else if (type == typeid(fogBlock)) selectedObject = 9;
+
+  return true;
+}
+
+bool Editor::areSamePath(std::vector<GameObject*>& gameObjects) {
+  if (gameObjects.size() == 1) return true;
+  if (gameObjects.empty()) return false;
+
+  std::vector<Path*> paths = gameObjects.at(0)->paths;
+  for (GameObject* gameObject : gameObjects) {
+    if (paths.size() != gameObject->paths.size()) return false;
+
+    for (Path* path : gameObject->paths) {
+      if (std::find(paths.begin(), paths.end(), path) == paths.end()) return false;
+    }
+  }
 
   return true;
 }

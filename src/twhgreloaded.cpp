@@ -70,11 +70,11 @@ void mainLoop() {
 }
 
 int main() {
-  SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE/* | FLAG_VSYNC_HINT */| FLAG_MSAA_4X_HINT);
 
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   SetTargetFPS(240);
   
-  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   InitAudioDevice();
 
   target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);

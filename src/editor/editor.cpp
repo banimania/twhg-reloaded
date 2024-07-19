@@ -18,11 +18,12 @@ void Editor::tick() {
   if (!init) initWidgets();
   if (IsKeyDown(KEY_LEFT_CONTROL)) {
     if (IsKeyReleased(KEY_C)) {
-      level->serialize("level.dat");
+      level->serialize("./res/levels/level.dat");
+      unsigned char* test = LoadFileData("./res/levels/level.dat", new int(GetFileLength("./res/levels/level.dat")));
     }
 
     if (IsKeyReleased(KEY_V)) {
-      level->deserialize("level.dat");
+      level->deserialize("./res/levels/level.dat");
       backgroundPrimaryColorWidget.color = level->background.colorPrimary;
       backgroundSecondaryColorWidget.color = level->background.colorSecondary;
       plainWidget.setSelected(level->background.backgroundType == PLAIN);

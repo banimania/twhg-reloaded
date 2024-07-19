@@ -54,6 +54,9 @@ void Player::tick(Level* level) {
     if (dx != 0.0f || force.x != 0.0f) {
       nx = rect.x + dx + force.x;
       for (GameObject* gameObject : level->gameObjects) {
+        if (KeyBlock* kb = dynamic_cast<KeyBlock*>(gameObject)) {
+          if (kb->open) continue;
+        }
         if (gameObject->solid) {
           if (CheckCollisionRecs({nx, rect.y, rect.width, rect.height}, gameObject->rect)) {
             xCol = true;
@@ -69,6 +72,9 @@ void Player::tick(Level* level) {
     if (dy != 0.0f || force.y != 0.0f) {
       ny = rect.y + dy + force.y;
       for (GameObject* gameObject : level->gameObjects) {
+        if (KeyBlock* kb = dynamic_cast<KeyBlock*>(gameObject)) {
+          if (kb->open) continue;
+        }
         if (gameObject->solid) {
           if (CheckCollisionRecs({rect.x, ny, rect.width, rect.height}, gameObject->rect)) {
             yCol = true;

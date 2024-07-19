@@ -46,8 +46,7 @@ public:
   void death();
   void reset();
 
-  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {
-  };
+  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {};
 
   Rectangle getObjectRectangle(std::vector<GameObject*> objects);
 

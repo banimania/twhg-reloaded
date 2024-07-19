@@ -72,6 +72,8 @@ void mainLoop() {
 int main() {
   SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
 
+  SetTargetFPS(240);
+  
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   InitAudioDevice();
 
@@ -86,8 +88,6 @@ int main() {
 #if defined(__EMSCRIPTEN__)
   emscripten_set_main_loop(mainLoop, 240, 1);
 #else
-
-  SetTargetFPS(240);
 
   while(running) {
     mainLoop();

@@ -8,7 +8,7 @@ void BackgroundBlock::tick(Player* player) {
 BackgroundBlock* BackgroundBlock::clone() {
   BackgroundBlock* clone = new BackgroundBlock({rect.x, rect.y}, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->fillColor = fillColor;
   return clone;
 }

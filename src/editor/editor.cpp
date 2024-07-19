@@ -636,6 +636,11 @@ void Editor::tick() {
     
     if (instructions) {
       if (!instructionsInit) {
+        if (level->findPath(pathEditing) == nullptr) {
+          Path* newPath = new Path();
+          level->pathMap.insert(std::make_pair(pathEditing, newPath));
+        }
+
         instructionsInit = true;
         instructionWidgets.clear();
         int i = 0;
@@ -703,8 +708,8 @@ void Editor::tick() {
         pathWidgets.clear();
 
         int i = 0;
-        for (Path* path : selectedObjects.at(0)->paths) {
-          pathWidgets.push_back(new PathWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 70, pathEditorRect.width - 40, 60}, level->findPathId(path)));
+        for (int pathId : selectedObjects.at(0)->pathIds) {
+          pathWidgets.push_back(new PathWidget({pathEditorRect.x + 20, pathEditorRect.y + 60 + i * 70, pathEditorRect.width - 40, 60}, pathId));
           i++;
         }
       }
@@ -726,7 +731,7 @@ void Editor::tick() {
       pathScroll += pathScrollDelta;
 
       int i = 0;
-      selectedObjects.at(0)->paths.clear();
+      selectedObjects.at(0)->pathIds.clear();
       for (PathWidget* pathWidget : pathWidgets) {
         
         pathWidget->rect.y = pathEditorRect.y + 60 + i * 70 - pathScroll;
@@ -735,13 +740,13 @@ void Editor::tick() {
         pathWidget->idWidget.rect.y = pathEditorRect.y + 60 + i * 70 + 5 - pathScroll;
 
         pathWidget->tick();
-        selectedObjects.at(0)->paths.push_back(level->findPath(pathWidget->pathId));
+        selectedObjects.at(0)->pathIds.push_back(pathWidget->pathId);
         i++;
       }
 
       EndScissorMode();
 
-      pathRemoveButton.disabled = selectedObjects.at(0)->paths.empty();
+      pathRemoveButton.disabled = selectedObjects.at(0)->pathIds.empty();
       pathNewButton.tick();
       pathRemoveButton.tick();
     }
@@ -955,14 +960,15 @@ void Editor::pathButton() {
 
 void Editor::newPath() {
   Path* newPath = new Path();
-  level->pathMap.insert(std::make_pair(level->highestEmptyPathId() + 1, newPath));
-  for (GameObject* gameObject : selectedObjects) gameObject->paths.push_back(newPath);
+  int pathId = level->lowestEmptyPathId();
+  level->pathMap.insert(std::make_pair(pathId, newPath));
+  for (GameObject* gameObject : selectedObjects) gameObject->pathIds.push_back(pathId);
   //selectedObjects.at(0)->paths.push_back(newPath);
   pathEditorInit = false;
 }
 
 void Editor::deletePath() {
-  for (GameObject* gameObject : selectedObjects) gameObject->paths.clear();
+  for (GameObject* gameObject : selectedObjects) gameObject->pathIds.clear();
   //selectedObjects.at(0)->paths.clear();
   pathEditorInit = false;
 }
@@ -1180,12 +1186,12 @@ bool Editor::areSamePath(std::vector<GameObject*>& gameObjects) {
   if (gameObjects.size() == 1) return true;
   if (gameObjects.empty()) return false;
 
-  std::vector<Path*> paths = gameObjects.at(0)->paths;
+  std::vector<int> pathIds = gameObjects.at(0)->pathIds;
   for (GameObject* gameObject : gameObjects) {
-    if (paths.size() != gameObject->paths.size()) return false;
+    if (pathIds.size() != gameObject->pathIds.size()) return false;
 
-    for (Path* path : gameObject->paths) {
-      if (std::find(paths.begin(), paths.end(), path) == paths.end()) return false;
+    for (int pathId : gameObject->pathIds) {
+      if (std::find(pathIds.begin(), pathIds.end(), pathId) == pathIds.end()) return false;
     }
   }
 

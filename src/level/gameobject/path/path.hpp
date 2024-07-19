@@ -2,7 +2,11 @@
 #define PATH_HPP
 
 #include "instruction/instruction.hpp"
+#include "instruction/instructions/circularinstruction.hpp"
+#include "instruction/instructions/linealinstruction.hpp"
+#include "instruction/instructions/waitinstruction.hpp"
 #include <vector>
+#include <fstream>
 
 class GameObject;
 
@@ -18,5 +22,38 @@ public:
   void removeInstruction(int instructionId);
 
   Path() {};
+  
+  void serialize(std::ofstream& ofs) const {
+    size_t instructionsSize = instructions.size();
+    ofs.write((char*)&instructionsSize, sizeof(instructionsSize));
+    for (const auto& instruction : instructions) {
+      int typeID = instruction->typeId;
+      ofs.write((char*)&typeID, sizeof(typeID));
+      instruction->serialize(ofs);
+    }
+  }
+
+  void deserialize(std::ifstream& ifs) {
+    size_t instructionsSize;
+    ifs.read((char*)&instructionsSize, sizeof(instructionsSize));
+    instructions.resize(instructionsSize);
+    for (size_t i = 0; i < instructionsSize; ++i) {
+      int typeID;
+      ifs.read((char*)&typeID, sizeof(typeID));
+
+      switch (typeID) {
+        case 1:
+          instructions[i] = new LinealInstruction({}, {});
+          break;
+        case 2:
+          instructions[i] = new CircularInstruction({}, 0, 0);
+          break;
+        case 3:
+          instructions[i] = new WaitInstruction(0);
+          break;
+      }
+      instructions[i]->deserialize(ifs);
+    }
+  }
 };
 #endif

@@ -62,7 +62,8 @@ void Level::tick() {
   for (int i = 0; i < gameObjects.size(); i++) {
     //for (GameObject* gameObject : gameObjects) {
     GameObject* gameObject = gameObjects[i];
-    for (Path* path : gameObject->paths) {
+    for (int pathId : gameObject->pathIds) {
+      Path* path = findPath(pathId);
       if (std::find(pathsTicked.begin(), pathsTicked.end(), path) == pathsTicked.end()) {
         path->tick();
         pathsTicked.push_back(path);
@@ -140,7 +141,8 @@ void Level::reset() {
   player.deaths = 0;
   for (GameObject* gameObject : gameObjects) {
     gameObject->rect = gameObject->originalRect;
-    for (Path* path : gameObject->paths) {
+    for (int pathId : gameObject->pathIds) {
+      Path* path = findPath(pathId);
       for (Instruction* instruction : path->instructions) {
         path->getCurrentInstruction()->reset();
       }
@@ -187,12 +189,10 @@ Path* Level::findPath(int pathId) {
   return nullptr;
 }
 
-int Level::highestEmptyPathId() {
-  int highest = 0;
-
-  for (std::pair<int, Path*> pathSet : pathMap) {
-    if (pathSet.first > highest) highest = pathSet.first;
+int Level::lowestEmptyPathId() {
+  int lowest = 1;
+  while (pathMap.find(lowest) != pathMap.end()) {
+    ++lowest;
   }
-
-  return highest;
+  return lowest;
 }

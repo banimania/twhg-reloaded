@@ -13,7 +13,21 @@ public:
 
   void reset() override;
 
-  LinealInstruction(Vector2 movement, Vector2 speed) : Instruction(), movement(movement), speed(speed) {};
+  LinealInstruction(Vector2 movement, Vector2 speed) : Instruction(), movement(movement), speed(speed) {
+    typeId = 1;
+  };
+  
+  void serialize(std::ofstream& ofs) const override {
+    Instruction::serialize(ofs);
+    ofs.write((char*)&movement, sizeof(movement));
+    ofs.write((char*)&speed, sizeof(speed));
+  }
+
+  void deserialize(std::ifstream& ifs) override {
+    Instruction::deserialize(ifs);
+    ifs.read((char*)&movement, sizeof(movement));
+    ifs.read((char*)&speed, sizeof(speed));
+  }
 };
 
 #endif

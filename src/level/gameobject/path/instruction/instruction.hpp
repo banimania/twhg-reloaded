@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include <cmath>
+#include <fstream>
 
 class GameObject;
 
@@ -15,7 +16,12 @@ public:
   virtual void tick(GameObject*& gameObject);
   virtual void reset();
 
+  int typeId = 0;
+
   Instruction() {};
+  
+  virtual void serialize(std::ofstream& ofs) const {}
+  virtual void deserialize(std::ifstream& ifs) {}
 };
 
 #endif

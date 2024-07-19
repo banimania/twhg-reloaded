@@ -16,7 +16,7 @@ void Enemy::tick(Player* player) {
 Enemy* Enemy::clone() {
   Enemy* clone = new Enemy({rect.x, rect.y}, 10.0f, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->fillColor = fillColor;
   clone->outlineColor = outlineColor;
   return clone;

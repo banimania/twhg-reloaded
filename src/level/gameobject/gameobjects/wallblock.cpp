@@ -52,7 +52,7 @@ void WallBlock::updateWallBlock(std::vector<WallBlock*> wallBlocks) {
 WallBlock* WallBlock::clone() {
   WallBlock* clone = new WallBlock({rect.x, rect.y}, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->fillColor = fillColor;
   clone->outlineColor = outlineColor;
   return clone;

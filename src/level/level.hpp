@@ -94,13 +94,19 @@ public:
 
   int findPathId(Path* path);
   Path* findPath(int pathId);
-  int highestEmptyPathId();
+  int lowestEmptyPathId();
 
   void serialize(const std::string& filename) const {
     std::ofstream ofs(filename, std::ios::binary);
     ofs.write((char*)&startX, sizeof(startX));
     ofs.write((char*)&startY, sizeof(startY));
-    ofs.write((char*)&time, sizeof(time));
+
+    size_t pathMapSize = pathMap.size();
+    ofs.write((char*)&pathMapSize, sizeof(pathMapSize));
+    for (const auto& pair : pathMap) {
+      ofs.write((char*)&pair.first, sizeof(pair.first));
+      pair.second->serialize(ofs);
+    }
 
     size_t gameObjectsSize = gameObjects.size();
     ofs.write((char*)&gameObjectsSize, sizeof(gameObjectsSize));
@@ -111,13 +117,6 @@ public:
     size_t nameLength = name.size();
     ofs.write((char*)&nameLength, sizeof(nameLength));
     ofs.write(name.c_str(), nameLength);
-
-    size_t pathMapSize = pathMap.size();
-    ofs.write((char*)&pathMapSize, sizeof(pathMapSize));
-    for (const auto& pair : pathMap) {
-      ofs.write((char*)&pair.first, sizeof(pair.first));
-      //pair.second->serialize(ofs);
-    }
 
     background.serialize(ofs);
 
@@ -132,8 +131,17 @@ public:
     std::ifstream ifs(filename, std::ios::binary);
     ifs.read((char*)&startX, sizeof(startX));
     ifs.read((char*)&startY, sizeof(startY));
-    ifs.read((char*)&time, sizeof(time));
 
+    size_t pathMapSize;
+    ifs.read((char*)&pathMapSize, sizeof(pathMapSize));
+    for (size_t i = 0; i < pathMapSize; ++i) {
+      int key;
+      ifs.read((char*)&key, sizeof(key));
+      Path* path = new Path();
+      path->deserialize(ifs);
+      pathMap[key] = path;
+    }
+    
     size_t gameObjectsSize;
     ifs.read((char*)&gameObjectsSize, sizeof(gameObjectsSize));
     gameObjects.resize(gameObjectsSize, {});
@@ -158,16 +166,6 @@ public:
     ifs.read((char*)&nameLength, sizeof(nameLength));
     name.resize(nameLength);
     ifs.read(&name[0], nameLength);
-
-    size_t pathMapSize;
-    ifs.read((char*)&pathMapSize, sizeof(pathMapSize));
-    for (size_t i = 0; i < pathMapSize; ++i) {
-      int key;
-      ifs.read((char*)&key, sizeof(key));
-      Path* path = new Path();
-      //path->deserialize(ifs);
-      pathMap[key] = path;
-    }
 
     background.deserialize(ifs);
 

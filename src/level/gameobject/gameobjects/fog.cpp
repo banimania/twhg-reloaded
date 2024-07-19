@@ -9,7 +9,7 @@ void FogBlock::tick(Player* player) {
 FogBlock* FogBlock::clone() {
   FogBlock* clone = new FogBlock({rect.x, rect.y}, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->visible = visible;
   clone->radius = radius;
   return clone;

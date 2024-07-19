@@ -109,7 +109,7 @@ void Conveyor::tick(Player* player) {
 Conveyor* Conveyor::clone() {
   Conveyor* clone = new Conveyor({rect.x, rect.y}, direction, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->speed = speed;
   clone->direction = direction;
   clone->fillColor = fillColor;

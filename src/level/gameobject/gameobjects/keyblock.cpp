@@ -93,7 +93,7 @@ void KeyBlock::updateKeyBlock(std::vector<KeyBlock*> keyBlocks) {
 KeyBlock* KeyBlock::clone() {
   KeyBlock* clone = new KeyBlock({rect.x, rect.y}, keyId, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->fillColor = fillColor;
   clone->outlineColor = outlineColor;
   clone->keyId = keyId;

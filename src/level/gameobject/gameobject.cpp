@@ -9,7 +9,7 @@ void GameObject::tick(Player* player) {
     return;
   }
 
-  for (Path* path : paths) {
-    path->updateObject(this);
+  for (int pathId : pathIds) {
+    level->findPath(pathId)->updateObject(this);
   }
 }

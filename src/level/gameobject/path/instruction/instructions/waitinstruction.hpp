@@ -12,7 +12,21 @@ public:
 
   void reset() override;
 
-  WaitInstruction(float time) : Instruction(), time(time) {};
+  WaitInstruction(float time) : Instruction(), time(time) {
+    typeId = 3;
+  };
+
+  void serialize(std::ofstream& ofs) const override {
+    Instruction::serialize(ofs);
+    ofs.write((char*)&time, sizeof(time));
+    ofs.write((char*)&timer, sizeof(timer));
+  }
+
+  void deserialize(std::ifstream& ifs) override {
+    Instruction::deserialize(ifs);
+    ifs.read((char*)&time, sizeof(time));
+    ifs.read((char*)&timer, sizeof(timer));
+  }
 };
 
 #endif

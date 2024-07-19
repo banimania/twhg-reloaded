@@ -29,7 +29,7 @@ void Key::tick(Player* player) {
 Key* Key::clone() {
   Key* clone = new Key({rect.x, rect.y}, keyId, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->keyId = keyId;
   clone->outlineColor = outlineColor;
   clone->fillColor = fillColor;

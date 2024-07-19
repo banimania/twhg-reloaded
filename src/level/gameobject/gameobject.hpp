@@ -11,7 +11,7 @@ public:
   Rectangle rect, originalRect;
   bool solid;
   Level* level;
-  std::vector<Path*> paths;
+  std::vector<int> pathIds;
 
   int zLayer;
   
@@ -32,6 +32,10 @@ public:
     ofs.write((char*)&originalRect, sizeof(originalRect));
     ofs.write((char*)&solid, sizeof(solid));
 
+    size_t pathIdsSize = pathIds.size();
+    ofs.write((char*)&pathIdsSize, sizeof(pathIdsSize));
+    ofs.write((char*)pathIds.data(), pathIdsSize * sizeof(int));
+
     ofs.write((char*)&zLayer, sizeof(zLayer));
   }
 
@@ -39,6 +43,11 @@ public:
     ifs.read((char*)&rect, sizeof(rect));
     ifs.read((char*)&originalRect, sizeof(originalRect));
     ifs.read((char*)&solid, sizeof(solid));
+
+    size_t pathIdsSize;
+    ifs.read((char*)&pathIdsSize, sizeof(pathIdsSize));
+    pathIds.resize(pathIdsSize);
+    ifs.read((char*)pathIds.data(), pathIdsSize * sizeof(int));
 
     ifs.read((char*)&zLayer, sizeof(zLayer));
   }

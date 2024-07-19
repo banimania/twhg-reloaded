@@ -71,7 +71,7 @@ draw:
 Checkpoint* Checkpoint::clone() {
   Checkpoint* clone = new Checkpoint({rect.x, rect.y}, goal, level, zLayer);
   clone->rect = rect;
-  clone->paths = paths;
+  clone->pathIds = pathIds;
   clone->fillColor = fillColor;
   clone->saveKeys = saveKeys;
   clone->saveCoins = saveCoins;

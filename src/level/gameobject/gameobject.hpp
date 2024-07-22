@@ -32,7 +32,7 @@ public:
     ofs.write((char*)&originalRect, sizeof(originalRect));
     ofs.write((char*)&solid, sizeof(solid));
 
-    size_t pathIdsSize = pathIds.size();
+    int pathIdsSize = pathIds.size();
     ofs.write((char*)&pathIdsSize, sizeof(pathIdsSize));
     ofs.write((char*)pathIds.data(), pathIdsSize * sizeof(int));
 
@@ -44,7 +44,7 @@ public:
     ifs.read((char*)&originalRect, sizeof(originalRect));
     ifs.read((char*)&solid, sizeof(solid));
 
-    size_t pathIdsSize;
+    int pathIdsSize;
     ifs.read((char*)&pathIdsSize, sizeof(pathIdsSize));
     pathIds.resize(pathIdsSize);
     ifs.read((char*)pathIds.data(), pathIdsSize * sizeof(int));

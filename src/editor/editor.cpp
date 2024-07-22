@@ -14,12 +14,13 @@ void Editor::initWidgets() {
   init = true;
 }
 
+int size = 55555;
+
 void Editor::tick() {
   if (!init) initWidgets();
   if (IsKeyDown(KEY_LEFT_CONTROL)) {
     if (IsKeyReleased(KEY_C)) {
       level->serialize("./res/levels/level.dat");
-      unsigned char* test = LoadFileData("./res/levels/level.dat", new int(GetFileLength("./res/levels/level.dat")));
     }
 
     if (IsKeyReleased(KEY_V)) {
@@ -29,7 +30,8 @@ void Editor::tick() {
       plainWidget.setSelected(level->background.backgroundType == PLAIN);
       checkerboardWidget.setSelected(level->background.backgroundType == CHECKERBOARD);
       freeCameraWidget.value = level->freeCameraMode;
-    } 
+    }
+    return;
   }
 
   if (IsKeyReleased(KEY_ESCAPE) && pathEditorOpen) {

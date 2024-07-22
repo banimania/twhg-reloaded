@@ -1,6 +1,7 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
+#include <iostream>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
@@ -97,27 +98,28 @@ public:
 
   void serialize(const std::string& filename) const {
     std::ofstream ofs(filename, std::ios::binary);
+
     ofs.write((char*)&startX, sizeof(startX));
     ofs.write((char*)&startY, sizeof(startY));
 
-    size_t pathMapSize = pathMap.size();
+    background.serialize(ofs);
+
+    int pathMapSize = pathMap.size();
     ofs.write((char*)&pathMapSize, sizeof(pathMapSize));
     for (const auto& pair : pathMap) {
       ofs.write((char*)&pair.first, sizeof(pair.first));
       pair.second->serialize(ofs);
     }
 
-    size_t gameObjectsSize = gameObjects.size();
+    int gameObjectsSize = gameObjects.size();
     ofs.write((char*)&gameObjectsSize, sizeof(gameObjectsSize));
     for (const auto& gameObject : gameObjects) {
       gameObject->serialize(ofs);
     }
 
-    size_t nameLength = name.size();
+    int nameLength = name.size();
     ofs.write((char*)&nameLength, sizeof(nameLength));
     ofs.write(name.c_str(), nameLength);
-
-    background.serialize(ofs);
 
     ofs.write((char*)&freeCameraMode, sizeof(freeCameraMode));
     ofs.write((char*)&camGoalX, sizeof(camGoalX));
@@ -128,12 +130,15 @@ public:
   
   void deserialize(const std::string& filename) {
     std::ifstream ifs(filename, std::ios::binary);
+
     ifs.read((char*)&startX, sizeof(startX));
     ifs.read((char*)&startY, sizeof(startY));
 
-    size_t pathMapSize;
+    background.deserialize(ifs);
+
+    int pathMapSize;
     ifs.read((char*)&pathMapSize, sizeof(pathMapSize));
-    for (size_t i = 0; i < pathMapSize; ++i) {
+    for (int i = 0; i < pathMapSize; ++i) {
       int key;
       ifs.read((char*)&key, sizeof(key));
       Path* path = new Path();
@@ -141,7 +146,7 @@ public:
       pathMap[key] = path;
     }
     
-    size_t gameObjectsSize;
+    int gameObjectsSize;
     ifs.read((char*)&gameObjectsSize, sizeof(gameObjectsSize));
     gameObjects.resize(gameObjectsSize, {});
     for (auto& gameObject : gameObjects) {
@@ -161,12 +166,10 @@ public:
       gameObject->deserialize(ifs);
     }
 
-    size_t nameLength;
+    int nameLength;
     ifs.read((char*)&nameLength, sizeof(nameLength));
     name.resize(nameLength);
     ifs.read(&name[0], nameLength);
-
-    background.deserialize(ifs);
 
     ifs.read((char*)&freeCameraMode, sizeof(freeCameraMode));
     ifs.read((char*)&camGoalX, sizeof(camGoalX));

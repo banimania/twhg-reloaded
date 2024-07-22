@@ -24,7 +24,7 @@ public:
   Path() {};
   
   void serialize(std::ofstream& ofs) const {
-    size_t instructionsSize = instructions.size();
+    int instructionsSize = instructions.size();
     ofs.write((char*)&instructionsSize, sizeof(instructionsSize));
     for (const auto& instruction : instructions) {
       int typeID = instruction->typeId;
@@ -34,10 +34,10 @@ public:
   }
 
   void deserialize(std::ifstream& ifs) {
-    size_t instructionsSize;
+    int instructionsSize;
     ifs.read((char*)&instructionsSize, sizeof(instructionsSize));
     instructions.resize(instructionsSize);
-    for (size_t i = 0; i < instructionsSize; ++i) {
+    for (int i = 0; i < instructionsSize; ++i) {
       int typeID;
       ifs.read((char*)&typeID, sizeof(typeID));
 

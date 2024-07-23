@@ -17,7 +17,9 @@ void Editor::initWidgets() {
 int size = 55555;
 
 void Editor::tick() {
-  if (!init) initWidgets();
+  if (!init) {
+    initWidgets();
+  }
   if (IsKeyDown(KEY_LEFT_CONTROL)) {
     if (IsKeyReleased(KEY_C)) {
       level->serialize("./res/levels/level.dat");
@@ -31,7 +33,6 @@ void Editor::tick() {
       checkerboardWidget.setSelected(level->background.backgroundType == CHECKERBOARD);
       freeCameraWidget.value = level->freeCameraMode;
     }
-    return;
   }
 
   if (IsKeyReleased(KEY_ESCAPE) && pathEditorOpen) {

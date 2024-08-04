@@ -42,6 +42,8 @@ public:
   bool freeCameraMode = false;
   float camGoalX = 0, camGoalY = 0, camMoveSpeed = 500;
 
+  bool didJustDie = true;
+
   void tick();
 
   void death();

@@ -38,6 +38,10 @@ void loadTextures() {
   ImageColorReplace(&fogIm, GREEN, {0, 0, 0, 0});
   fogTexture = LoadTextureFromImage(fogIm);
   UnloadImage(fogIm);
+
+  twhgTexture = LoadTexture("./res/img/twhg.png");
+  GenTextureMipmaps(&twhgTexture);
+  SetTextureFilter(twhgTexture, TEXTURE_FILTER_TRILINEAR);
 }
 
 Texture GetTextureFromName(std::string textureName) {

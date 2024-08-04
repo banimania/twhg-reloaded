@@ -19,6 +19,9 @@ public:
 
   bool allowNegative = false;
 
+  bool menu = false;
+  bool password = false;
+
   bool blink = false;
   float blinkTimer = 0, blinkTime = 0.5f;
 

@@ -297,6 +297,9 @@ public:
   bool areSamePath(std::vector<GameObject*>& gameObjects);
 
   void deselectAll();
+
+  void checkWalls();
+  void checkKeyBlocks();
 };
 
 #endif

@@ -100,13 +100,13 @@ void Editor::tick() {
   }
   
 
-  for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
+  /*for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
     wallBlock->updateWallBlock(getAllGameObjectsInLayer<WallBlock>(zLayer));
   }
   
   for (KeyBlock* keyBlock : getAllGameObjectsInLayer<KeyBlock>(zLayer)) {
     keyBlock->updateKeyBlock(getAllGameObjectsInLayer<KeyBlock>(zLayer));
-  }
+  }*/
 
   BeginMode2D(camera);
   
@@ -333,6 +333,8 @@ void Editor::tick() {
 
         if (object != nullptr) {
           level->gameObjects.push_back(object);
+          if (WallBlock* wb = dynamic_cast<WallBlock*>(object)) checkWalls();
+          if (KeyBlock* kb = dynamic_cast<KeyBlock*>(object)) checkKeyBlocks();
         }
       } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
         Vector2 deletionPos = {(float) ((int) (pos.x / 40) * 40), (float) ((int) (pos.y / 40) * 40)};
@@ -344,11 +346,12 @@ void Editor::tick() {
           if (gameObjects.empty()) {
             gameObjects = getAllGameObjectsInPos({deletionPos.x + 10, deletionPos.y + 10}, zLayer);
           }
-
           if (!gameObjects.empty()) {
             level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObjects.at(gameObjects.size() - 1)));
+            checkWalls();
+            checkKeyBlocks();
           }
-        } 
+        }
       }
     }
     rlPushMatrix();
@@ -901,48 +904,72 @@ void Editor::rightButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.x += 40;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::leftButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.x -= 40;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::upButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.y -= 40;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::downButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.y += 40;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::smallRightButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.x += 1;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::smallLeftButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.x -= 1;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::smallUpButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.y -= 1;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::smallDownButton() {
   for (GameObject* gameObject : selectedObjects) {
     gameObject->rect.y += 1;
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::trashButton() {
@@ -950,12 +977,18 @@ void Editor::trashButton() {
     level->gameObjects.erase(std::remove(level->gameObjects.begin(), level->gameObjects.end(), gameObject));
   }
   selectedObjects.clear();
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::duplicateButton() {
   for (GameObject* gameObject : selectedObjects) {
     level->gameObjects.push_back(gameObject->clone());
   }
+
+  checkWalls();
+  checkKeyBlocks();
 }
 
 void Editor::pathButton() {
@@ -1251,4 +1284,16 @@ std::vector<T*> Editor::getGameObjectsInPosAndLayer(Vector2 pos, int layer) {
     }
   }
   return result;
+}
+
+void Editor::checkWalls() {
+  for (WallBlock* wallBlock : getAllGameObjectsInLayer<WallBlock>(zLayer)) {
+    wallBlock->updateWallBlock(getAllGameObjectsInLayer<WallBlock>(zLayer));
+  }
+}
+
+void Editor::checkKeyBlocks() {
+  for (KeyBlock* keyBlock : getAllGameObjectsInLayer<KeyBlock>(zLayer)) {
+    keyBlock->updateKeyBlock(getAllGameObjectsInLayer<KeyBlock>(zLayer));
+  }
 }

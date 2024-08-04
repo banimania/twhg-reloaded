@@ -10,13 +10,17 @@
 #include "utils/textures.hpp"
 #if defined(__EMSCRIPTEN__)
   #include <emscripten/emscripten.h>
+#else
+  #include <curl/curl.h>
 #endif
 
 bool running = true;
 
 RenderTexture2D target;
-
 void mainLoop() {
+
+  UpdateMusicStream(music);
+
   float scale = std::min((float) GetScreenWidth() / SCREEN_WIDTH, (float) GetScreenHeight() / SCREEN_HEIGHT);
 
   Vector2 mouse = GetMousePosition();
@@ -30,18 +34,9 @@ void mainLoop() {
     running = false;
   }
 
-  if (IsKeyPressed(KEY_F)) {
-    int display = GetCurrentMonitor();
-    if (IsWindowFullscreen()) {
-      SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else {
-      SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display));
-    }
-    ToggleFullscreen();
-  }
-
   switch(TWHGReloaded::state) {
     case MENU:
+      TWHGReloaded::menu.tick();
       break;
     case EDITOR:
       TWHGReloaded::editor.tick();
@@ -85,9 +80,14 @@ int main() {
   loadTextures();
   loadShaders();
 
+  updateVolumes();
+  PlayMusicStream(music);
+
 #if defined(__EMSCRIPTEN__)
   emscripten_set_main_loop(mainLoop, 240, 1);
 #else
+
+  curl_global_init(CURL_GLOBAL_DEFAULT);
 
   while(running) {
     mainLoop();

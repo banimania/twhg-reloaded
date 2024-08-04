@@ -5,6 +5,7 @@
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
 #include "../utils/shaders.hpp"
+#include <iostream>
 #include <raylib.h>
 
 void Level::tick() {
@@ -22,6 +23,11 @@ void Level::tick() {
       camGoalX -= SCREEN_WIDTH;
     }
 
+    if (didJustDie) {
+      camera.target = {camGoalX, camGoalY};
+      goto skipCam;
+    }
+
     if (std::abs(camGoalX - camera.target.x) <= GetFrameTime() * camMoveSpeed) camera.target.x = camGoalX;
     if (camera.target.x > camGoalX) camera.target.x -= GetFrameTime() * camMoveSpeed;
     else if (camera.target.x < camGoalX) camera.target.x += GetFrameTime() * camMoveSpeed;
@@ -36,6 +42,9 @@ void Level::tick() {
     if (camera.target.y > camGoalY) camera.target.y -= GetFrameTime() * camMoveSpeed;
     else if (camera.target.y < camGoalY) camera.target.y += GetFrameTime() * camMoveSpeed;
   }
+
+skipCam:
+  if (didJustDie) didJustDie = false;
 
   time += GetFrameTime();
 
@@ -103,6 +112,8 @@ void Level::death() {
 
   player.deaths++;
 
+  didJustDie = true;
+
   camera = {{0, 0}, {0, 0}, 0.0f, 1.0f};
   if (freeCameraMode) {
     camera.target = {player.rect.x + player.rect.width / 2.0f - SCREEN_WIDTH / 2.0f, player.rect.y + player.rect.height / 2.0f - SCREEN_HEIGHT / 2.0f};
@@ -150,12 +161,14 @@ void Level::reset() {
     }
 
     if (Key* keyObject = dynamic_cast<Key*>(gameObject)) {
+      keyObject->saved = false;
       keyObject->collected = false;
       keyObject->isBeingCollected = false;
     } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
       keyBlock->open = false;
       keyBlock->isOpening = false;
     } else if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
+      coin->saved = false;
       coin->collected = false;
       coin->isBeingCollected = false;
     }

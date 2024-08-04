@@ -14,8 +14,12 @@ void TextFieldWidget::tick() {
     }
   } else blink = false;
 
-  DrawRectangleRec(rect, borderColor);
-  DrawRectangleRec({rect.x + borderThickness, rect.y + borderThickness, rect.width - borderThickness * 2, rect.height - borderThickness * 2}, fillColor);
+  if (menu) {
+    DrawRectangleRec(rect, {0, 0, 0, 100});
+  } else {
+    DrawRectangleRec(rect, borderColor);
+    DrawRectangleRec({rect.x + borderThickness, rect.y + borderThickness, rect.width - borderThickness * 2, rect.height - borderThickness * 2}, fillColor);
+  }
 
   if (active && !freeze) {
     int keyPressed = GetCharPressed();
@@ -43,8 +47,20 @@ void TextFieldWidget::tick() {
 
   DrawTextEx(font, title.c_str(), {rect.x, rect.y - 35}, fontSize, 0, borderColor);
   //BeginScissorMode(rect.x, rect.y, rect.width, rect.height);
-  DrawTextEx(font, text.c_str(), {rect.x + borderThickness + 1, rect.y + 2}, fontSize, 0, borderColor);
-  if (blink) DrawRectangle(rect.x + MeasureTextEx(font, text.c_str(), fontSize, 0).x + borderThickness + 3, rect.y + borderThickness + 1, 3, rect.height - borderThickness * 2 - 2, borderColor);
+  
+  std::string oldText = text;
+  if (password) {
+    std::string newPass = "";
+    for (char c : oldText) {
+      newPass += "*";
+    }
+    text = newPass;
+  }
+
+  DrawTextEx(font, text.c_str(), {rect.x + borderThickness + 1, rect.y + 2}, fontSize, 0, menu ? WHITE : borderColor);
+  if (blink) DrawRectangle(rect.x + MeasureTextEx(font, text.c_str(), fontSize, 0).x + borderThickness + 3, rect.y + borderThickness + 1, 3, rect.height - borderThickness * 2 - 2, menu ? RAYWHITE: borderColor);
+  
+  text = oldText;
   //EndScissorMode();
 }
 

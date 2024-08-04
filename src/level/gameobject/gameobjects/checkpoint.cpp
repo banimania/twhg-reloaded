@@ -40,12 +40,17 @@ void Checkpoint::tick(Player* player) {
     if (center) player->lastCheckpoint = centerPoint;
 
     for (GameObject* gameObject : level->gameObjects) {
-      if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
-        if (coin->collected) coin->saved = true;
-      } else if (Key* key = dynamic_cast<Key*>(gameObject)) {
-        if (key->collected) key->saved = true;
-      } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
-        if (keyBlock->open) keyBlock->saved = true;
+      if (saveCoins) {
+        if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
+          if (coin->collected) coin->saved = true;
+        }
+      }
+      if (saveKeys) {
+        if (Key* key = dynamic_cast<Key*>(gameObject)) {
+          if (key->collected) key->saved = true;
+        } else if (KeyBlock* keyBlock = dynamic_cast<KeyBlock*>(gameObject)) {
+          if (keyBlock->open) keyBlock->saved = true;
+        }
       }
     }
   }

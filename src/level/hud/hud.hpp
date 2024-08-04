@@ -2,8 +2,11 @@
 #define HUD_HPP
 
 #include <raylib.h>
+#include <string>
 
 class Level;
+
+std::string formatTime(float time);
 
 class HUD {
 public:

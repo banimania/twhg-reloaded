@@ -8,7 +8,7 @@ class Menu {
 public:
   bool ticked = false;
 
-  Level fakeLevel;
+  Level fakeLevel = Level(-1);
 
   bool right = true;
 
@@ -45,12 +45,18 @@ public:
   void loadB();
   void logoutB();
 
+  void getLevelStats();
+
+  std::map<int, std::string> difMap;
+  std::map<int, std::string> wrMap;
+  std::map<int, std::pair<std::string, std::string>> pbMap;
+
   std::string loginFetch = "";
   std::string top10Fetch = "";
   std::string whoamiFetch = "";
 
   void button(std::string text, Rectangle rect, std::function<void()> func);
-  void levelButton(std::string text, float time, std::string wrHolder, Rectangle rect, std::string levelPath);
+  void levelButton(std::string text, float time, std::string wrHolder, Rectangle rect, int levelId);
 };
 
 #endif

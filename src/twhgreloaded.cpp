@@ -16,7 +16,6 @@
 
 bool running = true;
 
-RenderTexture2D target;
 void mainLoop() {
 
   UpdateMusicStream(music);
@@ -28,7 +27,7 @@ void mainLoop() {
   TWHGReloaded::mouse.y = (mouse.y - (GetScreenHeight() - (SCREEN_HEIGHT * scale)) * 0.5f) / scale;
   TWHGReloaded::mouse = Vector2Clamp(TWHGReloaded::mouse, (Vector2){ 0, 0 }, (Vector2){ (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT });
 
-  BeginTextureMode(target);
+  BeginTextureMode(TWHGReloaded::target);
 
   if (IsKeyPressed(KEY_Q)) {
     running = false;
@@ -58,22 +57,22 @@ void mainLoop() {
   BeginDrawing();
   ClearBackground(BLACK);
 
-  DrawTexturePro(target.texture, (Rectangle) {0.0f, 0.0f, (float) target.texture.width, (float)-target.texture.height},
+  DrawTexturePro(TWHGReloaded::target.texture, (Rectangle) {0.0f, 0.0f, (float) TWHGReloaded::target.texture.width, (float)-TWHGReloaded::target.texture.height},
     (Rectangle) {(GetScreenWidth() - ((float) SCREEN_WIDTH * scale)) * 0.5f, (GetScreenHeight() - ((float) SCREEN_HEIGHT * scale)) * 0.5f,
     (float) SCREEN_WIDTH * scale, (float) SCREEN_HEIGHT * scale}, (Vector2) {0, 0}, 0.0f, WHITE);
   EndDrawing();
 }
 
 int main() {
-  SetConfigFlags(FLAG_WINDOW_RESIZABLE/* | FLAG_VSYNC_HINT */| FLAG_MSAA_4X_HINT);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The World's Hardest Game: Reloaded");
   SetTargetFPS(240);
   
   InitAudioDevice();
 
-  target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-  SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
+  TWHGReloaded::target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+  SetTextureFilter(TWHGReloaded::target.texture, TEXTURE_FILTER_BILINEAR);
   
   loadSounds();
   loadFonts();

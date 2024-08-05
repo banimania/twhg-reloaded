@@ -1,12 +1,23 @@
 #include "checkpoint.hpp"
 #include "enemy.hpp"
 #include "../../level.hpp"
+#include <raylib.h>
+#include "../../../utils/needed.hpp"
 
 void Checkpoint::tick(Player* player) {
   GameObject::tick(player);
 
   if (CheckCollisionRecs(player->rect, rect)) {
-   
+  
+    if (TWHGReloaded::state == PLAYING) {
+      if (goal && !level->beat && level->allCoins) {
+        level->pause = true;
+        level->beat = true;
+        level->ss = true;
+        return;
+      }
+    }
+    
     std::vector<GameObject*> checkpoints;
     if (shouldAnimate) animation = true;
     checkpoints.push_back(this);

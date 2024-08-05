@@ -1,11 +1,21 @@
 #include "menu.hpp"
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <raylib.h>
 #include <sstream>
 #include <string>
+#include <utility>
 #include "../utils/needed.hpp"
 #include "../utils/io.hpp"
+
+
+//TODO: fix this nightmare
+void Menu::getLevelStats() {
+  getWorldRecord(1);
+  getPersonalBest(1);
+  getDifficulty(1);
+}
 
 void Menu::button(std::string text, Rectangle rect, std::function<void()> func) {
   bool hovered = CheckCollisionPointRec(TWHGReloaded::mouse, rect);
@@ -18,14 +28,33 @@ void Menu::button(std::string text, Rectangle rect, std::function<void()> func) 
   if (hovered && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) func();
 }
 
-void Menu::levelButton(std::string text, float time, std::string wrHolder, Rectangle rect, std::string levelPath) {
+void Menu::levelButton(std::string text, float time, std::string wrHolder, Rectangle rect, int levelId) {
   bool hovered = CheckCollisionPointRec(TWHGReloaded::mouse, rect);
   DrawRectangleRec(rect, hovered ? Color{250, 200, 80, 255} : Color{33, 33, 33, 255});
-  DrawText(std::string(text + "  Difficulty: 10/10  Deaths: 0  PB: 00:00.00").c_str(), rect.x + 10, rect.y + 5, 30, WHITE);
-  DrawText(std::string("WR: 00:00.00 by danimania").c_str(), rect.x + 10, rect.y + 40, 35, WHITE);
+
+  std::string difficultyString = difMap.find(levelId)->second;
+  std::string deathsString = pbMap.find(levelId)->second.second;
+  std::string pbString = pbMap.find(levelId)->second.first == "N/A" ? "N/A" : formatTime(std::stof(pbMap.find(levelId)->second.first));
+  std::string wrRes = wrMap.find(levelId)->second;
+  std::string wrString = "N/A";
+  if (wrRes != "N/A") {
+
+    std::string wrTimeString = "";
+    std::string wrHolderString = "";
+    std::stringstream ss(wrRes);
+    std::getline(ss, wrTimeString, ' ');
+    std::getline(ss, wrHolderString, ' ');
+    std::getline(ss, wrHolderString, ' ');
+    wrTimeString = formatTime(std::stof(wrTimeString));
+    wrString = std::string(wrHolderString + " by " + wrTimeString);
+  }
+
+  DrawText(std::string(text + "  Difficulty: " + difficultyString + "/10  Deaths: " + deathsString + "  PB: " + pbString).c_str(), rect.x + 10, rect.y + 5, 30, WHITE);
+  DrawText(std::string("WR: " + wrString).c_str(), rect.x + 10, rect.y + 40, 35, WHITE);
   //DrawText(std::string("WR: " + formatTime(time) + " by " + wrHolder).c_str(), 750, rect.y + 5, 30, WHITE);
   if (hovered && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     menuState = 0;
+    std::string levelPath = std::string("./res/levels/level" + std::to_string(levelId) + ".dat");
     TWHGReloaded::level.deserialize(levelPath);
     TWHGReloaded::level.reset();
     TWHGReloaded::state = PLAYING;
@@ -34,6 +63,7 @@ void Menu::levelButton(std::string text, float time, std::string wrHolder, Recta
 
 void Menu::singlePlayer() {
   menuState = 3;
+  getLevelStats();
 }
 
 void Menu::multiPlayer() {
@@ -49,8 +79,11 @@ void Menu::leaderboards() {
 }
 
 void Menu::accounts() {
-  if (account == nullptr) account = whoamiAccount(whoami());
+  if (account == nullptr) whoami();
   menuState = 4;
+
+  getWorldRecord(1);
+  getPersonalBest(1);
 }
 
 void Menu::settings() {
@@ -145,6 +178,12 @@ void Menu::soundEffectsSlider() {
 
 void Menu::tick() {
   if (!ticked) {
+    difMap.emplace(std::make_pair(1, "N/A"));
+    wrMap.emplace(std::make_pair(1, "N/A"));
+    pbMap.emplace(std::make_pair(1, std::make_pair("N/A", "N/A")));
+
+    getLevelStats();
+    whoami();
     ticked = true;
     fakeLevel.deserialize("./res/levels/level1.dat");
     fakeLevel.camera.target.y += 40;
@@ -152,8 +191,6 @@ void Menu::tick() {
     loginWidget.menu = true;
     passwordWidget.menu = true;
     passwordWidget.password = true;
-
-    std::cout << status() << std::endl;
   }
 
   fakeLevel.camera.target.x += GetFrameTime() * 10 * (right ? 1 : -1);
@@ -244,7 +281,7 @@ void Menu::tick() {
     DrawText("Singleplayer", 80, 110, 50, WHITE);
     DrawRectangleRec({80, 160, 1100, 500}, {0, 0, 0, 100});
     
-    levelButton("1 - Unnamed Level", 574, "danimania", {100, 180, 1050, 80}, "./res/levels/level1.dat");
+    levelButton("1 - Unnamed Level", 574, "danimania", {100, 180, 1050, 80}, 1);
     
     if (IsKeyDown(KEY_ESCAPE)) menuState = 0;
   } else if (menuState == 4) {

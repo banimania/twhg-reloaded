@@ -48,7 +48,7 @@ void Player::tick(Level* level) {
     }
   }
 
-  if (!isDying) {
+  if (!isDying && !level->pause) {
     bool xCol = false, yCol = false;
 
     if (dx != 0.0f || force.x != 0.0f) {

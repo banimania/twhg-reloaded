@@ -5,10 +5,97 @@
 #include "gameobject/gameobjects/keyblock.hpp"
 #include "gameobject/gameobjects/coin.hpp"
 #include "../utils/shaders.hpp"
+#include <functional>
 #include <iostream>
 #include <raylib.h>
+#include "../utils/needed.hpp"
+#include "../utils/io.hpp"
+#include <sstream>
+
+void Level::resumeB() {
+  pause = false;
+}
+
+void Level::menuB() {
+  pause = false;
+  TWHGReloaded::menu.menuState = 0;
+  TWHGReloaded::state = MENU;
+}
+
+void Level::retryB() {
+  reset();
+  pause = false;
+  beat = false;
+}
 
 void Level::tick() {
+
+  if (IsKeyReleased(KEY_Z))  {
+    player.rect.x = 1600;
+    player.rect.y = 200;
+  }
+  
+
+  if (TWHGReloaded::state == PLAYING) {
+    if (IsKeyReleased(KEY_ESCAPE) && !beat) {
+      pause = !pause;
+      //if (!pause) UnloadTexture(pauseTexture);
+    } else if (IsKeyReleased(KEY_ESCAPE) && beat) {
+      pause = false;
+      beat = false;
+      //UnloadTexture(pauseTexture);
+      reset();
+    }
+    if (ss) {
+      if (beat) submitScore(id, time, player.deaths + 0);
+      ss = false;
+      /*Image screenImage = LoadImageFromScreen();
+      pauseTexture = LoadTextureFromImage(screenImage);
+      UnloadImage(screenImage);*/
+    }
+  }
+
+  if (pause) {
+    background.tick(camera);
+    for (GameObject* gameObject : gameObjects) {
+      gameObject->tick(&player);
+    }
+    player.tick(this);
+    hud.tick();
+    DrawRectangleRec({0, 0, 1280, 720}, {0, 0, 0, 100});
+    std::string pbString = TWHGReloaded::menu.pbMap.find(id)->second.first == "N/A" ? "N/A" : formatTime(std::stof(TWHGReloaded::menu.pbMap.find(id)->second.first));
+    std::string wrRes = TWHGReloaded::menu.wrMap.find(id)->second;
+    std::string wrString = "N/A";
+    if (wrRes != "N/A") {
+
+      std::string wrTimeString = "";
+      std::string wrHolderString = "";
+      std::stringstream ss(wrRes);
+      std::getline(ss, wrTimeString, ' ');
+      std::getline(ss, wrHolderString, ' ');
+      std::getline(ss, wrHolderString, ' ');
+      wrTimeString = formatTime(std::stof(wrTimeString));
+      wrString = std::string(wrHolderString + " by " + wrTimeString);
+    }
+    if (beat) {
+      DrawText("Level beaten", 80, 110, 50, WHITE);
+      DrawRectangleRec({80, 160, 1100, 500}, {0, 0, 0, 100});
+      TWHGReloaded::menu.button("Retry [esc]", {110, 190, 220, 40}, std::bind(&Level::retryB, this));
+      TWHGReloaded::menu.button("Exit level", {110, 240, 220, 40}, std::bind(&Level::menuB, this));
+      DrawText(submitScoreFetch.c_str(), 110, 290, 30, WHITE);
+      DrawText(std::string("PB: " + pbString).c_str(), 110, 340, 30, WHITE);
+      DrawText(std::string("WR: " + wrString).c_str(), 110, 390, 30, WHITE);
+      return;
+    }
+    DrawText("Pause", 80, 110, 50, WHITE);
+    DrawRectangleRec({80, 160, 1100, 500}, {0, 0, 0, 100});
+    TWHGReloaded::menu.button("Resume [esc]", {110, 190, 220, 40}, std::bind(&Level::resumeB, this));
+    TWHGReloaded::menu.button("Exit level", {110, 240, 220, 40}, std::bind(&Level::menuB, this));
+    DrawText(std::string("PB: " + pbString).c_str(), 110, 290, 30, WHITE);
+    DrawText(std::string("WR: " + wrString).c_str(), 110, 340, 30, WHITE);
+    return;
+  }
+  
   if (freeCameraMode) {
     //Vector2 centerWorld = GetScreenToWorld2D({SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f}, camera);
     Vector2 target = {player.rect.x + player.rect.width / 2.0f - SCREEN_WIDTH / 2.0f, player.rect.y + player.rect.height / 2.0f - SCREEN_HEIGHT / 2.0f};
@@ -46,6 +133,10 @@ void Level::tick() {
 skipCam:
   if (didJustDie) didJustDie = false;
 
+  if (account != nullptr) {
+    account->time += GetFrameTime();
+  }
+
   time += GetFrameTime();
 
   BeginMode2D(camera);
@@ -71,6 +162,9 @@ skipCam:
   for (int i = 0; i < gameObjects.size(); i++) {
     //for (GameObject* gameObject : gameObjects) {
     GameObject* gameObject = gameObjects[i];
+    if (Coin* coin = dynamic_cast<Coin*>(gameObject)) {
+      if (!coin->collected) allCoins = false;
+    }
     for (int pathId : gameObject->pathIds) {
       Path* path = findPath(pathId);
       if (std::find(pathsTicked.begin(), pathsTicked.end(), path) == pathsTicked.end()) {
@@ -109,6 +203,10 @@ skipCam:
 void Level::death() {
   player.rect.x = player.lastCheckpoint.x;
   player.rect.y = player.lastCheckpoint.y;
+
+  if (account != nullptr) {
+    account->deaths++;
+  }
 
   player.deaths++;
 

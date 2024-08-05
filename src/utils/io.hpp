@@ -31,6 +31,10 @@ std::string whoami();
 void logoutUser();
 void loadUser();
 void saveUser();
+void submitScore(int levelId, float time, int deaths);
+void getWorldRecord(int levelId);
+void getPersonalBest(int levelId);
+void getDifficulty(int levelId);
 std::string top10();
 
 Account* whoamiAccount(std::string whoami);

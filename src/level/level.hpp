@@ -29,6 +29,8 @@
 
 class Level {
 public:
+  int id;
+
   float startX, startY;
   float time = 0.0f;
   Player player;
@@ -42,14 +44,27 @@ public:
   bool freeCameraMode = false;
   float camGoalX = 0, camGoalY = 0, camMoveSpeed = 500;
 
+  bool allCoins = true;
   bool didJustDie = true;
+
+  bool pause = false;
+  bool beat = false;
+  bool ss = false;
+
+  std::string submitScoreFetch = "Submitting score...";
+
+  Texture pauseTexture;
 
   void tick();
 
   void death();
   void reset();
 
-  Level() : startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {};
+  void retryB();
+  void resumeB();
+  void menuB();
+
+  Level(int id) : id(id), startX(125), startY(125), name("Unnamed"), player(Player()), background(Background()) {};
 
   Rectangle getObjectRectangle(std::vector<GameObject*> objects);
 
@@ -101,6 +116,8 @@ public:
   void serialize(const std::string& filename) const {
     std::ofstream ofs(filename, std::ios::binary);
 
+    ofs.write((char*)&id, sizeof(id));
+    
     ofs.write((char*)&startX, sizeof(startX));
     ofs.write((char*)&startY, sizeof(startY));
 
@@ -133,6 +150,8 @@ public:
   void deserialize(const std::string& filename) {
     std::ifstream ifs(filename, std::ios::binary);
 
+    ifs.read((char*)&id, sizeof(id));
+    
     ifs.read((char*)&startX, sizeof(startX));
     ifs.read((char*)&startY, sizeof(startY));
 

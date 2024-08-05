@@ -22,11 +22,11 @@ void Editor::tick() {
   }
   if (IsKeyDown(KEY_LEFT_CONTROL)) {
     if (IsKeyReleased(KEY_C)) {
-      level->serialize("./res/levels/level.dat");
+      level->serialize("./res/levels/level1.dat");
     }
 
     if (IsKeyReleased(KEY_V)) {
-      level->deserialize("./res/levels/level.dat");
+      level->deserialize("./res/levels/level1.dat");
       backgroundPrimaryColorWidget.color = level->background.colorPrimary;
       backgroundSecondaryColorWidget.color = level->background.colorSecondary;
       plainWidget.setSelected(level->background.backgroundType == PLAIN);

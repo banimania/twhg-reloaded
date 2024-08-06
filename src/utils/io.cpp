@@ -509,7 +509,7 @@ void getPersonalBest(int levelId) {
     std::getline(ss, deaths, ' ');
   }
 
-  TWHGReloaded::menu.wrMap.insert_or_assign(levelId, std::make_pair(time, deaths));
+  TWHGReloaded::menu.pbMap.insert_or_assign(levelId, std::make_pair(time, deaths));
 
   #endif
 }

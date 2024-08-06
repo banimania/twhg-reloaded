@@ -34,7 +34,11 @@ void Menu::levelButton(std::string text, float time, std::string wrHolder, Recta
 
   std::string difficultyString = difMap.find(levelId)->second;
   std::string deathsString = pbMap.find(levelId)->second.second;
-  std::string pbString = pbMap.find(levelId)->second.first == "N/A" ? "N/A" : formatTime(std::stof(pbMap.find(levelId)->second.first));
+  //std::string pbString = pbMap.find(levelId)->second.first == "N/A" ? "N/A" : formatTime(std::stof(pbMap.find(levelId)->second.first));
+  std::string pbString = pbMap.find(levelId)->second.first;
+  if (pbString != "N/A" && pbString != "Not logged") {
+    pbString = formatTime(std::stof(pbMap.find(levelId)->second.first));
+  }
   std::string wrRes = wrMap.find(levelId)->second;
   std::string wrString = "N/A";
   if (wrRes != "N/A") {

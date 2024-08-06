@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 inline Shader fogShader;
+inline Shader distortionShader;
 
 void loadShaders();
 

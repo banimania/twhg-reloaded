@@ -9,4 +9,5 @@
 
 void loadShaders() {
   fogShader = LoadShader(0, TextFormat("res/shaders/fog%i.fs", GLSL_VERSION));
+  distortionShader = LoadShader(0, TextFormat("res/shaders/distortion%i.fs", GLSL_VERSION));
 }
